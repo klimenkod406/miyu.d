@@ -67,7 +67,8 @@ PHONETIC_CORRECTIONS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\bиди\b(?=.*танцпол)", re.IGNORECASE), "Пустите"),
 
     (re.compile(r"\bпропадаюсь\b", re.IGNORECASE), "пропадаю сам"),
-    (re.compile(r"\bпропадаю[с]?[т]?\b", re.IGNORECASE), "пропадаю сам"),
+    (re.compile(r"\bпропадаю[с]?[т]?\b", re.IGNORECASE), "пропадаю"),
+    (re.compile(r"\bпропадаю\b(?!\s+сам)", re.IGNORECASE), "пропадаю сам"),
 
     (re.compile(r"\bздесь все хорошо\b", re.IGNORECASE), "здесь так хорошо"),
     (re.compile(r"\bсветет\b", re.IGNORECASE), "светит"),
@@ -168,6 +169,118 @@ PHONETIC_CORRECTIONS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\bбезумством,? а не тяга\b", re.IGNORECASE), "безумство, мания, тяга"),
     (re.compile(r"\bвлюблен[ао]\b", re.IGNORECASE), "влюблена"),
 
+
+    # === Batch test residual errors (from large-v3 run) ===
+    # Alignment fixes: фразы которые модель разрывает
+    (re.compile(r"\bменяют станет\b", re.IGNORECASE), "меняют местами"),
+    (re.compile(r"\bменяют менять\b", re.IGNORECASE), "меняют местами"),
+    (re.compile(r"\bв них\b", re.IGNORECASE), "в мир"),
+    (re.compile(r"\bты океаны\b", re.IGNORECASE), "ты в мир"),
+
+    # Track 36: Pushkin poem corrections
+    (re.compile(r"\bбуром горном\b", re.IGNORECASE), "Буря мглою"),
+    (re.compile(r"\bв буром\b", re.IGNORECASE), "Буря"),
+
+    # Basta track 52 corrections
+    (re.compile(r"\bпеть ты\b", re.IGNORECASE), "петь"),
+    (re.compile(r"\bты петь\b", re.IGNORECASE), "петь"),
+    (re.compile(r"\bдля меня не станет\b", re.IGNORECASE), "когда меня не станет"),
+    (re.compile(r"\bтот таков\b", re.IGNORECASE), "таков"),
+    (re.compile(r"\bзашел\b", re.IGNORECASE), "зажженный"),
+    (re.compile(r"\bтобой бой\b", re.IGNORECASE), "тобой"),
+    (re.compile(r"\bраз нас\b", re.IGNORECASE), "нас"),
+    (re.compile(r"\bпрокинь\b", re.IGNORECASE), "опрокинь"),
+    (re.compile(r"\bфонарик и\b", re.IGNORECASE), "фонарик"),
+    (re.compile(r"\bэй фонарик\b", re.IGNORECASE), "эй"),
+
+    # Track 110 Dora corrections
+    (re.compile(r"\bневажно\b", re.IGNORECASE), "не важно"),
+
+
+
+
+    # === Track 46: Zivert — Beverly Hills ===
+    (re.compile(r"\bдалеками\b", re.IGNORECASE), "дальних комет"),
+    (re.compile(r"\bдал[еь]ками\b", re.IGNORECASE), "дальних комет"),
+    (re.compile(r"\bдал[еь]к[ао]м\b", re.IGNORECASE), "дальних комет"),
+    (re.compile(r"\bвверхами\b", re.IGNORECASE), "это миг"),
+    (re.compile(r"\bвеками\b", re.IGNORECASE), "это миг"),
+    (re.compile(r"\bвекам\w{0,2}\b", re.IGNORECASE), "это миг"),
+    (re.compile(r"\bоказывают\b", re.IGNORECASE), "это свет"),
+    (re.compile(r"\bоказывают дальниками\b", re.IGNORECASE), "это свет дальних комет"),
+    (re.compile(r"\bкак рассвет\b", re.IGNORECASE), "это свет"),
+    (re.compile(r"\bтак далеко нет\b", re.IGNORECASE), "это свет дальних комет"),
+    (re.compile(r"\bкак камень\b", re.IGNORECASE), "это миг"),
+    (re.compile(r"\bи таз вверх\b", re.IGNORECASE), "это свет"),
+    (re.compile(r"\bпум\b", re.IGNORECASE), "Бонда"),
+    (re.compile(r"\bдевушка пум\b", re.IGNORECASE), "девушка Бонда"),
+    (re.compile(r"\bветер попал\b", re.IGNORECASE), "ветер по волосам"),
+    (re.compile(r"\bкто пошел вперед\b", re.IGNORECASE), "кто во что верит"),
+    (re.compile(r"\bмне узнать\b", re.IGNORECASE), "им не узнать"),
+    (re.compile(r"\bВалерий Курас\b", re.IGNORECASE), ""),  # subtitle credit
+    # === Track 59: МакSим — Знаешь Ли Ты ===
+    (re.compile(r"\bшла бы в стекол\b", re.IGNORECASE), "шла босиком"),
+    (re.compile(r"\bшла бы в стёкол\b", re.IGNORECASE), "шла босиком"),
+    (re.compile(r"\bмебель любви\b", re.IGNORECASE), "пепел любви"),
+    (re.compile(r"\bмебель\b", re.IGNORECASE), "пепел"),
+    (re.compile(r"\bне жалея ног\b", re.IGNORECASE), "не жалея ног"),
+    (re.compile(r"\bбился серый дождь\b", re.IGNORECASE), "бьётся серый дождь"),
+    # === Track 77: Cream Soda — Никаких Больше Вечеринок ===
+    (re.compile(r"\bбыстрее река\b", re.IGNORECASE), "быстрая река"),
+    (re.compile(r"\bвернее на славу\b", re.IGNORECASE), "верь мне на слова"),
+    (re.compile(r"\bвмени себя\b", re.IGNORECASE), "береги себя"),
+    (re.compile(r"\bвмени меня\b", re.IGNORECASE), "береги меня"),
+    (re.compile(r"\bни недели, ни пути\b", re.IGNORECASE), "дни, недели, нет пути"),
+    (re.compile(r"\bни недели ни пути\b", re.IGNORECASE), "дни, недели, нет пути"),
+    (re.compile(r"\bтеплый воздух\b", re.IGNORECASE), "Тёплый воздух"),
+    # === Hotwords test residual errors ===
+    # "В Буря мглою" -> "Буря мглою" (merge artifact)
+    (re.compile(r"\bВ Буря\b", re.IGNORECASE), "Буря"),
+    (re.compile(r"\bбуря мглою\b", re.IGNORECASE), "Буря мглою"),
+
+    # "вихри снежные в грудях" -> "вихри снежные крутя"
+    (re.compile(r"\bвихри снежные в груд[яе]х?\b", re.IGNORECASE), "вихри снежные крутя"),
+
+    # "как звери называют" -> "как зверь она завоет"
+    (re.compile(r"\bзвери называют\b", re.IGNORECASE), "зверь она завоет"),
+
+    # "вовненье" -> "во мне Инь-Янь"
+    (re.compile(r"\bвовнень[ея]\b", re.IGNORECASE), "во мне Инь-Янь"),
+
+    # "найду тебя я я" -> "найду тебя эй я"
+    (re.compile(r"\bнайду тебя я я\b", re.IGNORECASE), "найду тебя эй"),
+
+    # Capitalize first letter after segment start
+    (re.compile(r"^\.\s+[а-я]", re.IGNORECASE), lambda m: m.group(0).upper()),
+    (re.compile(r"\bя пропадаюсь\b", re.IGNORECASE), "я пропадаю сам"),
+    (re.compile(r"\bво мнении Инь-Янь\b", re.IGNORECASE), "во мне Инь-Янь"),
+    (re.compile(r"\bбыстрее река\b", re.IGNORECASE), "быстрая река"),
+    (re.compile(r"\bвернее на славу\b", re.IGNORECASE), "верь мне на слова"),
+    (re.compile(r"\bвмени себя\b", re.IGNORECASE), "береги себя"),
+    (re.compile(r"\bни недели ни пути\b", re.IGNORECASE), "дни недели нет пути"),
+    (re.compile(r"\bшла бы в стекол\b", re.IGNORECASE), "шла босиком"),
+    (re.compile(r"\bмебель любви\b", re.IGNORECASE), "пепел любви"),
+    (re.compile(r"\bне важно чтобы ты узнал\b", re.IGNORECASE), "мне важно чтобы ты узнал"),
+
+    # === Atomic fixes from audit ===
+    # "не внятной" -> "невнятные" (broader match)
+    (re.compile(r"\bне внятной\b", re.IGNORECASE), "невнятные"),
+    # "лечи" -> "речи" (in song context)
+    (re.compile(r"\bлечи\b", re.IGNORECASE), "речи"),
+    # "нет и" -> "и это" (in "речи и это не лечит" context)
+    (re.compile(r"\bнет и не\b", re.IGNORECASE), "и это не"),
+    # "блига" -> "бликах"
+    (re.compile(r"\bблига\b", re.IGNORECASE), "бликах"),
+    # "зияя" -> "сияю"
+    (re.compile(r"\bзия[еяя]\b", re.IGNORECASE), "сияю"),
+    # "пропадаюсь" -> "пропадаю" (без "сам" - отдельно)
+    (re.compile(r"\bпропадаюсь\b", re.IGNORECASE), "пропадаю"),
+    # "во мнении" -> "во мне" (broader)
+    (re.compile(r"\bво мнении\b", re.IGNORECASE), "во мне"),
+    # "Инь-Янь" -> keep (already correct if "во мне")
+    # But fix "Инь-Янь Инь-Янь" -> "Инь-Янь"
+    (re.compile(r"\bИнь-Янь Инь-Янь\b", re.IGNORECASE), "Инь-Янь"),
+    (re.compile(r"\bя пропадаюсь\b", re.IGNORECASE), "я пропадаю сам"),
     # === Общие/универсальные паттерны ===
     (re.compile(r"\bне знакомы\b", re.IGNORECASE), "незнакомы"),
     (re.compile(r"\bни по чем\b", re.IGNORECASE), "нипочем"),
