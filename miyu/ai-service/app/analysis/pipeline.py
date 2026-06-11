@@ -6,7 +6,7 @@
   2. Аудио-признаки (librosa)
   3. Tagging + audio embedding (PANNs)
   4. Транскрипция (faster-whisper)
-  5. Текстовая модерация (Detoxify) + text embedding (e5)
+  5. Текстовая модерация (9 категорий: мат, секс, наркотики, насилие...) + text embed
   6. NSFW-обложка (opennsfw2)
   7. Fingerprint (chromaprint) + дубликаты
   8. Aggregator → ai_score / ai_flags / decision
@@ -156,23 +156,17 @@ def analyze_track(track_id: int, file_path: str | None = None) -> dict[str, Any]
     lyrics_text = best_lyrics_text
 
     # --- 4. Текстовая модерация + embedding ---
-    toxicity: dict = {}
-    explicit_analysis = text_moderation.ExplicitAnalysis()
+    moderation_result = text_moderation.ModerationResult()
     text_emb = None
     if moderation_text:
         try:
-            toxicity = text_moderation.toxicity_scores(moderation_text)
+            moderation_result = text_moderation.analyze(moderation_text)
         except Exception as e:
-            logger.exception("toxicity failed: %s", e)
-        try:
-            explicit_analysis = text_moderation.analyze_explicit(moderation_text)
-        except Exception as e:
-            logger.exception("explicit analysis failed: %s", e)
+            logger.exception("text moderation failed: %s", e)
         try:
             text_emb = text_moderation.embed(moderation_text)
         except Exception as e:
             logger.exception("text embed failed: %s", e)
-
     # --- 5. NSFW-обложка (если есть) ---
     nsfw_cover_score = 0.0
     cover = track.get("cover_url")
@@ -212,16 +206,12 @@ def analyze_track(track_id: int, file_path: str | None = None) -> dict[str, Any]
 
     # --- 7. Aggregator ---
     signals = aggregator.ModerationSignals(
-        toxicity=toxicity or None,
-        is_explicit=explicit_analysis.is_explicit,
-        explicit_score=explicit_analysis.score,
-        explicit_density=explicit_analysis.density,
-        explicit_severe_count=explicit_analysis.severe_count,
-        explicit_moderate_count=explicit_analysis.moderate_count,
-        explicit_mild_count=explicit_analysis.mild_count,
-        explicit_drug_count=explicit_analysis.drug_count,
-        explicit_has_slur=explicit_analysis.has_slur,
-        explicit_has_drug=explicit_analysis.has_drug_reference,
+        is_18plus=moderation_result.is_18plus,
+        mmr_score=moderation_result.mmr_score,
+        density=moderation_result.density,
+        total_hits=moderation_result.total_hits,
+        categories=moderation_result.categories,
+        has_red_flag=moderation_result.has_red_flag,
         nsfw_cover=nsfw_cover_score,
         invalid_audio=invalid_audio,
         possible_duplicate=possible_dup,

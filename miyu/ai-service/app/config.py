@@ -26,11 +26,11 @@ class Settings(BaseSettings):
     db_path: Path = Field(default_factory=_default_db_path)
     redis_url: str = Field(default_factory=_default_redis_url)
     rq_queue_default: str = "miyu-ai"
-    whisper_model: str = "large-v3"  # Заменить на путь к large-v3-turbo-ct2
+    whisper_model: str = Field(default="large-v3", alias="MIYU_AI_WHISPER_MODEL")  # large-v3 (3GB) или large-v3-turbo-ct2 (1.5GB)
     whisper_compute_type: str = "int8"
     whisper_device: str = "cpu"
     whisper_num_workers: int = 3
-    enable_toxicity_model: bool = True
+    enable_text_embeddings: bool = True
     enable_text_embeddings: bool = True
     auto_approve_threshold: float = 0.20
     flag_threshold: float = 0.70

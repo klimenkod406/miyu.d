@@ -1,10 +1,10 @@
-"""Текстовая модерация: toxicity (Detoxify) + категоризация explicit + эмбеддинг.
+"""Текстовая модерация: 9 категорий + MMR скоринг.
 
-Архитектура explicit-анализа:
-  - 4 категории: severe / moderate / mild / slur (см. profanity_dict.py)
-  - whitelist для устранения false positives
-  - explicit_score (0..1) учитывает severity + плотность матов
-  - explicit_density = explicit_count / total_words
+Категории: sex, drugs, smoking, alcohol, racism, nationalism, fascism,
+           violence, profanity.
+
+Любой триггер → 18+ (is_18plus = True).
+Для MMR (auto-approve) используется взвешенная плотность.
 """
 from __future__ import annotations
 
@@ -15,70 +15,146 @@ from typing import Optional
 
 import numpy as np
 
-from .profanity_dict import (
-    SEVERE_PATTERNS,
-    MODERATE_PATTERNS,
-    MILD_PATTERNS,
-    SLUR_PATTERNS,
-    DRUG_PATTERNS,
-    WHITELIST,
-)
+from .profanity_dict import check_all
 
 logger = logging.getLogger(__name__)
 
-# Веса категорий для explicit_score
-CATEGORY_WEIGHTS = {
-    "severe": 1.0,
-    "moderate": 0.6,
-    "mild": 0.3,
-    "slur": 1.0,
-    "drug": 0.7,
-}
-
-# Скомпилированные regex по категориям
-_SEVERE_RE = re.compile("|".join(SEVERE_PATTERNS), re.IGNORECASE)
-_MODERATE_RE = re.compile("|".join(MODERATE_PATTERNS), re.IGNORECASE)
-_MILD_RE = re.compile("|".join(MILD_PATTERNS), re.IGNORECASE)
-_SLUR_RE = re.compile("|".join(SLUR_PATTERNS), re.IGNORECASE)
-_DRUG_RE = re.compile("|".join(DRUG_PATTERNS), re.IGNORECASE)
-
-# Объединённый regex для быстрой проверки и подсветки
-_ALL_RE = re.compile(
-    "|".join(SEVERE_PATTERNS + MODERATE_PATTERNS + MILD_PATTERNS + SLUR_PATTERNS + DRUG_PATTERNS),
-    re.IGNORECASE,
-)
-
-_WORD_RE = re.compile(r"[\w']+", re.UNICODE)
-_OBFUSCATION_RE = re.compile(r"(?<=[а-яёa-z0-9])[^а-яёa-z0-9\s]+(?=[а-яёa-z0-9])", re.IGNORECASE)
-_REPEAT_RE = re.compile(r"([а-яёa-z])\1+", re.IGNORECASE)
-_LATIN_TO_CYRILLIC = str.maketrans({"a":"а","e":"е","o":"о","p":"р","c":"с","x":"х","y":"у","A":"А","E":"Е","O":"О","P":"Р","C":"С","X":"Х","Y":"У","B":"В","H":"Н","K":"К","M":"М","T":"Т"})
-_SEVERE_ROOT_HINT_RE = re.compile(r"(х[у]?й|ху[яеюи]|п[ие]зд|[её]б|бля|пид[ао]р|муд[аи]к)", re.IGNORECASE)
-_CONTEXT_DRUG_TERMS = {"травка", "косяк", "план", "шишки", "бошки", "соль", "кислота", "клад", "приход", "спид", "кокс"}
-_DRUG_CONTEXT_RE = re.compile(
-    r"\b(кур\w*|дун\w*|нюх\w*|закин\w*|дилер\w*|барыг\w*|наркот\w*|меф\w*|кокаин\w*|героин\w*|амф\w*|мдма|лсд|weed|cocaine|heroin|meth|mdma|dealer|snort\w*)\b",
-    re.IGNORECASE,
-)
+# Пороги для MMR
+_MMR_DENSITY_FACTOR = 3.0  # 33% триггерных слов → mmr = 1.0
+_MMR_MIN_PROFANITY = 0.15   # хотя бы 1 мат → mmr >= 0.15
+_MMR_MIN_RED_FLAG = 0.85    # racism/fascism → mmr >= 0.85
+_MMR_MIN_SEX = 0.5          # секс → mmr >= 0.5
+_MMR_MIN_DRUGS = 0.4        # наркотики → mmr >= 0.4
+_MMR_MIN_VIOLENCE = 0.3     # насилие → mmr >= 0.3
 
 
 @dataclass
+class ModerationResult:
+    """Результат полной модерации текста."""
+    is_18plus: bool = False
+    mmr_score: float = 0.0          # 0..1 — итоговый MMR
+    density: float = 0.0            # доля триггеров в тексте
+    total_hits: int = 0
+    word_count: int = 0
+    categories: dict = field(default_factory=dict)  # {category: count}
+    has_red_flag: bool = False
+    hits: dict = field(default_factory=dict)        # {category: [matches]}
+
+    def to_dict(self) -> dict:
+        return {
+            "is_18plus": self.is_18plus,
+            "mmr_score": self.mmr_score,
+            "density": self.density,
+            "total_hits": self.total_hits,
+            "word_count": self.word_count,
+            "categories": self.categories,
+            "has_red_flag": self.has_red_flag,
+            "hits": {k: len(v) for k, v in self.hits.items()},
+        }
+
+
+def analyze(text: str | None) -> ModerationResult:
+    """Полная модерация текста: 9 категорий + MMR.
+
+    Правила MMR:
+      1. Любой хит → is_18plus = True
+      2. base = min(1.0, total_weighted / word_count * _MMR_DENSITY_FACTOR)
+      3. profanity → mmr = max(mmr, 0.15)
+      4. racism/fascism → mmr = max(mmr, 0.85)
+      5. sex → mmr = max(mmr, 0.5)
+      6. drugs → mmr = max(mmr, 0.4)
+      7. violence → mmr = max(mmr, 0.3)
+    """
+    result = ModerationResult()
+
+    if not text or not text.strip():
+        return result
+
+    raw = check_all(text)
+    result.is_18plus = raw["is_18plus"]
+    result.total_hits = raw["total_hits"]
+    result.word_count = raw["word_count"]
+    result.density = raw["density"]
+    result.categories = raw["categories"]
+    result.hits = raw["hits"]
+    result.has_red_flag = raw["has_red_flag"]
+
+    if not result.is_18plus:
+        return result
+
+    # MMR: взвешенная плотность
+    mmr = min(1.0, raw["total_weighted"] / result.word_count * _MMR_DENSITY_FACTOR)
+
+    # Минимальные пороги по категориям
+    if raw["categories"].get("profanity", 0) > 0:
+        mmr = max(mmr, _MMR_MIN_PROFANITY)  # хотя бы 0.15
+    if raw["categories"].get("racism", 0) > 0 or raw["categories"].get("fascism", 0) > 0:
+        mmr = max(mmr, _MMR_MIN_RED_FLAG)   # 0.85
+    if raw["categories"].get("sex", 0) > 0:
+        mmr = max(mmr, _MMR_MIN_SEX)        # 0.5
+    if raw["categories"].get("drugs", 0) > 0:
+        mmr = max(mmr, _MMR_MIN_DRUGS)      # 0.4
+    if raw["categories"].get("violence", 0) > 0:
+        mmr = max(mmr, _MMR_MIN_VIOLENCE)   # 0.3
+
+    result.mmr_score = round(min(1.0, mmr), 4)
+    return result
+
+
+# ============================================================
+# Text embedding (оставляем, не зависит от Detoxify)
+# ============================================================
+_EMB_MODEL = None
+
+
+def _load_embedder():
+    global _EMB_MODEL
+    if _EMB_MODEL is not None:
+        return _EMB_MODEL
+    from sentence_transformers import SentenceTransformer  # type: ignore
+    from ..config import get_settings
+    logger.info("Loading text embedder (%s)...", get_settings().text_embedding_model)
+    _EMB_MODEL = SentenceTransformer(get_settings().text_embedding_model)
+    return _EMB_MODEL
+
+
+def embed(text: str) -> Optional[np.ndarray]:
+    """Text embedding через sentence-transformers."""
+    if not text or not text.strip():
+        return None
+    from ..config import get_settings
+    if not get_settings().enable_text_embeddings:
+        logger.info("Text embeddings disabled by config")
+        return None
+    try:
+        model = _load_embedder()
+        vec = model.encode(f"passage: {text}", normalize_embeddings=True)
+        return np.asarray(vec, dtype=np.float32)
+    except Exception as e:
+        logger.exception("Text embedding failed: %s", e)
+        return None
+
+
+# ============================================================
+# Backward-compatible API
+# ============================================================
+
+@dataclass
 class ExplicitAnalysis:
-    """Результат анализа нецензурной лексики."""
-    score: float = 0.0                                # 0..1, итоговый explicit-скор
-    density: float = 0.0                              # доля матов в тексте 0..1
+    """Backward-compatible: обёртка над ModerationResult для старого кода."""
+    score: float = 0.0
+    density: float = 0.0
     total_words: int = 0
+    total_count: int = 0
+    is_explicit: bool = False
     severe_count: int = 0
     moderate_count: int = 0
     mild_count: int = 0
     slur_count: int = 0
-    drug_count: int = 0                               # упоминания наркотиков
-    has_slur: bool = False                            # red-flag для агрегатора
-    has_drug_reference: bool = False                  # soft-flag (≥1 упоминание)
-    matches: list[dict] = field(default_factory=list) # [{start, end, word, category, severity}]
-
-    @property
-    def total_count(self) -> int:
-        return (self.severe_count + self.moderate_count + self.mild_count
-                + self.slur_count + self.drug_count)
+    drug_count: int = 0
+    has_slur: bool = False
+    has_drug_reference: bool = False
+    matches: list = field(default_factory=list)
 
     @property
     def is_explicit(self) -> bool:
@@ -101,200 +177,44 @@ class ExplicitAnalysis:
         }
 
 
-def _normalize_for_matching(value: str) -> str:
-    normalized = (value or "").lower().replace("ё", "е")
-    normalized = _OBFUSCATION_RE.sub("", normalized)
-    return _REPEAT_RE.sub(r"\1\1", normalized)
-
-
-def _has_drug_context(text: str, start: int, end: int) -> bool:
-    window = text[max(0, start - 48):min(len(text), end + 48)].lower().replace("ё", "е")
-    return bool(_DRUG_CONTEXT_RE.search(window))
-
-
-def _categorize(word: str, *, full_text: str = "", start: int = 0, end: int | None = None) -> Optional[str]:
-    """Определяет категорию слова или None если оно whitelisted/чистое."""
-    wl = _normalize_for_matching(word)
-    if wl in WHITELIST:
-        return None
-    if _SLUR_RE.fullmatch(wl) or _SLUR_RE.search(wl):
-        # fullmatch предпочтительнее, но pattern содержит ^/$ редко — используем search с проверкой
-        if _SLUR_RE.search(wl):
-            return "slur"
-    if _SEVERE_RE.search(wl) or _SEVERE_ROOT_HINT_RE.search(wl):
-        return "severe"
-    if _MODERATE_RE.search(wl):
-        return "moderate"
-    if _MILD_RE.search(wl):
-        return "mild"
-    if _DRUG_RE.search(wl):
-        if wl in _CONTEXT_DRUG_TERMS and not _has_drug_context(full_text, start, end if end is not None else start + len(word)):
-            return None
-        return "drug"
-    return None
-
-
 def analyze_explicit(text: str) -> ExplicitAnalysis:
-    """Категоризирует все нецензурные слова и считает скор.
+    """Backward-compatible: обёртка."""
+    result = analyze(text)
+    ea = ExplicitAnalysis(
+        score=result.mmr_score,
+        density=result.density,
+        total_words=result.word_count,
+        total_count=result.total_hits,
+        is_explicit=result.is_18plus,
+        severe_count=result.total_hits,
+        has_slur=result.has_red_flag,
+        matches=[],
+    )
+    # Map new categories to old fields
+    for cat, count in result.categories.items():
+        if cat in ("racism", "fascism"):
+            ea.slur_count += count
+        elif cat == "drugs":
+            ea.drug_count += count
+            ea.has_drug_reference = True
 
-    Скоринг:
-      raw = sum(weight[cat] for cat in matched) / total_words
-      score = min(1.0, raw * 4)   — масштабирование: 25% матов = 1.0
-      slur_count > 0 → score >= 0.85 (red-flag)
-    """
-    result = ExplicitAnalysis()
-    if not text or not text.strip():
-        return result
+    # Flatten hits to matches
+    for cat, cat_hits in result.hits.items():
+        for m in cat_hits:
+            ea.matches.append(m)
 
-    # Подсчёт слов в тексте
-    words = _WORD_RE.findall(text)
-    result.total_words = len(words)
-    if result.total_words == 0:
-        return result
+    return ea
 
-    weighted_sum = 0.0
-    normalized_text = _normalize_for_matching(text)
-    seen_spans: set[tuple[int, int]] = set()
-
-    def add_match(start: int, end: int, word: str, category: str) -> None:
-        nonlocal weighted_sum
-        if (start, end) in seen_spans:
-            return
-        seen_spans.add((start, end))
-        weight = CATEGORY_WEIGHTS[category]
-        weighted_sum += weight
-
-        if category == "severe":
-            result.severe_count += 1
-        elif category == "moderate":
-            result.moderate_count += 1
-        elif category == "mild":
-            result.mild_count += 1
-        elif category == "slur":
-            result.slur_count += 1
-            result.has_slur = True
-        elif category == "drug":
-            result.drug_count += 1
-            result.has_drug_reference = True
-
-        result.matches.append({
-            "start": start,
-            "end": end,
-            "word": word,
-            "category": category,
-            "severity": weight,
-        })
-
-    for m in _ALL_RE.finditer(normalized_text):
-        word = m.group()
-        if word.lower() in WHITELIST:
-            continue
-        category = _categorize(word, full_text=normalized_text, start=m.start(), end=m.end())
-        if category is not None:
-            add_match(m.start(), m.end(), word, category)
-
-    for m in _WORD_RE.finditer(normalized_text):
-        word = m.group()
-        category = _categorize(word, full_text=normalized_text, start=m.start(), end=m.end())
-        if category is not None:
-            add_match(m.start(), m.end(), word, category)
-
-    if result.total_count == 0:
-        return result
-
-    # Плотность: доля от общего числа слов
-    result.density = round(result.total_count / result.total_words, 4)
-
-    # Скор: взвешенная плотность * 4 (т.е. 25% severe-матов = 1.0)
-    raw_score = weighted_sum / result.total_words
-    score = min(1.0, raw_score * 4.0)
-
-    # Минимум 0.15 если есть хоть один severe (чтобы 1 мат в 200-словесной песне дал ≥0.15)
-    if result.severe_count > 0:
-        score = max(score, 0.15)
-    if result.moderate_count > 0 and score < 0.05:
-        score = 0.05
-
-    # Slur — всегда серьёзно
-    if result.has_slur:
-        score = max(score, 0.85)
-
-    result.score = round(score, 4)
-    return result
-
-
-# ============================================================
-# Backward-compatible API
-# ============================================================
 
 def is_explicit(text: str) -> bool:
-    """Backward-compatible: True если найдено хотя бы одно матерное слово."""
-    return analyze_explicit(text).is_explicit
+    """Backward-compatible."""
+    return analyze(text).is_18plus
 
 
 def mark_explicit_words(text: str) -> list[dict]:
-    """Backward-compatible: возвращает позиции слов для подсветки.
-
-    Каждый элемент: {start, end, word, category, severity}
-    """
-    return analyze_explicit(text).matches
-
-_TOXIC_MODEL = None
-_EMB_MODEL = None
-
-
-def _load_detoxify():
-    global _TOXIC_MODEL
-    if _TOXIC_MODEL is not None:
-        return _TOXIC_MODEL
-    from detoxify import Detoxify  # type: ignore
-    from ..config import get_settings
-    logger.info("Loading Detoxify (%s)...", get_settings().detoxify_model)
-    _TOXIC_MODEL = Detoxify(get_settings().detoxify_model)
-    return _TOXIC_MODEL
-
-
-def _load_embedder():
-    global _EMB_MODEL
-    if _EMB_MODEL is not None:
-        return _EMB_MODEL
-    from sentence_transformers import SentenceTransformer  # type: ignore
-    from ..config import get_settings
-    logger.info("Loading text embedder (%s)...", get_settings().text_embedding_model)
-    _EMB_MODEL = SentenceTransformer(get_settings().text_embedding_model)
-    return _EMB_MODEL
-
-
-def toxicity_scores(text: str) -> dict:
-    """Возвращает словарь оценок Detoxify ({toxicity, severe_toxicity, obscene, ...})."""
-    if not text or not text.strip():
-        return {}
-    from ..config import get_settings
-    if not get_settings().enable_toxicity_model:
-        logger.info("Detoxify toxicity model disabled by config")
-        return {}
-    try:
-        model = _load_detoxify()
-        result = model.predict(text)
-        # Detoxify возвращает np.float32 — приведём к питон-флоту
-        return {k: float(v) for k, v in result.items()}
-    except Exception as e:
-        logger.exception("Detoxify failed: %s", e)
-        return {}
-
-
-def embed(text: str) -> Optional[np.ndarray]:
-    if not text or not text.strip():
-        return None
-    from ..config import get_settings
-    if not get_settings().enable_text_embeddings:
-        logger.info("Text embeddings disabled by config")
-        return None
-    try:
-        model = _load_embedder()
-        # e5 ожидает префикс "passage:" для документов
-        vec = model.encode(f"passage: {text}", normalize_embeddings=True)
-        return np.asarray(vec, dtype=np.float32)
-    except Exception as e:
-        logger.exception("Text embedding failed: %s", e)
-        return None
+    """Backward-compatible."""
+    result = analyze(text)
+    matches = []
+    for cat_hits in result.hits.values():
+        matches.extend(cat_hits)
+    return matches
