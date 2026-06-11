@@ -1,0 +1,165 @@
+{
+  "dashboard": {
+    "title": "Miyu AI Service",
+    "tags": ["miyu", "ai", "recsys"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Worker Jobs Throughput",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(miyu_worker_jobs_total[5m])",
+            "legendFormat": "{{job_type}} - {{status}}"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8}
+      },
+      {
+        "id": 2,
+        "title": "Worker Job Duration (p95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(miyu_worker_job_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{job_type}}"
+          }
+        ],
+        "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8}
+      },
+      {
+        "id": 3,
+        "title": "Moderation Decisions",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum by (decision) (increase(miyu_moderation_decisions_total[1h]))",
+            "legendFormat": "{{decision}}"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 8, "w": 8, "h": 8}
+      },
+      {
+        "id": 4,
+        "title": "AI Score Distribution",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "rate(miyu_moderation_ai_score_bucket[5m])"
+          }
+        ],
+        "gridPos": {"x": 8, "y": 8, "w": 8, "h": 8}
+      },
+      {
+        "id": 5,
+        "title": "Moderation Flags",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(miyu_moderation_flags_total[5m])",
+            "legendFormat": "{{flag}}"
+          }
+        ],
+        "gridPos": {"x": 16, "y": 8, "w": 8, "h": 8}
+      },
+      {
+        "id": 6,
+        "title": "Feed Generation Latency (p50, p95, p99)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(miyu_recsys_feed_duration_seconds_bucket[5m]))",
+            "legendFormat": "p50 - {{mode}}"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(miyu_recsys_feed_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 - {{mode}}"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(miyu_recsys_feed_duration_seconds_bucket[5m]))",
+            "legendFormat": "p99 - {{mode}}"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8}
+      },
+      {
+        "id": 7,
+        "title": "Cache Hit Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(miyu_recsys_cache_requests_total{result='hit'}[5m]) / rate(miyu_recsys_cache_requests_total[5m])",
+            "legendFormat": "{{cache_type}}"
+          }
+        ],
+        "gridPos": {"x": 12, "y": 16, "w": 12, "h": 8}
+      },
+      {
+        "id": 8,
+        "title": "Index Sizes",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "miyu_recsys_index_size",
+            "legendFormat": "{{index_type}}"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 24, "w": 8, "h": 4}
+      },
+      {
+        "id": 9,
+        "title": "User Profiles with Embeddings",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "miyu_recsys_profiles_total"
+          }
+        ],
+        "gridPos": {"x": 8, "y": 24, "w": 8, "h": 4}
+      },
+      {
+        "id": 10,
+        "title": "User Feedback Events",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(miyu_recsys_feedback_total[5m])",
+            "legendFormat": "{{target_type}} score={{score}}"
+          }
+        ],
+        "gridPos": {"x": 16, "y": 24, "w": 8, "h": 8}
+      },
+      {
+        "id": 11,
+        "title": "HTTP Request Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(miyu_http_requests_total[5m])",
+            "legendFormat": "{{method}} {{endpoint}} - {{status}}"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 28, "w": 12, "h": 8}
+      },
+      {
+        "id": 12,
+        "title": "HTTP Request Duration (p95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(miyu_http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "gridPos": {"x": 12, "y": 28, "w": 12, "h": 8}
+      }
+    ],
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "version": 1
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
+
+  // === СБАЛАНСИРОВАННАЯ КОНФИГУРАЦИЯ ДЛЯ OPENCODE GO ===
+  // 90% задач — DeepSeek V4 Flash (158k запросов/мес, $10/мес).
+  // Qwen3.7 Plus — только для сложной архитектуры (ultrabrain) и UI (visual-engineering).
+  // Дорогие агенты и навыки отключены — экономим лимит.
+
+  // Отключаем дорогих агентов
+  "disabled_agents": [
+    "hephaestus",
+    "multimodal-looker",
+    "atlas"
+  ],
+
+  // Отключаем ресурсоёмкие навыки
+  "disabled_skills": [
+    "playwright",
+    "agent-browser",
+    "security-research",
+    "security-review",
+    "team-mode"
+  ],
+
+  // Отключаем тяжёлые команды
+  "disabled_commands": [
+    "ralph-loop",
+    "ulw-loop",
+    "hyperplan"
+  ],
+
+  // === НАСТРОЙКА АГЕНТОВ ===
+  "agents": {
+    // Главный оркестратор — Flash, variant high (не max, экономит ~30% токенов)
+    "sisyphus": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "high",
+      "fallback_models": ["opencode-go/deepseek-v4-flash"],
+      "compaction": {
+        "model": "opencode-go/deepseek-v4-flash",
+        "variant": "none"
+      }
+    },
+    // Облегчённый Sisyphus для тривиальных подзадач
+    "sisyphus-junior": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "medium",
+      "fallback_models": "opencode-go/deepseek-v4-flash"
+    },
+    // Планировщик (используется /start-work)
+    "prometheus": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "high",
+      "fallback_models": ["opencode-go/deepseek-v4-flash"]
+    },
+    // Быстрый grep/поиск по коду
+    "explore": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "none"
+    },
+    // Документация / поиск
+    "librarian": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "low"
+    },
+    // Build-агент
+    "build": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "medium"
+    },
+    // Plan-агент (альтернативный планировщик)
+    "plan": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "high"
+    }
+  },
+
+  // Настройки ultrawork — всё на Flash
+  "ultrawork": {
+    "model": "opencode-go/deepseek-v4-flash",
+    "variant": "high",
+    "fallback_models": ["opencode-go/deepseek-v4-flash"]
+  },
+
+  // === ОБЩИЕ НАСТРОЙКИ ===
+  "hashline_edit": true,
+  "model_fallback": true,
+
+  // Team Mode выключен
+  "team_mode": {
+    "enabled": false
+  },
+
+  // === КАТЕГОРИИ ДЕЛЕГИРОВАНИЯ ===
+  "categories": {
+    // Простые задачи — Flash, минимум токенов
+    "quick": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "low",
+      "description": "Однофайловые изменения, опечатки, простые правки"
+    },
+    // Сложные автономные задачи — Flash, high (не max, экономия ~30%)
+    "deep": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "high",
+      "description": "Автономное исследование и реализация"
+    },
+    // Фронтенд/UI — Qwen3.7 Plus (качество картинки важнее)
+    "visual-engineering": {
+      "model": "opencode-go/qwen3.7-plus",
+      "variant": "high",
+      "fallback_models": ["opencode-go/deepseek-v4-flash"],
+      "description": "Фронтенд, UI/UX, сложный дизайн"
+    },
+    // Сложная архитектура — Qwen3.7 Plus, только когда реально нужно
+    "ultrabrain": {
+      "model": "opencode-go/qwen3.7-plus",
+      "variant": "high",
+      "fallback_models": ["opencode-go/deepseek-v4-flash"],
+      "description": "Сложная архитектура, бизнес-логика (только при необходимости)"
+    },
+    // Креативные нестандартные решения — Flash достаточно
+    "artistry": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "high",
+      "description": "Нестандартные решения, креативный подход"
+    },
+    // Простые бескатегорийные задачи
+    "unspecified-low": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "low",
+      "description": "Простые задачи без категории"
+    },
+    // Сложные бескатегорийные задачи
+    "unspecified-high": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "high",
+      "fallback_models": ["opencode-go/qwen3.7-plus"],
+      "description": "Сложные задачи без категории"
+    },
+    // Документация, тексты
+    "writing": {
+      "model": "opencode-go/deepseek-v4-flash",
+      "variant": "medium",
+      "description": "Документация, технические тексты"
+    }
+  }
+}

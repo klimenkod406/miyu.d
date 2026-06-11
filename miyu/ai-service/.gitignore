@@ -1,0 +1,20 @@
+# Игнорировать виртуальное окружение
+venv/
+.venv/
+env/
+.env
+
+# Игнорировать кэш Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Игнорировать файлы IDE
+.idea/
+.vscode/
+
+# Игнорировать файлы сборки
+build/
+dist/
+*.egg-info/

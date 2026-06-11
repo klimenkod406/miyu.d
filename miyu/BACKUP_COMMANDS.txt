@@ -1,0 +1,5 @@
+# Manual Miyu backup commands
+cd /opt/miyu
+mkdir -p backups
+cp -a database "backups/database-$(date +%Y%m%d-%H%M%S)"
+cp -a uploads "backups/uploads-$(date +%Y%m%d-%H%M%S)"

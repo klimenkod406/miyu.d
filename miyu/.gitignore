@@ -1,0 +1,138 @@
+# ============================================
+# Dependencies
+# ============================================
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ============================================
+# Build outputs
+# ============================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+*.tsbuildinfo
+
+# ============================================
+# Environment & Secrets
+# ============================================
+.env
+.env.production
+.env.local
+.env.*.local
+.env.development.local
+.env.production.local
+!.env.example
+
+# ============================================
+# Logs
+# ============================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+
+# ============================================
+# IDE / OS
+# ============================================
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================
+# Database (SQLite WAL, postgres data)
+# ============================================
+database/*.db
+database/*.db-shm
+database/*.db-wal
+database/*.db-journal
+database/postgres_data/
+database/pgdata/
+*.sqlite
+*.sqlite3
+database/*.db.bak.*
+database/*.db.backup.*
+
+# ============================================
+# Uploads (user-generated content)
+# ============================================
+uploads/
+backend/uploads/tracks/
+backend/uploads/covers/
+backend/uploads/avatars/
+!backend/uploads/.gitkeep
+
+# ============================================
+# AI models / cache
+# ============================================
+ai-service/models/
+ai-service/.cache/
+ai-service/cache/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+!**/package-lock.json
+!**/yarn.lock
+!**/pnpm-lock.yaml
+
+# ============================================
+# Coverage
+# ============================================
+coverage/
+.nyc_output/
+htmlcov/
+.coverage
+.coverage.*
+
+# ============================================
+# Temporary files
+# ============================================
+*.tmp
+*.temp
+tmp/
+temp/
+trek-import/
+
+# ============================================
+# Seed media for manual VPS import
+# ============================================
+seed-content/tracks/*
+!seed-content/tracks/.gitkeep
+
+# ============================================
+# Generated ML artifacts
+# ============================================
+ai-service/data/*.pkl
+ai-service/data/*.joblib
+ai-service/data/*.npy

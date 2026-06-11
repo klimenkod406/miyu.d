@@ -1,0 +1,110 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      network: host
+    container_name: miyu-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      network: host
+    container_name: miyu-backend
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      DB_PATH: /app/database/miyu.db
+      JWT_SECRET: ${JWT_SECRET}
+      AI_SERVICE_URL: http://ai-service:8001
+      AI_SERVICE_ENABLED: ${AI_SERVICE_ENABLED:-true}
+    volumes:
+      - ./database:/app/database
+      - ./uploads:/app/uploads
+      - ./seed-content:/app/seed-content:ro
+    depends_on:
+      - ai-service
+
+  redis:
+    image: redis:7-alpine
+    container_name: miyu-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ai-service:
+    build:
+      context: ./ai-service
+      network: host
+    container_name: miyu-ai-service
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      MIYU_AI_REDIS_URL: redis://redis:6379/0
+      MIYU_AI_DB_PATH: /data/miyu.db
+      MIYU_AI_STORAGE_ROOT: /data
+      MIYU_AI_LOG_LEVEL: ${MIYU_AI_LOG_LEVEL:-INFO}
+      MIYU_AI_WHISPER_MODEL: ${MIYU_AI_WHISPER_MODEL:-base}
+      MIYU_AI_WHISPER_DEVICE: ${MIYU_AI_WHISPER_DEVICE:-cpu}
+      MIYU_AI_WHISPER_COMPUTE_TYPE: ${MIYU_AI_WHISPER_COMPUTE_TYPE:-int8}
+      MIYU_AI_WHISPER_NUM_WORKERS: ${MIYU_AI_WHISPER_NUM_WORKERS:-1}
+      MIYU_AI_ENABLE_TOXICITY_MODEL: ${MIYU_AI_ENABLE_TOXICITY_MODEL:-false}
+      MIYU_AI_ENABLE_TEXT_EMBEDDINGS: ${MIYU_AI_ENABLE_TEXT_EMBEDDINGS:-false}
+      HF_HUB_DISABLE_XET: ${HF_HUB_DISABLE_XET:-1}
+    volumes:
+      - ./database:/data
+      - ./uploads:/data/uploads
+      - ai_models_cache:/root/.cache
+
+  ai-worker:
+    build:
+      context: ./ai-service
+      network: host
+    container_name: miyu-ai-worker
+    restart: unless-stopped
+    command: ["python", "worker.py"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      MIYU_AI_REDIS_URL: redis://redis:6379/0
+      MIYU_AI_DB_PATH: /data/miyu.db
+      MIYU_AI_STORAGE_ROOT: /data
+      MIYU_AI_LOG_LEVEL: ${MIYU_AI_LOG_LEVEL:-INFO}
+      MIYU_AI_WHISPER_MODEL: ${MIYU_AI_WHISPER_MODEL:-base}
+      MIYU_AI_WHISPER_DEVICE: ${MIYU_AI_WHISPER_DEVICE:-cpu}
+      MIYU_AI_WHISPER_COMPUTE_TYPE: ${MIYU_AI_WHISPER_COMPUTE_TYPE:-int8}
+      MIYU_AI_WHISPER_NUM_WORKERS: ${MIYU_AI_WHISPER_NUM_WORKERS:-1}
+      MIYU_AI_ENABLE_TOXICITY_MODEL: ${MIYU_AI_ENABLE_TOXICITY_MODEL:-false}
+      MIYU_AI_ENABLE_TEXT_EMBEDDINGS: ${MIYU_AI_ENABLE_TEXT_EMBEDDINGS:-false}
+      HF_HUB_DISABLE_XET: ${HF_HUB_DISABLE_XET:-1}
+      PYTHONPATH: /app
+    volumes:
+      - ./database:/data
+      - ./uploads:/data/uploads
+      - ai_models_cache:/root/.cache
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: miyu-nginx
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+      - ai-service
+      - ai-worker
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./uploads:/var/www/uploads:ro
+
+volumes:
+  ai_models_cache:
