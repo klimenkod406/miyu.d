@@ -62,6 +62,7 @@ export default function ExpandedPlayer() {
   const lyricsContainerRef = useRef<HTMLDivElement>(null)
   const lineRefs = useRef<Array<HTMLDivElement | null>>([])
   const [lyricsOffset, setLyricsOffset] = useState(0)
+  const lastActiveRef = useRef(0)  // prevents jumping to top between segments
 
   const eqPresets = ['По умолчанию', 'Басы', 'Вокал', 'Электроника', 'Рок', 'Классика', 'Поп', 'Хип-хоп', 'Пользовательский']
 
@@ -192,6 +193,14 @@ export default function ExpandedPlayer() {
   }, [currentTrack?.id])
 
   const activeSegmentIndex = lyricsSegments.findIndex((segment) => progress >= segment.start && progress < segment.end)
+  // Keep last active segment to prevent jumping to top
+  const effectiveIndex = activeSegmentIndex >= 0
+    ? activeSegmentIndex
+    : lastActiveRef.current
+
+  useEffect(() => {
+    if (activeSegmentIndex >= 0) lastActiveRef.current = activeSegmentIndex
+  }, [activeSegmentIndex])
 
   useEffect(() => {
     if (viewMode !== 'lyrics') return
@@ -199,14 +208,15 @@ export default function ExpandedPlayer() {
     if (!container) return
 
     const items = lineRefs.current
-    const activeLine = items[activeSegmentIndex >= 0 ? activeSegmentIndex : 0]
+    const displayIndex = lyricsSegments.length > 0 ? effectiveIndex : 0
+    const activeLine = items[displayIndex]
     if (!activeLine) return
 
     const containerHeight = container.clientHeight
     const lineCenter = activeLine.offsetTop + activeLine.offsetHeight / 2
     const nextOffset = Math.max(0, lineCenter - containerHeight / 2)
     setLyricsOffset(nextOffset)
-  }, [activeSegmentIndex, viewMode, lyricsSegments])
+  }, [effectiveIndex, viewMode, lyricsSegments])
 
   const progressPercent = duration > 0 ? (progress / duration) * 100 : 0
 
@@ -381,7 +391,7 @@ export default function ExpandedPlayer() {
                           className="space-y-3 py-[9rem] max-[414px]:py-[7rem]"
                         >
                           {lyricsSegments.map((segment, index) => {
-                            const isActive = index === activeSegmentIndex || (activeSegmentIndex === -1 && progress >= segment.start && index === lyricsSegments.length - 1)
+                            const isActive = index === effectiveIndex
                             return (
                               <motion.div
                                 key={`${segment.start}-${index}`}
@@ -400,21 +410,32 @@ export default function ExpandedPlayer() {
                           })}
                         </motion.div>
                       ) : fallbackLyricsLines.length > 0 ? (
-                        <div className="flex h-full items-center">
-                          <div className="w-full space-y-3 py-8">
-                            {fallbackLyricsLines.map((line, index) => (
+                        <motion.div
+                          animate={{ y: duration > 0 ? -Math.max(0, (fallbackLyricsLines.length * 70) - 416) * (progress / duration) : 0 }}
+                          transition={{ type: 'spring', stiffness: 60, damping: 30 }}
+                          className="space-y-3 py-[9rem] max-[414px]:py-[7rem]"
+                        >
+                          {fallbackLyricsLines.map((line, index) => {
+                            const lineDuration = duration / fallbackLyricsLines.length
+                            const lineStart = index * lineDuration
+                            const lineEnd = (index + 1) * lineDuration
+                            const isActive = progress >= lineStart && progress < lineEnd
+                            return (
                               <motion.div
-                                key={`${line}-${index}`}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 0.8, y: 0 }}
-                                transition={{ delay: index * 0.02 }}
-                                className="rounded-2xl px-4 py-3 text-center text-xl leading-relaxed text-white/75 max-[414px]:text-base"
+                                key={`fallback-${index}`}
+                                ref={(node) => { lineRefs.current[index] = node }}
+                                animate={{
+                                  opacity: isActive ? 1 : 0.28,
+                                  scale: isActive ? 1.04 : 0.98,
+                                }}
+                                transition={{ duration: 0.25 }}
+                                className={`rounded-2xl px-4 py-3 text-center text-xl leading-relaxed max-[414px]:text-lg ${isActive ? 'bg-white/10 text-white shadow-lg shadow-purple-500/10' : 'text-white/55'}`}
                               >
                                 {line}
                               </motion.div>
-                            ))}
-                          </div>
-                        </div>
+                            )
+                          })}
+                        </motion.div>
                       ) : (
                         <div className="flex h-full items-center justify-center text-sm text-white/40">
                           Текст для этого трека пока недоступен
