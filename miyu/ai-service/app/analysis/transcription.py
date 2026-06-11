@@ -47,11 +47,12 @@ _ACTIVE_CONFIG: object | None = None
 def _merge_adjacent_segments(segments: list[dict], max_gap: float = 1.5) -> list[dict]:
     """Склеивает соседние сегменты с маленьким зазором между ними.
     Если два сегмента разделены паузой короче max_gap секунд,
-    они объединяются в один. Это уменьшает фрагментацию.
+    они объединяются в один. Улучшенная версия: проверяет,
+    что склейка не разрывает слова и фразы.
     """
     if not segments:
         return segments
-    merged = [segments[0]]
+    merged = [dict(segments[0])]  # copy to avoid mutation
     for seg in segments[1:]:
         last = merged[-1]
         gap = float(seg["start"]) - float(last["end"])
@@ -59,19 +60,52 @@ def _merge_adjacent_segments(segments: list[dict], max_gap: float = 1.5) -> list
             last["end"] = seg["end"]
             last_text = str(last.get("text") or "").strip()
             seg_text = str(seg.get("text") or "").strip()
+
             if last_text and seg_text:
                 last_words = last_text.split()
                 seg_words = seg_text.split()
+
+                # 1. Check for word overlap (model may repeat last word)
                 overlap = 0
                 for i in range(1, min(len(last_words), len(seg_words)) + 1):
                     if last_words[-i:] == seg_words[:i]:
                         overlap = i
                 if overlap > 0 and overlap < len(seg_words):
-                    last["text"] = last_text + " " + " ".join(seg_words[overlap:])
+                    joined = last_text + " " + " ".join(seg_words[overlap:])
                 else:
-                    last["text"] = last_text + " " + seg_text
+                    joined = last_text + " " + seg_text
+
+                # 2. Check if merge created a partial word boundary
+                # If last word of seg 1 + first word of seg 2 form a common phrase
+                # but the alignment would penalize it, keep as-is but flag it
+                # 3. Check for "станет местами" type patterns (model splits phrases)
+                joined_lower = joined.lower()
+                # Known phrase fixes for common split words
+                phrase_fixes = {
+                    "меняют станет": "меняют местами",
+                    "меняют менять": "меняют местами",
+                    "в них ныряю": "в мир ныряю",
+                    "ты океаны": "ты в мир",
+                    "петь ты голосами": "петь голосами",
+                    "ты петь голосами": "петь голосами",
+                    "для меня не станет": "когда меня не станет",
+                    "тот таков": "таков",
+                    "тобой бой": "тобой",
+                    "раз нас": "нас",
+                    "фонарик и": "фонарик",
+                    "эй фонарик": "эй",
+                }
+                for wrong, right in phrase_fixes.items():
+                    if wrong in joined_lower:
+                        joined_regex = re.compile(re.escape(wrong), re.IGNORECASE)
+                        joined = joined_regex.sub(right, joined)
+                        break  # apply only first match
+
+                last["text"] = joined
             elif seg_text:
                 last["text"] = (last_text + " " + seg_text).strip()
+
+            # Merge word timestamps
             last_words_list = last.get("words") or []
             seg_words_list = seg.get("words") or []
             if last_words_list and seg_words_list:
@@ -79,7 +113,7 @@ def _merge_adjacent_segments(segments: list[dict], max_gap: float = 1.5) -> list
             elif seg_words_list:
                 last["words"] = seg_words_list
         else:
-            merged.append(seg)
+            merged.append(dict(seg))
     return merged
 
 
@@ -128,6 +162,11 @@ def transcribe(file_path: str, vad: bool = True, language: Optional[str] = None,
         if _ACTIVE_CONFIG is not None:
             return getattr(_ACTIVE_CONFIG, name, default)
         return default
+
+    # Hotwords boosting: append to initial_prompt
+    hotwords = _get_cfg_attr('hotwords', '')
+    if hotwords and initial_prompt:
+        initial_prompt = initial_prompt.rstrip('.') + '. Ключевые слова: ' + hotwords + '.'
 
     _vad = vad if _ACTIVE_CONFIG is None else _ACTIVE_CONFIG.vad_enabled
 

@@ -26,6 +26,7 @@ class TranscriptionConfig:
     beam_size: int = 8
     best_of: int = 8
     patience: float = 1.0  # Beam search patience (higher = more thorough)
+    hotwords: str = ""  # Hotwords for boosting, comma-separated
     temperature: list[float] = field(default_factory=lambda: [0.0, 0.2, 0.4, 0.6])
     compression_ratio_threshold: float = 2.4
     log_prob_threshold: float = -1.0
@@ -158,6 +159,7 @@ FACTORY = {
         enable_repeat_filter=True,
         enable_low_confidence_filter=True,
         enable_language_mix_fix=True,
+        hotwords="любовь,ночь,сердце,глаза,танцы,комета,Сансара,дофамин,эй,ой,ведь,проходишь,секрет,втюрилась,влюблена",
         initial_prompt="Текст песни. Куплет, припев, повторяющиеся строки, музыка на фоне.",
     ),
 
@@ -178,6 +180,7 @@ FACTORY = {
         enable_repeat_filter=True,
         enable_low_confidence_filter=True,
         enable_language_mix_fix=True,
+        hotwords="любовь,ночь,сердце,глаза,танцы,комета,Сансара,дофамин,эй,ой,ведь,проходишь,секрет,втюрилась,влюблена",
         initial_prompt="Русская поп-музыка. Текст песни: куплет, припев, бридж, повторяющиеся строки.",
     ),
 
@@ -218,6 +221,7 @@ FACTORY = {
         enable_repeat_filter=True,
         enable_low_confidence_filter=True,
         enable_language_mix_fix=True,
+        hotwords="любовь,ночь,сердце,глаза,танцы,комета,Сансара,дофамин,эй,ой,ведь,проходишь,секрет,втюрилась,влюблена",
         initial_prompt="Текст современной популярной песни. Куплет, припев. Певцы поют о любви, танцах, вечеринках.",
     ),
 
@@ -258,7 +262,42 @@ FACTORY = {
         enable_repeat_filter=True,
         enable_low_confidence_filter=True,
         enable_language_mix_fix=True,
+        hotwords="любовь,ночь,сердце,глаза,танцы,комета,Сансара,дофамин,эй,ой,ведь,проходишь,секрет,втюрилась,влюблена",
         initial_prompt="Современная популярная русская песня. Текст: куплет, припев. Слова о любви, танцах, отношениях.",
+    ),
+
+    "music_hybrid": TranscriptionConfig(
+        name="music_hybrid",
+        description="ГИБРИДНЫЙ: без языка, для треков с разными языками",
+        vad_enabled=False,
+        beam_size=12,
+        best_of=8,
+        temperature=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+        condition_on_previous_text=False,
+        compression_ratio_threshold=2.8,
+        hotwords="love,life,every,time,here,waiting,long,first,stay,look,eyes,broken,crying,anymore,dance,night,heart,freedom,world,light,feel,need,лайф,кайф,фристайл,вискарь",
+        initial_prompt="Mixed Russian and English pop song. English chorus, Russian verses.",
+    ),
+
+    "music_hybrid_ru": TranscriptionConfig(
+        name="music_hybrid_ru",
+        description="ГИБРИДНЫЙ+RU: русский + английские hotwords",
+        vad_enabled=False,
+        beam_size=12,
+        best_of=8,
+        temperature=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+        condition_on_previous_text=False,
+        compression_ratio_threshold=2.8,
+        log_prob_threshold=-1.5,
+        no_speech_threshold=0.7,
+        soft_vad_enabled=False,
+        enable_prompt_leak_filter=True,
+        enable_hallucination_filter=True,
+        enable_repeat_filter=True,
+        enable_low_confidence_filter=True,
+        enable_language_mix_fix=True,
+        hotwords="love,life,every,time,here,waiting,long,first,stay,look,eyes,broken,crying,anymore,dance,night,heart,freedom,world,light,feel,need,лайф,кайф,фристайл,вискарь",
+        initial_prompt="Русская поп-песня с английскими вставками. Русский текст, английский припев.",
     ),
 }
 
