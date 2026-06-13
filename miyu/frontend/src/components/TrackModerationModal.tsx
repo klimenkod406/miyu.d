@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Check, Loader2, Play, Pause, Volume2, VolumeX, AlertTriangle, FileText, History, Sparkles, RefreshCw, ExternalLink } from 'lucide-react'
+import { X, Check, Loader2, Play, Pause, Volume2, VolumeX, AlertTriangle, FileText, History, Sparkles, RefreshCw, ExternalLink, ListMusic } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { adminApi } from '../api/admin'
 import { aiApi } from '../api/ai'
@@ -19,6 +19,15 @@ const FLAG_LABELS: Record<string, string> = {
   invalid_audio: 'Битый аудиофайл',
   possible_duplicate: 'Возможный дубликат',
 }
+
+const STRUCTURE_COLORS: Record<string, string> = {
+  intro: '#9CA3AF',
+  verse: '#60A5FA',
+  chorus: '#F472B6',
+  bridge: '#FBBF24',
+  outro: '#9CA3AF',
+}
+
 
 function scoreColor(score: number | null | undefined): string {
   if (score == null) return 'text-white/40 bg-white/5'
@@ -54,6 +63,7 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
   const [history, setHistory] = useState<any[]>([])
   const [showRejectConfirm, setShowRejectConfirm] = useState(false)
   const [lyricsData, setLyricsData] = useState<{ lyrics_text: string; explicit_words: Array<{ start: number; end: number; word: string }> } | null>(null)
+  const [trackStructure, setTrackStructure] = useState<Array<{ type: string; label: string; start: number; end: number; segment_indices?: number[] }>>([])
 
   // audio player
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -79,7 +89,10 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
       .then(d => setHistory(d.events || []))
       .catch(e => console.error('history failed', e))
     aiApi.getTrackLyrics(tokens.accessToken, track.id)
-      .then(d => setLyricsData({ lyrics_text: d.lyrics_text, explicit_words: d.explicit_words || [] }))
+      .then(d => {
+        setLyricsData({ lyrics_text: d.lyrics_text, explicit_words: d.explicit_words || [] })
+        setTrackStructure(d.structure || [])
+      })
       .catch(e => console.error('lyrics failed', e))
   }, [track.id])
 
@@ -193,8 +206,7 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
           <div className="flex gap-4">
             <div className="w-32 h-32 rounded-xl bg-white/[0.05] flex-shrink-0 overflow-hidden">
               {track.cover_url ? (
-                <img src={track.cover_url} alt="" className="w-full h-full object-cover" />
-              ) : (
+                <img src={track.cover_url} alt="" className="w-full h-full object-cover" loading="lazy" />) : (
                 <div className="w-full h-full flex items-center justify-center text-white/20">no cover</div>
               )}
             </div>
@@ -391,7 +403,43 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
             </div>
           )}
 
-          {/* History */}
+
+          {/* Track Structure */}
+          {trackStructure.length > 0 ? (
+            <div className="rounded-xl border border-white/[0.05] p-4 bg-white/[0.02]">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/40 mb-3">
+                <ListMusic className="w-3.5 h-3.5" /> Структура трека
+              </div>
+              <div className="space-y-1">
+                {trackStructure.map((block, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition cursor-pointer hover:bg-white/5"
+                    onClick={() => { if (audioRef.current) audioRef.current.currentTime = block.start }}
+                    style={{ borderLeft: `3px solid ${STRUCTURE_COLORS[block.type] || '#9CA3AF'}` }}
+                  >
+                    <span className="text-xs font-semibold w-16 shrink-0" style={{ color: STRUCTURE_COLORS[block.type] || '#9CA3AF' }}>
+                      [{block.label}]
+                    </span>
+                    <span className="text-xs text-white/40 w-20 shrink-0 font-mono">
+                      {fmtDuration(block.start)} – {fmtDuration(block.end)}
+                    </span>
+                    <span className="text-[10px] text-white/25 font-mono">
+                      {Math.round(block.end - block.start)}s
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : lyricsData ? (
+            <div className="rounded-xl border border-white/[0.05] p-4 bg-white/[0.02]">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/40">
+                <ListMusic className="w-3.5 h-3.5" /> Структура трека
+              </div>
+              <p className="text-xs text-white/30 mt-2">Структура не определена</p>
+            </div>
+          ) : null}
+
           {history.length > 0 && (
             <div className="rounded-xl border border-white/[0.05] p-4 bg-white/[0.02]">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/40 mb-3">

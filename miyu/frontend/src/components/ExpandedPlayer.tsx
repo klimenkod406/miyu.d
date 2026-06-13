@@ -19,6 +19,22 @@ interface LyricsSegment {
   text: string
 }
 
+interface StructureBlock {
+  type: string
+  label: string
+  start: number
+  end: number
+  segment_indices?: number[]
+}
+
+const SECTION_LABEL_COLORS: Record<string, string> = {
+  intro: 'text-white/40',
+  verse: 'text-blue-300',
+  chorus: 'text-pink-300',
+  bridge: 'text-yellow-300',
+  outro: 'text-white/40',
+}
+
 export default function ExpandedPlayer() {
   const {
     currentTrack,
@@ -57,12 +73,13 @@ export default function ExpandedPlayer() {
   const [lyricsLoading, setLyricsLoading] = useState(false)
   const [lyricsText, setLyricsText] = useState('')
   const [lyricsSegments, setLyricsSegments] = useState<LyricsSegment[]>([])
+
+  const [trackStructure, setTrackStructure] = useState<StructureBlock[]>([])
   const [trackClip, setTrackClip] = useState<Video | null>(null)
   const progressBarRef = useRef<HTMLDivElement>(null)
   const lyricsContainerRef = useRef<HTMLDivElement>(null)
   const lineRefs = useRef<Array<HTMLDivElement | null>>([])
   const [lyricsOffset, setLyricsOffset] = useState(0)
-  const lastActiveRef = useRef(0)  // prevents jumping to top between segments
 
   const eqPresets = ['По умолчанию', 'Басы', 'Вокал', 'Электроника', 'Рок', 'Классика', 'Поп', 'Хип-хоп', 'Пользовательский']
 
@@ -129,6 +146,7 @@ export default function ExpandedPlayer() {
     setViewMode('player')
     setLyricsText('')
     setLyricsSegments([])
+    setTrackStructure([])
     setLyricsOffset(0)
 
     const trackId = currentTrack?.id
@@ -145,11 +163,13 @@ export default function ExpandedPlayer() {
         if (cancelled) return
         setLyricsText(data.lyrics_text || '')
         setLyricsSegments((data.segments || []).filter(seg => seg.text?.trim()))
+        setTrackStructure(data.structure || [])
       })
       .catch(() => {
         if (cancelled) return
         setLyricsText(currentTrack?.lyrics || '')
         setLyricsSegments([])
+        setTrackStructure([])
       })
       .finally(() => {
         if (!cancelled) setLyricsLoading(false)
@@ -193,6 +213,9 @@ export default function ExpandedPlayer() {
   }, [currentTrack?.id])
 
   const activeSegmentIndex = lyricsSegments.findIndex((segment) => progress >= segment.start && progress < segment.end)
+  const activeStructureIdx = trackStructure.findIndex(
+    block => progress >= block.start && progress < block.end
+  )
   // Keep last active segment to prevent jumping to top
   const effectiveIndex = activeSegmentIndex >= 0
     ? activeSegmentIndex
@@ -303,8 +326,7 @@ export default function ExpandedPlayer() {
               className={`flex items-center justify-center overflow-hidden rounded-xl bg-white/10 shadow-lg ${viewMode === 'lyrics' ? 'h-48 w-48 max-[414px]:h-36 max-[414px]:w-36' : 'h-40 w-40 max-[414px]:mx-auto max-[414px]:h-32 max-[414px]:w-32'}`}
             >
               {coverUrl ? (
-                <img src={coverUrl} alt="" className="w-full h-full object-cover" />
-              ) : (
+                <img src={coverUrl} alt="" loading="lazy" className="w-full h-full object-cover" />) : (
                 <Music className="w-16 h-16 text-white/60" />
               )}
             </motion.div>
@@ -392,20 +414,33 @@ export default function ExpandedPlayer() {
                         >
                           {lyricsSegments.map((segment, index) => {
                             const isActive = index === effectiveIndex
+                            const sectionBlock = trackStructure.find(
+                              s => s.segment_indices?.includes(index) && s.segment_indices?.[0] === index
+                            )
+                            const sectionIsActive = sectionBlock && activeStructureIdx >= 0 && trackStructure[activeStructureIdx]?.type === sectionBlock.type
                             return (
-                              <motion.div
-                                key={`${segment.start}-${index}`}
-                                ref={(node) => { lineRefs.current[index] = node }}
-                                animate={{
-                                  opacity: isActive ? 1 : 0.28,
-                                  scale: isActive ? 1.04 : 0.98,
-                                  y: isActive ? 0 : 2,
-                                }}
-                                transition={{ duration: 0.25 }}
-                                className={`rounded-2xl px-4 py-3 text-center text-2xl leading-relaxed max-[414px]:text-lg ${isActive ? 'bg-white/10 text-white shadow-lg shadow-purple-500/10' : 'text-white/55'}`}
-                              >
-                                {segment.text}
-                              </motion.div>
+                              <div key={`${segment.start}-${index}`}>
+                                {sectionBlock && (
+                                  <div className={`flex items-center gap-1.5 px-1 pb-1 ${sectionIsActive ? 'opacity-100' : 'opacity-50'}`}>
+                                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${SECTION_LABEL_COLORS[sectionBlock.type] || 'text-white/40'}`}>
+                                      {sectionBlock.label}
+                                    </span>
+                                    {sectionIsActive && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />}
+                                  </div>
+                                )}
+                                <motion.div
+                                  ref={(node) => { lineRefs.current[index] = node }}
+                                  animate={{
+                                    opacity: isActive ? 1 : 0.28,
+                                    scale: isActive ? 1.04 : 0.98,
+                                    y: isActive ? 0 : 2,
+                                  }}
+                                  transition={{ duration: 0.25 }}
+                                  className={`rounded-2xl px-4 py-3 text-center text-2xl leading-relaxed max-[414px]:text-lg ${isActive ? 'bg-white/10 text-white shadow-lg shadow-purple-500/10' : 'text-white/55'}`}
+                                >
+                                  {segment.text}
+                                </motion.div>
+                              </div>
                             )
                           })}
                         </motion.div>
