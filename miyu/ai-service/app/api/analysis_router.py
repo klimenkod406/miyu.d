@@ -132,7 +132,7 @@ def get_track_lyrics(track_id: int) -> dict[str, Any]:
     from ..analysis.text_moderation import analyze_explicit
     row = db.fetch_one(
         """
-        SELECT lyrics_text, lyrics_language, segments_json, analysis_version
+        SELECT lyrics_text, lyrics_language, segments_json, structure_json, analysis_version
         FROM track_analysis WHERE track_id = ?
         """,
         (track_id,),
@@ -143,6 +143,7 @@ def get_track_lyrics(track_id: int) -> dict[str, Any]:
     text = payload.get("lyrics_text") or ""
     analysis = analyze_explicit(text) if text else None
     segments = db.from_json(payload.get("segments_json"), default=[])
+    structure = db.from_json(payload.get("structure_json"), default=[])
     return {
         "track_id": track_id,
         "lyrics_text": text,
@@ -162,5 +163,6 @@ def get_track_lyrics(track_id: int) -> dict[str, Any]:
             "has_slur": analysis.has_slur if analysis else False,
         },
         "segments": segments,
+        "structure": structure,
         "analysis_version": payload.get("analysis_version"),
     }

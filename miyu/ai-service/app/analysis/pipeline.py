@@ -32,6 +32,7 @@ from . import (
     tagging,
     text_moderation,
     transcription,
+    structure,
 )
 
 logger = logging.getLogger(__name__)
@@ -155,6 +156,15 @@ def analyze_track(track_id: int, file_path: str | None = None) -> dict[str, Any]
 
     lyrics_text = best_lyrics_text
 
+    # --- 3.5. Структурная сегментация ---
+    track_structure: list[dict] | None = None
+    if lyrics_segments and not invalid_audio:
+        try:
+            track_structure = structure.analyze(
+                lyrics_segments, features_dict, features_dict.get("duration_sec", 0.0),
+            )
+        except Exception as e:
+            logger.exception("structure analysis failed: %s", e)
     # --- 4. Текстовая модерация + embedding ---
     moderation_result = text_moderation.ModerationResult()
     text_emb = None
@@ -257,6 +267,7 @@ def analyze_track(track_id: int, file_path: str | None = None) -> dict[str, Any]
         summary=summary,
         analysis_version=settings.analysis_version,
         segments=lyrics_segments,
+        structure=track_structure,
     )
 
     final_status = repository.apply_moderation_decision(
