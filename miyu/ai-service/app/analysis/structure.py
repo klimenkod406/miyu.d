@@ -35,6 +35,22 @@ VERSE_MIN_DURATION: float = 8.0
 """Minimum duration in seconds for a segment to be considered a verse
 (rather than a transitional segment)."""
 
+MIN_GAP_FOR_BOUNDARY: float = 2.0
+"""Minimum silence gap (seconds) between segments to indicate a likely
+section boundary."""
+
+LOW_CONFIDENCE_THRESHOLD: float = 0.7
+"""Average word probability below this threshold suggests an instrumental
+or non-vocal segment."""
+CHORUS_MIN_TOTAL_DURATION: float = 3.0
+"""Minimum total duration (seconds) for a chorus cluster to be valid."""
+
+BRIDGE_MIN_DURATION: float = 3.0
+"""Segments shorter than this labelled as bridge are reclassified as verse."""
+
+MAX_BRIDGE_BLOCKS: int = 2
+"""Maximum number of separate bridge blocks allowed in a single track."""
+
 TYPE_TO_LABEL: dict[str, str] = {
     "intro": "Интро",
     "verse": "Куплет",
@@ -60,11 +76,12 @@ def analyze(
       2. Text similarity matrix — pairwise ``difflib.SequenceMatcher.ratio()``.
       3. Chorus detection — finds repeated-text clusters via connected
          components on the similarity graph; the largest cluster is the
-         primary chorus.
+         primary chorus, filtered by duration constraints.
       4. Label assignment — intro / verse / chorus / bridge / outro based
-         on position, duration, text length, and chorus membership.
-      5. Structural smoothing — ``[intro] [verse] [chorus] [verse] [chorus]
-         [bridge] [chorus] [outro]`` prior + between-same-type gap filling.
+         on position, duration, text length, chorus membership, and gap
+         boundaries.
+      5. Structural smoothing — gap filling + pop-song prior + bridge
+         constraints + structural pattern validation.
       6. Merge adjacent same-type segments into contiguous blocks.
       7. Return sorted blocks.
 
@@ -106,20 +123,60 @@ def analyze(
     else:
         logger.info("analyze: %d segments over %.1fs (no features)", n, duration_sec)
 
+    # ── Step 1b: Precompute auxiliary signals ──────────────────────────────────
+    gap_boundaries = _analyze_gaps(segments, min_gap=MIN_GAP_FOR_BOUNDARY)
+    low_conf_segments = _analyze_word_confidence(segments, threshold=LOW_CONFIDENCE_THRESHOLD)
+    if gap_boundaries:
+        logger.debug("gap boundaries at segment indices: %s", gap_boundaries)
+    if low_conf_segments:
+        logger.debug("low-confidence segments: %s", low_conf_segments)
+
     # ── Step 2: Text Similarity Matrix ─────────────────────────────────────────
     sim = _build_similarity_matrix(texts)
 
     # ── Step 3: Chorus Detection ───────────────────────────────────────────────
     primary_chorus = _detect_chorus_clusters(sim, n)
 
+    # ── Step 3b: Chorus Duration Constraints ───────────────────────────────────
+    primary_chorus = _filter_chorus_by_duration(segments, primary_chorus, duration_sec)
+
     # ── Step 4: Label Assignment ───────────────────────────────────────────────
-    labels = _assign_labels(segments, texts, primary_chorus, duration_sec, n)
+    labels = _assign_labels(
+        segments, texts, primary_chorus, duration_sec, n,
+        gap_boundaries=gap_boundaries,
+    )
 
     # ── Step 5: Structural Smoothing ───────────────────────────────────────────
-    labels = _smooth_labels(segments, labels, primary_chorus, duration_sec, n)
+    labels = _smooth_labels(
+        segments, labels, primary_chorus, duration_sec, n,
+        gap_boundaries=gap_boundaries,
+        low_conf_segments=low_conf_segments,
+    )
 
     # ── Step 6: Merge Adjacent Same-Type Segments ──────────────────────────────
     blocks = _merge_adjacent(segments, labels, n)
+
+    # ── Step 6b: Post-merge bridge count safeguard ─────────────────────────
+    # Ensure _merge_adjacent didn't produce excess bridge blocks
+    bridge_blocks_final = [i for i, b in enumerate(blocks) if b["type"] == "bridge"]
+    if len(bridge_blocks_final) > MAX_BRIDGE_BLOCKS:
+        # Sort by duration, keep the longest MAX_BRIDGE_BLOCKS
+        excess_count_final = len(bridge_blocks_final) - MAX_BRIDGE_BLOCKS
+        # Compute durations for bridge blocks
+        final_block_durs = []
+        for idx in bridge_blocks_final:
+            b = blocks[idx]
+            dur = b["end"] - b["start"]
+            final_block_durs.append((idx, dur))
+        # Sort by duration ascending (shortest first)
+        final_block_durs.sort(key=lambda x: x[1])
+        for idx, dur in final_block_durs[:excess_count_final]:
+            logger.debug(
+                "post-merge: excess bridge block %d (dur=%.1fs) → verse",
+                idx, dur,
+            )
+            blocks[idx]["type"] = "verse"
+            blocks[idx]["label"] = TYPE_TO_LABEL["verse"]
 
     logger.info(
         "analyze: %d blocks — %s",
@@ -230,13 +287,14 @@ def _assign_labels(
     chorus_set: set[int],
     duration_sec: float,
     n: int,
+    gap_boundaries: list[int] | None = None,
 ) -> list[str]:
     """Assign initial structural labels to each segment.
 
     Order of assignment:
       1. Chorus — from the chorus cluster.
-      2. Intro — short segments at the very beginning.
-      3. Outro — short segments at the very end.
+      2. Intro — short segments at the very beginning (refined by gap analysis).
+      3. Outro — short segments at the very end (refined by gap analysis).
       4. Verse — default label for everything else.
       5. Bridge — non-chorus segments sandwiched between two chorus
          occurrences and shorter than adjacent verses.
@@ -255,9 +313,17 @@ def _assign_labels(
     if len(first_text) <= INTRO_MAX_CHARS:
         cum_dur = 0.0
         intro_end = -1  # sentinel: -1 means no intro detected
-        # Walk forward from the start until we hit the first chorus or
-        # exceed the intro timing/text-length budget.
         limit = min(n, first_chorus)
+
+        # Find the first significant gap (if any) to constrain intro
+        first_gap_boundary = None
+        if gap_boundaries:
+            # Only consider gaps before the first chorus candidate
+            for gb in gap_boundaries:
+                if gb < limit:
+                    first_gap_boundary = gb
+                    break
+
         for i in range(limit):
             seg = segments[i]
             seg_dur = seg["end"] - seg["start"]
@@ -268,6 +334,9 @@ def _assign_labels(
                 and seg_text_len <= INTRO_MAX_CHARS
             ):
                 intro_end = i
+                # Stop at a significant gap boundary (strong structural signal)
+                if first_gap_boundary is not None and i >= first_gap_boundary:
+                    break
             else:
                 break
         if intro_end >= 0:
@@ -278,6 +347,16 @@ def _assign_labels(
     # ── 4c. Outro ──────────────────────────────────────────────────────────
     if chorus_set:
         outro_start = n  # default: no outro
+
+        # Find the last significant gap (if any) to refine outro start
+        last_gap_boundary = None
+        if gap_boundaries:
+            # Only consider gaps after the last chorus
+            for gb in reversed(gap_boundaries):
+                if gb > last_chorus:
+                    last_gap_boundary = gb
+                    break
+
         for i in range(n - 1, last_chorus, -1):
             seg = segments[i]
             seg_dur = seg["end"] - seg["start"]
@@ -285,6 +364,15 @@ def _assign_labels(
                 outro_start = i
             else:
                 break
+
+        # If we found a gap boundary near the end, use it to tighten outro start
+        if last_gap_boundary is not None:
+            # Gap boundary is between seg[g] and seg[g+1]; outro should start
+            # at g+1 (after the gap) or later
+            gap_after = last_gap_boundary + 1
+            if gap_after > outro_start:
+                outro_start = gap_after
+
         for i in range(outro_start, n):
             if labels[i] is None:
                 labels[i] = "outro"
@@ -344,23 +432,110 @@ def _nearest_verse_duration(
     return float("inf")
 
 
+# ── Auxiliary analysis helpers ─────────────────────────────────────────────────
+
+
+def _analyze_gaps(segments: list[dict], min_gap: float = MIN_GAP_FOR_BOUNDARY) -> list[int]:
+    """Find segment indices where silence gaps indicate section boundaries.
+
+    A gap is the difference between seg[i+1].start and seg[i].end.
+    Returns indices i where gap >= min_gap seconds.
+    """
+    boundaries: list[int] = []
+    for i in range(len(segments) - 1):
+        gap = float(segments[i + 1]["start"]) - float(segments[i]["end"])
+        if gap >= min_gap:
+            boundaries.append(i)
+    return boundaries
+
+
+def _analyze_word_confidence(
+    segments: list[dict],
+    threshold: float = LOW_CONFIDENCE_THRESHOLD,
+) -> list[int]:
+    """Return indices of segments with low average word probability.
+
+    Low-confidence segments are often musical interludes or spoken intros
+    rather than clear vocals.
+    """
+    low_conf: list[int] = []
+    for i, seg in enumerate(segments):
+        words = seg.get("words")
+        if not words:
+            continue
+        probs = [w.get("probability", 1.0) for w in words if isinstance(w, dict)]
+        if probs and sum(probs) / len(probs) < threshold:
+            low_conf.append(i)
+    return low_conf
+
+
+def _filter_chorus_by_duration(
+    segments: list[dict],
+    chorus_set: set[int],
+    duration_sec: float,
+) -> set[int]:
+    """Apply duration-based constraints to chorus candidates.
+
+    Rules:
+      1. Chorus segments must not exceed 50% of total segments
+         (many matching segments = likely false positive).
+      2. Total chorus duration must be >= CHORUS_MIN_TOTAL_DURATION (3s).
+
+    Returns filtered chorus set (or empty set if constraints fail).
+    """
+    if not chorus_set or duration_sec <= 0:
+        return chorus_set
+
+    sorted_idxs = sorted(chorus_set)
+    n = len(segments)
+
+    # Rule 1: chorus segments must not exceed 50% of total segments
+    # Catches false positives where too many segments match each other
+    if len(chorus_set) > n // 2:
+        logger.debug(
+            "chorus cluster contains %d/%d segments (> 50%%) — discarding",
+            len(chorus_set), n,
+        )
+        return set()
+
+    # Rule 2: total duration must be >= 3 seconds
+    total_dur = sum(
+        float(segments[i]["end"]) - float(segments[i]["start"])
+        for i in sorted_idxs
+    )
+    if total_dur < CHORUS_MIN_TOTAL_DURATION:
+        logger.debug("chorus cluster total duration %.1fs < %.0fs — discarding", total_dur, CHORUS_MIN_TOTAL_DURATION)
+        return set()
+
+    return chorus_set
+
+
+# ── Label smoothing and constraints ────────────────────────────────────────────
+
+
 def _smooth_labels(
     segments: list[dict[str, Any]],
     labels: list[str],
     chorus_set: set[int],
     duration_sec: float,
     n: int,
+    gap_boundaries: list[int] | None = None,
+    low_conf_segments: list[int] | None = None,
 ) -> list[str]:
-    """Structural smoothing pass.
+    """Structural smoothing pass with bridge constraints and pattern validation.
 
     Rules applied:
       1. *Gap filling* — if a segment sits between two same-type segments
          and is **not** a ``chorus`` or ``bridge``, match the neighbours'
          type.
-      2. *Pop-song prior* — after a ``bridge`` the next non-bridge segment
-         should be ``chorus``; if it is still ``verse``, promote it.
-      3. *Fallback* — if no chorus was found, label everything (except
-         ``intro`` / ``outro``) as ``verse``.
+      2. *Bridge duration constraint* — very short bridges (< 3s) → verse.
+      3. *Bridge same-type check* — if a bridge has the same section type
+         on both sides (post-smoothing), reclassify to verse.
+      4. *Bridge count limit* — cap total bridge blocks at MAX_BRIDGE_BLOCKS.
+      5. *Structural pattern validation* — ensure typical pop patterns;
+         if no chorus found, fall back to verse (except intro/outro).
+      6. *Low-confidence segments* — segments with low word confidence
+         between verses are reclassified as verse (not bridge/chorus).
     """
     new_labels = list(labels)
 
@@ -374,22 +549,113 @@ def _smooth_labels(
             ):
                 new_labels[i] = new_labels[i - 1]
 
-    # ── 5b. Pop-song pattern prior: bridge → chorus ────────────────────────
-    if chorus_set:
-        for i in range(n - 1):
-            if new_labels[i] == "bridge":
-                # Find the next segment that is not bridge
-                for j in range(i + 1, n):
-                    if new_labels[j] != "bridge":
-                        if new_labels[j] == "verse":
-                            new_labels[j] = "chorus"
-                        break
+    # ── 5c. Bridge duration constraint ─────────────────────────────────────
+    for i in range(n):
+        if new_labels[i] == "bridge":
+            seg_dur = segments[i]["end"] - segments[i]["start"]
+            if seg_dur < BRIDGE_MIN_DURATION:
+                logger.debug(
+                    "bridge at index %d too short (%.1fs < %.0fs) → verse",
+                    i, seg_dur, BRIDGE_MIN_DURATION,
+                )
+                new_labels[i] = "verse"
 
-    # ── 5c. No-chorus fallback ─────────────────────────────────────────────
+    # ── 5d. Bridge same-type check ─────────────────────────────────────────
+    # After gap-filling, check if a bridge has the same *non-chorus* type on
+    # both sides.  [chorus] [bridge] [chorus] is *legitimate* — bridges
+    # traditionally sit between choruses.  But [verse] [bridge] [verse] is
+    # suspicious (bridge should connect different section types).
+    if n >= 3:
+        for i in range(1, n - 1):
+            if new_labels[i] == "bridge":
+                left = new_labels[i - 1]
+                right = new_labels[i + 1]
+                # Same non-chorus, non-bridge type on both sides → not a bridge
+                if left == right and left not in ("chorus", "bridge"):
+                    logger.debug(
+                        "bridge at index %d has same type '%s' on both sides → verse",
+                        i, left,
+                    )
+                    new_labels[i] = "verse"
+
+    # ── 5e. Bridge count limit ─────────────────────────────────────────────
+    # Count contiguous bridge blocks; demote excess bridges to verse
+    bridge_blocks: list[list[int]] = []
+    current_block: list[int] = []
+    for i in range(n):
+        if new_labels[i] == "bridge":
+            current_block.append(i)
+        else:
+            if current_block:
+                bridge_blocks.append(current_block)
+                current_block = []
+    if current_block:
+        bridge_blocks.append(current_block)
+
+    if len(bridge_blocks) > MAX_BRIDGE_BLOCKS:
+        # Demote the SHORTEST bridges first (keep the longest, most significant)
+        block_durations: list[float] = []
+        for block in bridge_blocks:
+            dur = sum(segments[idx]["end"] - segments[idx]["start"] for idx in block)
+            block_durations.append(dur)
+
+        # Sort blocks by duration ascending so shortest get demoted first
+        sorted_pairs = sorted(
+            zip(bridge_blocks, block_durations),
+            key=lambda x: x[1],
+        )
+
+        excess_count = len(bridge_blocks) - MAX_BRIDGE_BLOCKS
+        for block, dur in sorted_pairs[:excess_count]:
+            for idx in block:
+                logger.debug(
+                    "excess bridge block at indices %s (dur=%.1fs) → verse",
+                    block, dur,
+                )
+                new_labels[idx] = "verse"
+
+    # Also demote suspiciously long bridges (>30s — real pop bridges are 8-20s)
+    for i in range(n):
+        if new_labels[i] == "bridge":
+            dur = segments[i]["end"] - segments[i]["start"]
+            if dur > 30.0:
+                logger.debug(
+                    "bridge at index %d too long (%.1fs > 30s) → verse",
+                    i, dur,
+                )
+                new_labels[i] = "verse"
+
+    # ── 5f. Low-confidence segments: demote to verse ───────────────────────
+    # Segments with low word confidence that got labelled as chorus/bridge
+    # are likely instrumental sections — keep as verse.
+    if low_conf_segments:
+        for i in low_conf_segments:
+            if new_labels[i] in ("chorus", "bridge"):
+                logger.debug(
+                    "low-confidence segment %d (label=%s) → verse",
+                    i, new_labels[i],
+                )
+                new_labels[i] = "verse"
+
+    # ── 5g. No-chorus fallback ─────────────────────────────────────────────
     if not chorus_set:
         for i in range(n):
             if new_labels[i] not in ("intro", "outro"):
                 new_labels[i] = "verse"
+
+    # ── 5h. Structural pattern validation ──────────────────────────────────
+    # Ensure that verses between choruses stay as verses
+    # (gap-filling already preserves chorus/bridge, but double-check)
+    if chorus_set and n >= 3:
+        for i in range(1, n - 1):
+            if (
+                new_labels[i - 1] == "chorus"
+                and new_labels[i + 1] == "chorus"
+                and new_labels[i] not in ("chorus", "bridge")
+            ):
+                # A verse between two choruses should remain verse
+                if new_labels[i] != "verse":
+                    new_labels[i] = "verse"
 
     return new_labels
 
