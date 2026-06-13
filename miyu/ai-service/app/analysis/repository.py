@@ -182,12 +182,14 @@ def upsert_track_analysis(
     summary: str,
     analysis_version: str,
     segments: list[dict] | None = None,
+    structure: list[dict] | None = None,
 ) -> None:
     audio_blob = db.embedding_to_blob(audio_embedding) if audio_embedding is not None else None
     text_blob = db.embedding_to_blob(text_embedding) if text_embedding is not None else None
     primary_genre = _select_public_genre(genre_tags, features)
 
     segments_blob = db.to_json(segments) if segments else None
+    structure_blob = db.to_json(structure) if structure else None
 
     db.execute(
         """
@@ -195,10 +197,10 @@ def upsert_track_analysis(
             track_id, mood_tags, bpm, key, danceability, energy, valence,
             acousticness, instrumentalness, speechiness, loudness, genre_tags,
             audio_embedding, text_embedding, fingerprint, analysis_version,
-            ai_score, ai_flags, lyrics_text, lyrics_language, segments_json, analysis_summary,
+            ai_score, ai_flags, lyrics_text, lyrics_language, segments_json, structure_json, analysis_summary,
             updated_at, created_at
         ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(
                 (SELECT created_at FROM track_analysis WHERE track_id = ?), ?
             )
         )
@@ -223,6 +225,7 @@ def upsert_track_analysis(
             lyrics_text = excluded.lyrics_text,
             lyrics_language = excluded.lyrics_language,
             segments_json = excluded.segments_json,
+            structure_json = excluded.structure_json,
             analysis_summary = excluded.analysis_summary,
             updated_at = excluded.updated_at
         """,
@@ -248,6 +251,7 @@ def upsert_track_analysis(
             lyrics_text,
             lyrics_language,
             segments_blob,
+            structure_blob,
             summary,
             _now(),
             track_id,
