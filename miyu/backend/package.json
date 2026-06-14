@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "ts-node index.ts",
+    "dev": "ts-node --transpile-only index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "seed:tracks": "node dist/scripts/seed-tracks-from-folder.js",

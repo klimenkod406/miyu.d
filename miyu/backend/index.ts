@@ -30,6 +30,8 @@ import aiRoutes from './routes/ai';
 import recsysRoutes from './routes/recsys';
 import homeRoutes from './routes/home';
 import supportRoutes from './routes/support';
+import passport from './config/passport';
+import oauthRoutes from './routes/oauth';
 import { migrate, closeDb } from './db/migrate';
 import { getAll } from './db';
 
@@ -61,6 +63,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(require('express-session')({
+  secret: process.env.SESSION_SECRET || 'miyu-session-secret-for-oauth',
+  resave: false,
+  saveUninitialized: false,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser((user: any, done: any) => done(null, user.id));
+passport.deserializeUser(async (id: number, done: any) => {
+  const { getOne } = require('./db');
+  const user = await getOne('SELECT id, email, username, role FROM users WHERE id = ?', [id]);
+  done(null, user);
+});
+
 app.use('/uploads', express.static(path.resolve(process.cwd(), '..', 'uploads')));
 
 app.use('/api/auth', authRoutes);
@@ -91,6 +107,7 @@ app.use('/api/support', supportRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/recsys', recsysRoutes);
 app.use('/api/home', homeRoutes);
+app.use('/api/auth', oauthRoutes);
 
 app.get('/api/tracks', async (req, res) => {
   try {
