@@ -9,7 +9,7 @@ import { authenticateToken, authorizeRole, AuthRequest } from '../middleware/aut
 
 const router = express.Router();
 
-const uploadDir = path.resolve(process.cwd(), '..', 'uploads/concerts');
+const uploadDir = path.resolve(__dirname, '..', '..', 'uploads/concerts');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

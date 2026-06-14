@@ -77,7 +77,7 @@ passport.deserializeUser(async (id: number, done: any) => {
   done(null, user);
 });
 
-app.use('/uploads', express.static(path.resolve(process.cwd(), '..', 'uploads')));
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user/achievements', userAchievementsRoutes);

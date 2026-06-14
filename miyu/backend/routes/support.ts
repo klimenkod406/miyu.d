@@ -8,7 +8,7 @@ import { createNotification } from './notifications';
 
 const router = express.Router();
 
-const uploadDir = path.resolve(process.cwd(), '..', 'uploads/support');
+const uploadDir = path.resolve(__dirname, '..', '..', 'uploads/support');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

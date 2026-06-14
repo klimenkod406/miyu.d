@@ -9,7 +9,7 @@ import { enqueueAnalyzeTrackAndForget } from '../services/aiService';
 
 const router = Router();
 
-const uploadDir = path.resolve(process.cwd(), '..', 'uploads/tracks');
+const uploadDir = path.resolve(__dirname, '..', '..', 'uploads/tracks');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

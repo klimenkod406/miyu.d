@@ -117,7 +117,7 @@ async function closeDatabase(): Promise<void> {
 
 async function seedTracksFromFolder(): Promise<void> {
   const seedDir = resolveSeedTracksDir();
-  const uploadsDir = path.resolve(process.cwd(), '..', 'uploads/tracks');
+  const uploadsDir = path.resolve(__dirname, '..', '..', 'uploads/tracks');
 
   console.log(`Seed tracks directory: ${seedDir}`);
   console.log(`Uploads directory: ${uploadsDir}`);

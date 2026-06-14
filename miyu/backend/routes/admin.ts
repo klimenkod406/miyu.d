@@ -9,7 +9,7 @@ import { createNotification } from './notifications';
 
 const router = Router();
 
-const avatarUploadDir = path.resolve(process.cwd(), '..', 'uploads/avatars');
+const avatarUploadDir = path.resolve(__dirname, '..', '..', 'uploads/avatars');
 if (!fs.existsSync(avatarUploadDir)) {
   fs.mkdirSync(avatarUploadDir, { recursive: true });
 }

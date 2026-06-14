@@ -8,12 +8,12 @@ import { AuthRequest, authenticateToken, authorizeRole } from '../middleware/aut
 
 const router = Router();
 
-const videosDir = path.resolve(process.cwd(), '..', 'uploads/videos');
+const videosDir = path.resolve(__dirname, '..', '..', 'uploads/videos');
 if (!fs.existsSync(videosDir)) {
   fs.mkdirSync(videosDir, { recursive: true });
 }
 
-const thumbnailsDir = path.resolve(process.cwd(), '..', 'uploads/thumbnails');
+const thumbnailsDir = path.resolve(__dirname, '..', '..', 'uploads/thumbnails');
 if (!fs.existsSync(thumbnailsDir)) {
   fs.mkdirSync(thumbnailsDir, { recursive: true });
 }
