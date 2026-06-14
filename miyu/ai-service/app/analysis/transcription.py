@@ -16,7 +16,7 @@ _WHITESPACE_RE = re.compile(r"\s+")
 _PROMPT_LEAK_RE = re.compile(r"^текст песни на русском языке\.?$", re.IGNORECASE)
 _GENERIC_LEAK_RE = re.compile(r"^современн[а-я\-/ ]+$", re.IGNORECASE)
 _HALLUCINATION_RE = re.compile(
-    r"^(спасибо за просмотр|подписывайтесь|ставьте лайк|субтитры|перевод|автор|"
+    r"^(спасибо за просмотр|подписывайтесь|ставьте лайк|субтитры.*|перевод|автор|"
     r"редактор\s+субтитров.*|корректор\s+.*|\[музыка\]|♪.*♪|thanks for watching|"
     r"subscribe|like and share|спасибо за субтитры.*|продолжение следует.*|девушки отдыхают.*)$",
     re.IGNORECASE

@@ -199,6 +199,27 @@ PHONETIC_CORRECTIONS: list[tuple[re.Pattern, str]] = [
 
 
 
+
+
+
+    # === Cycle 3: HammAli + Zivert BH + Maksim patterns ===
+    (re.compile(r"\bналайте\b", re.IGNORECASE), "на лайте"),
+    (re.compile(r"\bна навеселе\b", re.IGNORECASE), "навеселе"),
+    (re.compile(r"\bродом спал\b", re.IGNORECASE), "по себе"),
+    (re.compile(r"\bпусть ты меня родом\b", re.IGNORECASE), "я сам по себе"),
+    (re.compile(r"\bНабиваю в неоне\b", re.IGNORECASE), "на ногах Найки"),
+    (re.compile(r"\bокеаны я в мир\b", re.IGNORECASE), "а ты пьяная в мир"),
+    # === Cycle 2b: Dora final patterns ===
+    (re.compile(r"\bне важно, чтобы ты узнал\b", re.IGNORECASE), "мне важно, чтобы ты узнал"),
+    (re.compile(r"\bловим мы каждый пут[ьи]\b", re.IGNORECASE), "лови мой каждый импульс"),
+    (re.compile(r"\bГубы дофамин\b", re.IGNORECASE), "Губы дофамин дофамин"),
+    # === Cycle 2: Basta Sansara final patterns ===
+    (re.compile(r"\bэто бой зажженный\b", re.IGNORECASE), "тобой зажженный фонарик эй"),
+    (re.compile(r"\bэти звезды в темноте это бой\b", re.IGNORECASE), "эти звезды в темноте тобой"),
+    (re.compile(r"\bих голосами их\b", re.IGNORECASE), "и голосами их"),
+    (re.compile(r"\bА тот закон Сансары\b", re.IGNORECASE), "Таков закон Сансары"),
+    (re.compile(r"\bза друг\b", re.IGNORECASE), "закон круговорот"),
+    (re.compile(r"\bкогда меня местами\b", re.IGNORECASE), "когда меня не станет"),
     # === Track 46: Zivert — Beverly Hills ===
     (re.compile(r"\bдалеками\b", re.IGNORECASE), "дальних комет"),
     (re.compile(r"\bдал[еь]ками\b", re.IGNORECASE), "дальних комет"),

@@ -79,6 +79,7 @@ export default function ExpandedPlayer() {
   const progressBarRef = useRef<HTMLDivElement>(null)
   const lyricsContainerRef = useRef<HTMLDivElement>(null)
   const lineRefs = useRef<Array<HTMLDivElement | null>>([])
+  const lastActiveRef = useRef(0)
   const [lyricsOffset, setLyricsOffset] = useState(0)
 
   const eqPresets = ['По умолчанию', 'Басы', 'Вокал', 'Электроника', 'Рок', 'Классика', 'Поп', 'Хип-хоп', 'Пользовательский']

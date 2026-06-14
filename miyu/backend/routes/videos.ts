@@ -8,7 +8,7 @@ import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-const videoUploadDir = path.resolve(process.cwd(), 'uploads/videos');
+const videoUploadDir = path.resolve(process.cwd(), '..', 'uploads/videos');
 if (!fs.existsSync(videoUploadDir)) {
   fs.mkdirSync(videoUploadDir, { recursive: true });
 }

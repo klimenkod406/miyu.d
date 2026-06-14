@@ -9,7 +9,7 @@ import multer from 'multer';
 
 const router = Router();
 
-const uploadDir = path.resolve(process.cwd(), 'uploads/playlists');
+const uploadDir = path.resolve(process.cwd(), '..', 'uploads/playlists');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

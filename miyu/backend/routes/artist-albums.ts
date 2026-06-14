@@ -8,7 +8,7 @@ import multer from 'multer';
 
 const router = Router();
 
-const uploadDir = path.resolve(process.cwd(), 'uploads/albums');
+const uploadDir = path.resolve(process.cwd(), '..', 'uploads/albums');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

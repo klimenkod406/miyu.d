@@ -56,7 +56,7 @@ interface ExistingTrackRow {
   id: number;
 }
 
-const DEFAULT_UPLOADS_DIR = path.resolve(process.cwd(), 'uploads/tracks');
+const DEFAULT_UPLOADS_DIR = path.resolve(process.cwd(), '..', 'uploads/tracks');
 
 function depsWithDefaults(deps: ImportTrackDependencies = {}): Required<ImportTrackDependencies> {
   return {

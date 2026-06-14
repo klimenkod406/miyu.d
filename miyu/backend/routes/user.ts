@@ -9,7 +9,7 @@ import bcrypt from 'bcryptjs';
 
 const router = Router();
 
-const uploadDir = path.resolve(process.cwd(), 'uploads/avatars');
+const uploadDir = path.resolve(process.cwd(), '..', 'uploads/avatars');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

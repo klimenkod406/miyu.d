@@ -1083,6 +1083,174 @@ recsys_feed_latency = Histogram(
 
 ---
 
+### 4.13. Transcription Configs — A/B тестирование
+
+**Что это:** Набор из 14 предустановленных конфигураций транскрипции в `app/analysis/transcription_params.py`. Каждый конфиг меняет параметры VAD, beam search, температуры, hotwords и фильтров.
+
+**Зачем в проекте:** Позволяет быстро переключаться между стратегиями транскрипции для разных жанров (поп, рэп, микс) и условий (шум, фоновая музыка).
+
+**Пример — структура конфига:**
+
+```python
+@dataclass
+class TranscriptionConfig:
+    name: str
+    vad_enabled: bool = True          # Voice Activity Detection
+    beam_size: int = 8                # Ширина beam search
+    best_of: int = 8                  # Количество кандидатов
+    patience: float = 1.0             # Терпение поиска
+    temperature: list[float] = ...    # Температуры декодирования
+    hotwords: str = ""                # Слова для приоритета
+    compression_ratio_threshold: float = 2.4
+    log_prob_threshold: float = -1.0
+    no_speech_threshold: float = 0.5
+```
+
+**Ключевые конфиги:**
+- `music_polish` — beam=15, patience=2, максимальное качество
+- `music_precise` — beam=12, для сложных треков
+- `music_hybrid_ru` — русский + английский, hotwords на обоих языках
+- `music_rap_focused` — без фильтра повторов (для рэпа)
+- `baseline` — стандартный production-конфиг
+
+---
+
+### 4.14. Phonetic Corrections — автокоррекция
+
+**Что это:** Словарь из 200+ regex-паттернов в `app/analysis/phonetic_corrections.py` для исправления типичных ошибок Whisper при распознавании русских песен.
+
+**Зачем в проекте:** Whisper часто ошибается в фонетически сложных местах (похожие созвучия, непривычные слова). Паттерны исправляют эти ошибки на уровне текста и сегментов.
+
+**Пример — исправления для трека «Пустите меня на танцпол»:**
+
+```python
+PHONETIC_CORRECTIONS = [
+    (re.compile(r"\bсенч[ае]\b", re.IGNORECASE), "бокалами"),
+    (re.compile(r"\bнавеселен\b", re.IGNORECASE), "навеселе"),
+    (re.compile(r"\bконспол\b", re.IGNORECASE), "танцпол"),
+    # ... 200+ паттернов
+]
+```
+
+Паттерны организованы по трекам: track_34 (HammAli), track_36 (JONY), track_52 (Баста), track_110 (Дора), track_46 (Zivert), track_59 (МакSим), track_77 (Cream Soda). Также есть общие патерны для пунктуации и пробелов.
+
+---
+
+### 4.15. Profanity Dictionary — словарь цензуры
+
+**Что это:** Регулярные выражения для 9 категорий триггерного контента в `app/analysis/profanity_dict.py`. Полная замена Detoxify — не требует ML-модели, работает быстрее.
+
+**Зачем в проекте:** Поиск и классификация нежелательного контента в текстах песен.
+
+**Категории и веса:**
+| Категория | Вес | Описание |
+|-----------|-----|----------|
+| sex | 1.0 | Сексуальный контент |
+| drugs | 1.0 | Наркотики |
+| racism | 1.0 | Расизм (red-flag) |
+| fascism | 1.0 | Фашизм (red-flag) |
+| profanity | 1.0 | Мат |
+| violence | 0.9 | Насилие |
+| nationalism | 0.8 | Национализм |
+| alcohol | 0.6 | Алкоголь |
+| smoking | 0.6 | Курение |
+
+**Пример использования:**
+
+```python
+result = check_all("Текст песни для проверки")
+# result = {
+#     "is_18plus": True,
+#     "categories": {"profanity": 3, "alcohol": 1},
+#     "total_weighted": 3.6,
+#     "density": 0.15,
+#     "has_red_flag": False,
+# }
+```
+
+---
+
+### 4.16. Text Moderation — MMR скоринг
+
+**Что это:** Система оценки контента в `app/analysis/text_moderation.py`. На основе результатов profanity_dict вычисляет MMR-оценку (0..1).
+
+**Зачем в проекте:** Автоматическое принятие решения: approve / pending / flag.
+
+**Правила MMR:**
+1. Любой триггер → `is_18plus = True`
+2. Базовая оценка = weighted_density / word_count * 3.0
+3. Категорийные минимумы: мат ≥ 0.15, расизм/фашизм ≥ 0.85, секс ≥ 0.5, наркотики ≥ 0.4, насилие ≥ 0.3
+
+```python
+result = text_moderation.analyze(lyrics_text)
+# result.mmr_score -> 0.0..1.0
+# result.is_18plus -> True/False
+# result.has_red_flag -> True/False
+```
+
+---
+
+### 4.17. Benchmark System — оценка транскрипции
+
+**Что это:** Тестовая система в `tests/test_benchmark.py` для сравнения качества транскрипции с эталонными текстами.
+
+**Зачем в проекте:** Объективная оценка улучшений при изменении параметров транскрипции.
+
+**Метрики:**
+- **WER** (Word Error Rate) — процент ошибок на уровне слов
+- **CER** (Character Error Rate) — процент ошибок на уровне символов
+- **Recall** — сколько слов эталона найдено
+- **Precision** — сколько распознанных слов верны
+- **F1** — гармоническое среднее recall и precision
+- **Coverage** — процент времени трека, покрытый речью
+
+**Эталонные тексты:** 9 треков в `tests/ground_truth/` — вручную выверенные тексты песен.
+
+```bash
+# Запуск с одним конфигом
+python tests/test_benchmark.py --track 34 --config baseline
+
+# Сравнение всех конфигов
+python tests/test_benchmark.py --track 34 --all-configs
+```
+
+Результат сохраняется как JSON в `tests/benchmark_results/`.
+
+---
+
+### 4.18. Pipeline — полный анализ трека
+
+**Что это:** Оркестратор всех этапов анализа в `app/analysis/pipeline.py`. Выполняет 9 шагов последовательно, каждый защищён try/except.
+
+**Зачем в проекте:** Единая точка входа для полного анализа трека, от загрузки аудио до финального решения.
+
+**Шаги pipeline:**
+```
+1. Pre-flight (длительность, валидность)
+2. Аудио-признаки (librosa: BPM, тональность, энергия)
+3. Tagging (PANNs: жанр, настроение, эмбеддинг)
+4. Транскрипция (faster-whisper + phonetic corrections)
+5. Текстовая модерация (9 категорий + MMR + text embed)
+6. NSFW-обложка (opennsfw2)
+7. Fingerprint (chromaprint) + дубликаты
+8. Aggregator → ai_score / ai_flags / decision
+9. Запись в БД (track_analysis + moderation_queue)
+```
+
+```python
+result = pipeline.analyze_track(track_id=42)
+# result = {
+#   "track_id": 42,
+#   "ai_score": 0.85,
+#   "ai_flags": ["high_energy", "pop"],
+#   "decision": "approve",
+#   "moderation": {...},
+#   "features": {...},
+# }
+```
+
+---
+
 ## 5. Инфраструктура
 
 ### 5.1. Docker
@@ -1206,4 +1374,9 @@ server {
 | Инфра | Docker | — | Контейнеризация |
 | Инфра | Nginx | — | Reverse proxy |
 | Инфра | Redis | 7 | Очередь задач |
+| Инфра | TranscriptionConfigs | — | 14 configs for A/B testing |
+| AI | Phonetic Corrections | — | 200+ regex patterns for lyrics |
+| AI | Profanity Dict | — | 9 categories, regex-based censorship |
+| AI | Text Moderation | — | MMR scoring, replaces Detoxify |
+| AI | Benchmark | — | WER/CER/F1 evaluation with ground truth |
 | Инфра | Grafana | — | Мониторинг |

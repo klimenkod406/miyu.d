@@ -146,7 +146,7 @@ class ExplicitAnalysis:
     density: float = 0.0
     total_words: int = 0
     total_count: int = 0
-    is_explicit: bool = False
+    # is_explicit computed via @property
     severe_count: int = 0
     moderate_count: int = 0
     mild_count: int = 0
@@ -185,7 +185,7 @@ def analyze_explicit(text: str) -> ExplicitAnalysis:
         density=result.density,
         total_words=result.word_count,
         total_count=result.total_hits,
-        is_explicit=result.is_18plus,
+        # is_explicit=result.is_18plus,  # computed via @property
         severe_count=result.total_hits,
         has_slur=result.has_red_flag,
         matches=[],
