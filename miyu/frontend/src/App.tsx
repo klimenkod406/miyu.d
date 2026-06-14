@@ -1,79 +1,80 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
-import React from 'react'
+import React, { Suspense } from 'react'
 import Layout from './components/Layout'
 import AuthLayout from './components/AuthLayout'
 import { useAuth } from './hooks/AuthContext'
 
 // Pages - P0
-import HomePage from './pages/HomePage'
-import SearchPage from './pages/SearchPage'
-import TrackPage from './pages/TrackPage'
-import AlbumPage from './pages/AlbumPage'
-import ArtistPage from './pages/ArtistPage'
-import ProfilePage from './pages/ProfilePage'
-import EditProfilePage from './pages/EditProfilePage'
-import LikedPage from './pages/LikedPage'
-import LikedPlaylistsPage from './pages/LikedPlaylistsPage'
-import PlaylistsPage from './pages/PlaylistsPage'
-import PlaylistPage from './pages/PlaylistPage'
-import HistoryPage from './pages/HistoryPage'
-import FavoriteArtistsPage from './pages/FavoriteArtistsPage'
-import FavoriteAlbumsPage from './pages/FavoriteAlbumsPage'
-import NewReleasesPage from './pages/NewReleasesPage'
-import ChartsPage from './pages/ChartsPage'
-import PopularArtistsPage from './pages/PopularArtistsPage'
-import GenresPage from './pages/GenresPage'
-import ArtistDashboardPage from './pages/ArtistDashboardPage'
-import ArtistUploadPage from './pages/ArtistUploadPage'
-import ArtistTracksPage from './pages/ArtistTracksPage'
-import ArtistAlbumsPage from './pages/ArtistAlbumsPage'
-import ArtistCreateAlbumPage from './pages/ArtistCreateAlbumPage'
-import ArtistCreateConcertPage from './pages/ArtistCreateConcertPage'
-import ArtistUploadVideoPage from './pages/ArtistUploadVideoPage'
-import ArtistVideosPage from './pages/ArtistVideosPage'
-import ArtistConcertsPage from './pages/ArtistConcertsPage'
-import PremiumPage from './pages/PremiumPage'
-import CheckoutPage from './pages/CheckoutPage'
-import GiftPage from './pages/GiftPage'
-import VideoPage from './pages/VideoPage'
-import ClipsPage from './pages/ClipsPage'
-import ModerationPage from './pages/ModerationPage'
-import AdminUsersPage from './pages/AdminUsersPage'
-import AdminPage from './pages/AdminPage'
-import AdminArtistsPage from './pages/AdminArtistsPage'
-import AdminArtistAvatarsPage from './pages/AdminArtistAvatarsPage'
-import ArtistStatsPage from './pages/ArtistStatsPage'
-import UserStatsPage from './pages/UserStatsPage'
-import AchievementsPage from './pages/AchievementsPage'
-import AdminAchievementsPage from './pages/AdminAchievementsPage'
-import AdminContentPage from './pages/AdminContentPage'
-import AdminBatchUploadPage from './pages/AdminBatchUploadPage'
-import AdminConcertsPage from './pages/AdminConcertsPage'
-import AdminConcertEditPage from './pages/AdminConcertEditPage'
-import SupportAdminPage from './pages/SupportAdminPage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import NotFoundPage from './pages/NotFoundPage'
+const HomePage = React.lazy(() => import('./pages/HomePage'))
+const SearchPage = React.lazy(() => import('./pages/SearchPage'))
+const TrackPage = React.lazy(() => import('./pages/TrackPage'))
+const AlbumPage = React.lazy(() => import('./pages/AlbumPage'))
+const ArtistPage = React.lazy(() => import('./pages/ArtistPage'))
+const ProfilePage = React.lazy(() => import('./pages/ProfilePage'))
+const EditProfilePage = React.lazy(() => import('./pages/EditProfilePage'))
+const LikedPage = React.lazy(() => import('./pages/LikedPage'))
+const LikedPlaylistsPage = React.lazy(() => import('./pages/LikedPlaylistsPage'))
+const PlaylistsPage = React.lazy(() => import('./pages/PlaylistsPage'))
+const PlaylistPage = React.lazy(() => import('./pages/PlaylistPage'))
+const HistoryPage = React.lazy(() => import('./pages/HistoryPage'))
+const FavoriteArtistsPage = React.lazy(() => import('./pages/FavoriteArtistsPage'))
+const FavoriteAlbumsPage = React.lazy(() => import('./pages/FavoriteAlbumsPage'))
+const NewReleasesPage = React.lazy(() => import('./pages/NewReleasesPage'))
+const ChartsPage = React.lazy(() => import('./pages/ChartsPage'))
+const PopularArtistsPage = React.lazy(() => import('./pages/PopularArtistsPage'))
+const GenresPage = React.lazy(() => import('./pages/GenresPage'))
+const ArtistDashboardPage = React.lazy(() => import('./pages/ArtistDashboardPage'))
+const ArtistUploadPage = React.lazy(() => import('./pages/ArtistUploadPage'))
+const ArtistTracksPage = React.lazy(() => import('./pages/ArtistTracksPage'))
+const ArtistAlbumsPage = React.lazy(() => import('./pages/ArtistAlbumsPage'))
+const ArtistCreateAlbumPage = React.lazy(() => import('./pages/ArtistCreateAlbumPage'))
+const ArtistCreateConcertPage = React.lazy(() => import('./pages/ArtistCreateConcertPage'))
+const ArtistUploadVideoPage = React.lazy(() => import('./pages/ArtistUploadVideoPage'))
+const ArtistVideosPage = React.lazy(() => import('./pages/ArtistVideosPage'))
+const ArtistConcertsPage = React.lazy(() => import('./pages/ArtistConcertsPage'))
+const PremiumPage = React.lazy(() => import('./pages/PremiumPage'))
+const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'))
+const GiftPage = React.lazy(() => import('./pages/GiftPage'))
+const VideoPage = React.lazy(() => import('./pages/VideoPage'))
+const ClipsPage = React.lazy(() => import('./pages/ClipsPage'))
+const ModerationPage = React.lazy(() => import('./pages/ModerationPage'))
+const AdminUsersPage = React.lazy(() => import('./pages/AdminUsersPage'))
+const AdminPage = React.lazy(() => import('./pages/AdminPage'))
+const AdminArtistsPage = React.lazy(() => import('./pages/AdminArtistsPage'))
+const AdminArtistAvatarsPage = React.lazy(() => import('./pages/AdminArtistAvatarsPage'))
+const ArtistStatsPage = React.lazy(() => import('./pages/ArtistStatsPage'))
+const UserStatsPage = React.lazy(() => import('./pages/UserStatsPage'))
+const AchievementsPage = React.lazy(() => import('./pages/AchievementsPage'))
+const AdminAchievementsPage = React.lazy(() => import('./pages/AdminAchievementsPage'))
+const AdminContentPage = React.lazy(() => import('./pages/AdminContentPage'))
+const AdminBatchUploadPage = React.lazy(() => import('./pages/AdminBatchUploadPage'))
+const AdminConcertsPage = React.lazy(() => import('./pages/AdminConcertsPage'))
+const AdminConcertEditPage = React.lazy(() => import('./pages/AdminConcertEditPage'))
+const SupportAdminPage = React.lazy(() => import('./pages/SupportAdminPage'))
+const LoginPage = React.lazy(() => import('./pages/LoginPage'))
+const RegisterPage = React.lazy(() => import('./pages/RegisterPage'))
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'))
 import Toast from './components/Toast'
 import AchievementToast from './components/AchievementToast'
 
+
 // Pages - P1
-import ForgotPasswordPage from './pages/ForgotPasswordPage'
-import BillingPage from './pages/BillingPage'
-import SettingsPage from './pages/SettingsPage'
-import ConcertsPage from './pages/ConcertsPage'
-import ConcertPage from './pages/ConcertPage'
-import MyTicketsPage from './pages/MyTicketsPage'
-import TicketDetailPage from './pages/TicketDetailPage'
-import ConcertTicketsPage from './pages/ConcertTicketsPage'
+const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage'))
+const BillingPage = React.lazy(() => import('./pages/BillingPage'))
+const SettingsPage = React.lazy(() => import('./pages/SettingsPage'))
+const ConcertsPage = React.lazy(() => import('./pages/ConcertsPage'))
+const ConcertPage = React.lazy(() => import('./pages/ConcertPage'))
+const MyTicketsPage = React.lazy(() => import('./pages/MyTicketsPage'))
+const TicketDetailPage = React.lazy(() => import('./pages/TicketDetailPage'))
+const ConcertTicketsPage = React.lazy(() => import('./pages/ConcertTicketsPage'))
 
 // Pages - Social
-import FeedPage from './pages/FeedPage'
-import NotificationsPage from './pages/NotificationsPage'
-import FriendsPage from './pages/FriendsPage'
-import FollowersPage from './pages/FollowersPage'
-import FollowingPage from './pages/FollowingPage'
-import PublicProfilePage from './pages/PublicProfilePage'
+const FeedPage = React.lazy(() => import('./pages/FeedPage'))
+const NotificationsPage = React.lazy(() => import('./pages/NotificationsPage'))
+const FriendsPage = React.lazy(() => import('./pages/FriendsPage'))
+const FollowersPage = React.lazy(() => import('./pages/FollowersPage'))
+const FollowingPage = React.lazy(() => import('./pages/FollowingPage'))
+const PublicProfilePage = React.lazy(() => import('./pages/PublicProfilePage'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -99,8 +100,21 @@ function GuestHomeOnlyGate() {
     return <Navigate to="/" replace />
   }
 
-  return <Layout />
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <Layout />
+    </Suspense>
+  )
 }
+
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-[#050505]">
+      <div className="animate-pulse text-gray-400">Загрузка...</div>
+    </div>
+  )
+}
+
 
 function App() {
   const [toast, setToast] = React.useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null)
@@ -138,9 +152,9 @@ function App() {
   return (
     <>
       <Routes>
-      <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
-      <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
-      <Route path="/forgot-password" element={<AuthLayout><ForgotPasswordPage /></AuthLayout>} />
+      <Route path="/login" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><LoginPage /></AuthLayout></Suspense>} />
+      <Route path="/register" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><RegisterPage /></AuthLayout></Suspense>} />
+      <Route path="/forgot-password" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><ForgotPasswordPage /></AuthLayout></Suspense>} />
 
       {/* Main routes */}
       <Route path="/" element={
