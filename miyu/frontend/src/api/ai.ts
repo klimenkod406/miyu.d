@@ -62,6 +62,7 @@ export const aiApi = {
       lyrics_language: string | null;
       explicit_words: Array<{ start: number; end: number; word: string }>;
       segments: Array<{ start: number; end: number; text: string }>;
+      structure: Array<{ start: number; end: number; label: string; type: string }>;
       analysis_version: string | null;
     }>(`/ai/tracks/${trackId}/lyrics`, {
       headers: { Authorization: `Bearer ${accessToken}` },
