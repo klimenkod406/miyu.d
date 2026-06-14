@@ -1,7 +1,35 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { authApi, getStoredTokens, storeTokens, clearTokens } from '../api/auth'
+import { getStoredTokens, storeTokens, clearTokens } from '../api/auth'
 
+const API_BASE = '/api';
+
+async function fetchWithTimeout<T>(url: string, options: RequestInit = {}, timeoutMs = 15000): Promise<T> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(`${API_BASE}${url}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(text || 'Request failed');
+    }
+    return text ? JSON.parse(text) : (null as any);
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new Error(`Request timed out after ${timeoutMs}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 interface AuthUser {
   id: number
   email: string
@@ -58,16 +86,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const userData = await authApi.me(tokens.accessToken)
+      const userData = await fetchWithTimeout<AuthUser>('/auth/me', {
+        headers: { Authorization: 'Bearer ' + tokens.accessToken }
+      })
       setUser(userData)
       setAccessToken(tokens.accessToken);
     } catch (err) {
+      if (err instanceof Error && err.message.includes('timed out')) {
+        handleClearTokens()
+        return
+      }
       try {
-        const newTokens = await authApi.refresh(tokens.refreshToken)
+        const newTokens = await fetchWithTimeout<{ accessToken: string; refreshToken: string }>('/auth/refresh', {
+          method: 'POST',
+          body: JSON.stringify({ refreshToken: tokens.refreshToken }),
+        })
         handleSetTokens(newTokens.accessToken, newTokens.refreshToken)
-        const userData = await authApi.me(newTokens.accessToken)
+        const userData = await fetchWithTimeout<AuthUser>('/auth/me', {
+          headers: { Authorization: 'Bearer ' + newTokens.accessToken }
+        })
         setUser(userData)
       } catch (refreshErr) {
+        if (refreshErr instanceof Error && refreshErr.message.includes('timed out')) {
+          handleClearTokens()
+          return
+        }
         handleClearTokens();
       }
     }
@@ -78,16 +121,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const tokens = getStoredTokens()
       if (tokens) {
         try {
-          const userData = await authApi.me(tokens.accessToken)
+          const userData = await fetchWithTimeout<AuthUser>('/auth/me', {
+            headers: { Authorization: 'Bearer ' + tokens.accessToken }
+          })
           setUser(userData);
           setAccessToken(tokens.accessToken);
         } catch (err) {
+          if (err instanceof Error && err.message.includes('timed out')) {
+            setIsLoading(false)
+            handleClearTokens()
+            return
+          }
           try {
-            const newTokens = await authApi.refresh(tokens.refreshToken)
+            const newTokens = await fetchWithTimeout<{ accessToken: string; refreshToken: string }>('/auth/refresh', {
+              method: 'POST',
+              body: JSON.stringify({ refreshToken: tokens.refreshToken }),
+            })
             handleSetTokens(newTokens.accessToken, newTokens.refreshToken)
-            const userData = await authApi.me(newTokens.accessToken)
+            const userData = await fetchWithTimeout<AuthUser>('/auth/me', {
+              headers: { Authorization: 'Bearer ' + newTokens.accessToken }
+            })
             setUser(userData)
           } catch (refreshErr) {
+            if (refreshErr instanceof Error && refreshErr.message.includes('timed out')) {
+              setIsLoading(false)
+              handleClearTokens()
+              return
+            }
             handleClearTokens();
           }
         }
@@ -98,13 +158,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (email: string, password: string) => {
-    const response = await authApi.login({ email, password })
+    const response = await fetchWithTimeout<{ user: AuthUser; accessToken: string; refreshToken: string }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    })
     handleSetTokens(response.accessToken, response.refreshToken)
     setUser(response.user)
   }
 
   const register = async (email: string, username: string, password: string) => {
-    const response = await authApi.register({ email, username, password })
+    const response = await fetchWithTimeout<{ user: AuthUser; accessToken: string; refreshToken: string }>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, username, password }),
+    })
     handleSetTokens(response.accessToken, response.refreshToken)
     setUser(response.user)
   }
@@ -113,7 +179,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const tokens = getStoredTokens()
     if (tokens) {
       try {
-        await authApi.logout(tokens.refreshToken)
+        await fetchWithTimeout('/auth/logout', {
+          method: 'POST',
+          body: JSON.stringify({ refreshToken: tokens.refreshToken }),
+        })
       } catch {}
     }
     handleClearTokens();
