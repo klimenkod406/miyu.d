@@ -4,6 +4,7 @@ import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../hooks/AuthContext'
 import { openOAuthPopup } from '../components/OAuthPopup'
 import ServiceLogo from '../components/ServiceLogo'
+import AuthGlassButton from '../components/AuthGlassButton'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -100,14 +101,14 @@ export default function LoginPage() {
             </Link>
           </div>
           
-          <button
+          <AuthGlassButton
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 hover:from-purple-500 hover:via-pink-400 hover:to-purple-500 rounded-2xl font-semibold flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 rounded-2xl font-semibold text-white"
           >
             <LogIn size={22} />
-            {isLoading ? 'Вход...' : 'Войти'}
-          </button>
+            <span className="ml-3">{isLoading ? 'Вход...' : 'Войти'}</span>
+          </AuthGlassButton>
         </form>
 
         {/* OAuth */}
@@ -116,18 +117,21 @@ export default function LoginPage() {
           <span className="text-white/30 text-sm">или</span>
           <div className="flex-1 h-px bg-white/[0.08]" />
         </div>
-
-        <button
-          type="button"
-          onClick={() => handleOAuth('github')}
-          disabled={isLoading}
-          className="w-full py-4 bg-gradient-to-r from-[#333] to-[#555] hover:from-[#444] hover:to-[#666] rounded-2xl font-semibold text-white flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-          </svg>
-          Войти через GitHub
-        </button>
+        <div className="flex justify-center">
+          <AuthGlassButton
+            variant="glow"
+            type="button"
+            type="button"
+            onClick={() => handleOAuth('github')}
+            disabled={isLoading}
+            className="group w-12 h-12 rounded-2xl hover:w-[220px] transition-[width] duration-300 ease-out text-white"
+          >
+            <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span className="text-sm font-semibold whitespace-nowrap max-w-0 group-hover:max-w-60 transition-all duration-300 overflow-hidden opacity-0 group-hover:opacity-100 ml-0 group-hover:ml-4">Войти через GitHub</span>
+          </AuthGlassButton>
+        </div>
 
         <div className="mt-8 text-center">
           <p className="text-white/40">

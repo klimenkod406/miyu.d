@@ -353,3 +353,126 @@ select option {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* === Auth Button: Colorless Matte Glass + Hover Flashes / Glow === */
+
+/* Base: colorless glass */
+.btn-glass {
+  position: relative;
+  isolation: isolate;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+.btn-glass:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Content layer */
+.btn-glass-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Wrapper that clips the flashes */
+.btn-flashes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* === Light flashes: smooth movement via top/left (% of parent) + scale === */
+.btn-flash {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  filter: blur(22px);
+  opacity: 0.35;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+  will-change: top, left, opacity, transform;
+}
+
+@keyframes btn-flash-1 {
+  0%   { top: 10%; left: 5%;  background: #a855f7; transform: scale(0.85); }
+  25%  { top: 30%; left: 35%; background: #38bdf8; transform: scale(1); }
+  50%  { top: 65%; left: 60%; background: #ec4899; transform: scale(0.95); }
+  75%  { top: 25%; left: 75%; background: #a855f7; transform: scale(1.05); }
+  100% { top: 10%; left: 5%;  background: #a855f7; transform: scale(0.85); }
+}
+
+@keyframes btn-flash-2 {
+  0%   { top: 65%; left: 70%; background: #ec4899; transform: scale(0.9) translate(-50%, -50%); }
+  25%  { top: 20%; left: 30%; background: #a855f7; transform: scale(1) translate(-50%, -50%); }
+  50%  { top: 70%; left: 15%; background: #38bdf8; transform: scale(0.95) translate(-50%, -50%); }
+  75%  { top: 30%; left: 80%; background: #ec4899; transform: scale(1.05) translate(-50%, -50%); }
+  100% { top: 65%; left: 70%; background: #ec4899; transform: scale(0.9) translate(-50%, -50%); }
+}
+
+@keyframes btn-flash-3 {
+  0%   { top: 75%; left: 25%; background: #38bdf8; transform: scale(0.9); }
+  25%  { top: 30%; left: 70%; background: #ec4899; transform: scale(1); }
+  50%  { top: 65%; left: 50%; background: #a855f7; transform: scale(0.95); }
+  75%  { top: 45%; left: 25%; background: #38bdf8; transform: scale(1.05); }
+  100% { top: 75%; left: 25%; background: #38bdf8; transform: scale(0.9); }
+}
+
+.btn-flash-1 { animation: btn-flash-1 8s linear infinite; }
+.btn-flash-2 { animation: btn-flash-2 10s linear infinite; }
+.btn-flash-3 { animation: btn-flash-3 9s linear infinite; }
+
+/* On hover: same movement, just brighter and crisper */
+.btn-glass--flashes:hover:not(:disabled) .btn-flash {
+  opacity: 0.95;
+  filter: blur(16px);
+}
+
+/* === Glow variant (icon-only buttons) ===
+   White soft glow that fades in at the bottom edge of the button on hover. */
+.btn-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse 90% 100% at 50% 100%,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 40%,
+    transparent 75%
+  );
+  filter: blur(12px);
+  transition: opacity 0.6s ease, transform 0.8s ease;
+  transform: translateY(20%);
+}
+.btn-glass--glow:hover:not(:disabled) .btn-glow {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Disabled */
+.btn-glass:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.btn-glass:disabled .btn-flash,
+.btn-glass:disabled .btn-glow {
+  opacity: 0 !important;
+  animation: none !important;
+}

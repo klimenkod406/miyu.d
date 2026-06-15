@@ -157,15 +157,18 @@ function PromoBlock({ title, subtitle, gradient, icon: Icon }: {
   icon: typeof Sparkles
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl h-48 border border-white/[0.05] transition-all duration-300">
+    <div className="group relative overflow-hidden rounded-2xl h-48 border border-white/[0.12] transition-all duration-300">
       {/* Gradient background */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-90 group-hover:opacity-100 transition-opacity duration-300`} />
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-70 group-hover:opacity-85 transition-opacity duration-300`} />
+
+      {/* Glass morph overlay — frosted blur like sidebars */}
+      <div className="absolute inset-0 bg-white/[0.07] backdrop-blur-2xl backdrop-saturate-[1.8]" />
 
       {/* Animated gradient overlay */}
-      <div className={`absolute inset-0 bg-gradient-to-tr ${gradient} opacity-0 group-hover:opacity-40 transition-opacity duration-500`} />
+      <div className={`absolute inset-0 bg-gradient-to-tr ${gradient} opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />
 
       {/* Dot pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJub25lIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')] opacity-40" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJub25lIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')] opacity-30" />
 
       {/* Shine effect */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
@@ -317,9 +320,13 @@ function PlaylistOfDayPromo({
 
   return (
     <section>
-      <div className="group relative overflow-hidden rounded-3xl border border-orange-300/20 transition-all duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-amber-500 to-orange-300 opacity-95 transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-orange-700 via-orange-500 to-yellow-200 opacity-0 transition-opacity duration-500 group-hover:opacity-35" />
+      <div className="group relative overflow-hidden rounded-3xl border border-orange-300/30 transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-amber-500 to-orange-300 opacity-70 transition-opacity duration-300 group-hover:opacity-85" />
+        {/* Glass morph overlay — frosted blur like sidebars */}
+        <div className="absolute inset-0 bg-white/[0.07] backdrop-blur-2xl backdrop-saturate-[1.8]" />
+
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-orange-700 via-orange-500 to-yellow-200 opacity-0 transition-opacity duration-500 group-hover:opacity-25" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJub25lIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMTIiLz4KPC9zdmc+')] opacity-35" />
         <div className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full transition-transform duration-1000 group-hover:translate-x-full" />
@@ -350,7 +357,7 @@ function PlaylistOfDayPromo({
           </div>
 
           <Link to={`/playlist/${playlist.id}`} className="mx-auto block w-full max-w-[280px]">
-            <div className="overflow-hidden rounded-[2rem] border border-white/25 bg-white/10 p-3 shadow-2xl backdrop-blur-sm transition duration-300 group-hover:scale-[1.02]">
+            <div className="overflow-hidden rounded-[2rem] border border-white/25 bg-white/[0.07] p-3 shadow-2xl backdrop-blur-2xl transition duration-300 group-hover:scale-[1.02]">
               <div className="aspect-square overflow-hidden rounded-[1.5rem] bg-white/10">
                 {playlist.cover_url ? (
                   <img src={playlist.cover_url} alt={playlist.title} className="h-full w-full object-cover" />
