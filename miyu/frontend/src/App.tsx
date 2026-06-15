@@ -60,6 +60,7 @@ import AchievementToast from './components/AchievementToast'
 
 // Pages - P1
 const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'))
 const BillingPage = React.lazy(() => import('./pages/BillingPage'))
 const SettingsPage = React.lazy(() => import('./pages/SettingsPage'))
 const ConcertsPage = React.lazy(() => import('./pages/ConcertsPage'))
@@ -155,6 +156,7 @@ function App() {
       <Route path="/login" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><LoginPage /></AuthLayout></Suspense>} />
       <Route path="/register" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><RegisterPage /></AuthLayout></Suspense>} />
       <Route path="/forgot-password" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><ForgotPasswordPage /></AuthLayout></Suspense>} />
+      <Route path="/reset-password/:token" element={<Suspense fallback={<LoadingFallback />}><AuthLayout><ResetPasswordPage /></AuthLayout></Suspense>} />
 
       {/* Main routes */}
       <Route path="/" element={

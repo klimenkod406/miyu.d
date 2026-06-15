@@ -6,6 +6,8 @@ import fs from 'fs';
 import path from 'path';
 import { getAll, getOne, runQuery } from '../db';
 import { authenticateToken, authorizeRole, AuthRequest } from '../middleware/auth';
+import { sendEmail } from '../services/emailService';
+import { ticketEmail } from '../services/emailTemplates';
 
 const router = express.Router();
 
@@ -501,6 +503,30 @@ router.post('/:id/buy-ticket', authenticateToken, async (req: AuthRequest, res) 
         [artistEarnings, concert.artist_id],
       );
       await runQuery('COMMIT');
+
+      // Send ticket email (fire-and-forget — does not block response)
+      const userEmail = (await getOne<{ email: string }>('SELECT email FROM users WHERE id = ?', [userId]))?.email;
+      if (userEmail && createdTickets.length > 0) {
+        const concertInfo = {
+          title: concert.title || '',
+          event_date: concert.event_date || '',
+          event_time: concert.event_time || '',
+          venue: concert.venue || '',
+          city: concert.city || '',
+        };
+        createdTickets.forEach((t: any) => {
+          sendEmail(
+            userEmail,
+            `Билет на "${concert.title}"`,
+            ticketEmail(
+              { id: t.id, ticket_type_name: ticketType.name || 'Стандарт' },
+              concertInfo,
+              t.qr_code
+            )
+          ).catch(err => console.error('[EMAIL] Ticket email failed:', err.message));
+        });
+      }
+
       res.status(201).json({
         message: 'Билеты куплены',
         tickets: createdTickets,

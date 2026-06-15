@@ -659,6 +659,27 @@ export async function migrate() {
           )
         `);
 
+    // password_reset_tokens: tokens for forgot-password flow
+    const resetTokensExists = await getOne(`
+        SELECT name FROM sqlite_master WHERE type='table' AND name='password_reset_tokens'
+    `).catch(() => null);
+
+    if (!resetTokensExists) {
+        console.log('Creating password_reset_tokens table...');
+        await runQuery(`
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                token TEXT UNIQUE NOT NULL,
+                expires_at TEXT NOT NULL,
+                used INTEGER DEFAULT 0,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `);
+        await runQuery('CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token)');
+        console.log('✓ password_reset_tokens table created');
+    }
         await applyMigrations(); // Apply additional migrations
         await seedData(); // Also seed data after incremental migration if needed
 

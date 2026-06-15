@@ -2,7 +2,13 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { db, runQuery, getOne, getAll } from '../db';
 import { generateTokens, verifyRefreshToken, authenticateToken, AuthRequest } from '../middleware/auth';
+import crypto from 'crypto';
+import { sendEmail } from '../services/emailService';
+import { passwordResetEmail } from '../services/emailTemplates';
 
+const forgotPasswordRateLimit = new Map<string, number[]>();
+const FORGOT_MAX_REQUESTS = 3;
+const FORGOT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 const router = Router();
 
 interface User {
@@ -285,4 +291,88 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => 
   }
 });
 
+router.post('/forgot-password', async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Укажите email' });
+    }
+
+    // Rate limit check
+    const now = Date.now();
+    const key = email.toLowerCase();
+    const timestamps = forgotPasswordRateLimit.get(key) || [];
+    const recent = timestamps.filter(t => now - t < FORGOT_WINDOW_MS);
+    if (recent.length >= FORGOT_MAX_REQUESTS) {
+      return res.status(429).json({ error: 'Слишком много запросов. Попробуйте позже.' });
+    }
+    recent.push(now);
+    forgotPasswordRateLimit.set(key, recent);
+
+    // Find user (but don't reveal if exists — anti-enumeration)
+    const user = await getOne<{ id: number }>('SELECT id FROM users WHERE email = ?', [email]);
+    if (user) {
+      // Generate secure token
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(now + 3600000).toISOString(); // +1 hour
+
+      await runQuery(
+        'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
+        [user.id, token, expiresAt]
+      );
+
+      // Fire-and-forget email
+      const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${token}`;
+      sendEmail(email, 'Miyu — Сброс пароля', passwordResetEmail(resetLink))
+        .catch(err => console.error('[EMAIL] Forgot password send failed:', err.message));
+    }
+
+    // Always same response (anti-enumeration)
+    res.json({ message: 'Если аккаунт с таким email существует, письмо со ссылкой для сброса отправлено' });
+  } catch (err: any) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+router.post('/reset-password', async (req: Request, res: Response) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return res.status(400).json({ error: 'Токен и новый пароль обязательны' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Пароль должен быть не менее 6 символов' });
+    }
+
+    // Find valid token
+    const resetRecord = await getOne<{ id: number; user_id: number; expires_at: string }>(
+      'SELECT id, user_id, expires_at FROM password_reset_tokens WHERE token = ? AND used = 0',
+      [token]
+    );
+
+    if (!resetRecord) {
+      return res.status(400).json({ error: 'Ссылка недействительна или истекла. Запросите новую.' });
+    }
+
+    if (new Date(resetRecord.expires_at) < new Date()) {
+      return res.status(400).json({ error: 'Ссылка недействительна или истекла. Запросите новую.' });
+    }
+
+    // Update password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await runQuery('UPDATE users SET password_hash = ? WHERE id = ?', [hashedPassword, resetRecord.user_id]);
+
+    // Mark token as used
+    await runQuery('UPDATE password_reset_tokens SET used = 1 WHERE id = ?', [resetRecord.id]);
+
+    // Invalidate all refresh tokens for this user (force re-login everywhere)
+    await runQuery('DELETE FROM refresh_tokens WHERE user_id = ?', [resetRecord.user_id]);
+
+    res.json({ message: 'Пароль успешно изменен. Войдите с новым паролем.' });
+  } catch (err: any) {
+    console.error('Reset password error:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
 export default router;

@@ -170,6 +170,20 @@ export const authApi = {
       body: JSON.stringify({ status }),
     });
   },
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
+    return request<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  resetPassword: async (token: string, password: string): Promise<{ message: string }> => {
+    return request<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    });
+  },
+
 
   uploadArtistAvatar: async (accessToken: string, userId: number, file: File): Promise<{ avatar_url: string; username: string }> => {
     const formData = new FormData();

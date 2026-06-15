@@ -368,6 +368,16 @@ CREATE TABLE tickets (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- ==================== PASSWORD RESET ====================
+CREATE TABLE password_reset_tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TEXT NOT NULL,
+    used INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 -- ==================== PAYMENTS & SUBSCRIPTIONS ====================
 CREATE TABLE subscriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
