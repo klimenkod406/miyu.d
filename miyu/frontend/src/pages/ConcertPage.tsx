@@ -7,6 +7,8 @@ import { concertsApi } from '../api/concerts';
 import { useAuth } from '../hooks/AuthContext';
 import { venuePlans, VenuePlanPreview, type VenuePlan } from '../components/VenuePlans';
 import ConcertCover from '../components/ConcertCover';
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 interface TicketSector { id: number; name: string; price: number; available: number; zone_id?: string; }
 interface Artist { id: number; name: string; avatar_url?: string | null; }
@@ -31,6 +33,7 @@ export default function ConcertPage() {
   const [selectedTickets, setSelectedTickets] = useState<Record<number, number>>({});
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null);
   const [purchaseSuccess, setPurchaseSuccess] = useState<{ count: number; total: number } | null>(null);
+  useLockBodyScroll(purchaseSuccess !== null)
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -357,7 +360,7 @@ export default function ConcertPage() {
 
       {/* Success modal */}
       <AnimatePresence>
-        {purchaseSuccess && (
+        {purchaseSuccess && createPortal(
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -413,7 +416,7 @@ export default function ConcertPage() {
               </div>
             </motion.div>
           </motion.div>
-        )}
+        , document.body)}
       </AnimatePresence>
     </motion.div>
   );

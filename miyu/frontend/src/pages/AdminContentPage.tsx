@@ -7,6 +7,8 @@ import { adminApi } from '../api/admin'
 import { getStoredTokens } from '../api/auth'
 import AIAnalysisPanel from '../components/AIAnalysisPanel'
 import TrackModerationModal from '../components/TrackModerationModal'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 const COLORS = {
   gold: '#fbbf24',
@@ -984,6 +986,7 @@ function ModerationVideos() {
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<number | null>(null)
   const [previewVideo, setPreviewVideo] = useState<any | null>(null)
+  useLockBodyScroll(previewVideo !== null)
 
   const fetchVideos = async () => {
     const tokens = getStoredTokens()
@@ -1143,7 +1146,7 @@ function ModerationVideos() {
         </div>
       )}
 
-      {previewVideo && (
+      {previewVideo && createPortal(
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setPreviewVideo(null)}>
           <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="aspect-video bg-black">
@@ -1186,7 +1189,8 @@ function ModerationVideos() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

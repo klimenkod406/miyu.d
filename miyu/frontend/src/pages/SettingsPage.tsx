@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { User, CreditCard, Play, Shield, Bell, Mic, Info, ChevronRight, Heart, HelpCircle, LogOut, Volume2 } from 'lucide-react'
 import { useTheme, defaultPalettes } from '../hooks/ThemeContext'
@@ -506,9 +507,11 @@ export default function SettingsPage() {
   const [artistApplicationLinks, setArtistApplicationLinks] = useState('')
   const [artistApplicationLoading, setArtistApplicationLoading] = useState(false)
   const [showArtistDeleteModal, setShowArtistDeleteModal] = useState(false)
+  useLockBodyScroll(showArtistDeleteModal)
   const [artistDeleteReason, setArtistDeleteReason] = useState('')
   const [artistDeletePassword, setArtistDeletePassword] = useState('')
   const [showSupportModal, setShowSupportModal] = useState(false)
+  useLockBodyScroll(showSupportModal)
   const [supportIssueAreas, setSupportIssueAreas] = useState<string[]>([])
   const [supportDescription, setSupportDescription] = useState('')
   const [supportFiles, setSupportFiles] = useState<File[]>([])
@@ -1146,7 +1149,7 @@ export default function SettingsPage() {
               )}
             </SettingSection>
 
-            {showArtistDeleteModal && (
+            {showArtistDeleteModal && createPortal(
               <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
                 <div className="w-full max-w-md rounded-2xl bg-[#0a0a0a] border border-white/10 p-6 space-y-4">
                   <h2 className="text-xl font-bold">Удалить страницу артиста</h2>
@@ -1176,7 +1179,8 @@ export default function SettingsPage() {
                     </button>
                   </div>
                 </div>
-              </div>
+              </div>,
+              document.body
             )}
           </div>
         )

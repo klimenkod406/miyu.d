@@ -1,7 +1,9 @@
+import { createPortal } from 'react-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, CheckCircle2, Loader2, Search } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { getStoredTokens } from '../api/auth'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 type SupportStatus = 'open' | 'closed'
 type Tab = 'active' | 'archive'
@@ -28,6 +30,7 @@ export default function SupportAdminPage() {
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null)
   const [responseText, setResponseText] = useState('')
   const [closingTicketId, setClosingTicketId] = useState<number | null>(null)
+  useLockBodyScroll(selectedTicket !== null)
 
   const fetchTickets = async () => {
     const tokens = getStoredTokens()
@@ -168,7 +171,7 @@ export default function SupportAdminPage() {
         )}
       </div>
 
-      {selectedTicket && (
+      {selectedTicket && createPortal(
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="w-full max-w-2xl rounded-2xl bg-[#0a0a0a] border border-white/10 p-6 space-y-5 max-h-[90vh] overflow-auto">
             <div className="flex items-start justify-between gap-4">
@@ -221,7 +224,8 @@ export default function SupportAdminPage() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+      document.body
       )}
     </div>
   )

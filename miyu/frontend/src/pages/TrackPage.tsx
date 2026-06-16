@@ -1,10 +1,12 @@
 import { Link, useParams } from 'react-router-dom'
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { usePlayer } from '../hooks/PlayerContext'
 import { getStoredTokens } from '../api/auth'
 import { Music, Pause, Play, Heart, FileText, Mic, ListMusic, X, Disc, ArrowRight } from 'lucide-react'
 import SimilarTracks from '../components/SimilarTracks'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 export default function TrackPage() {
   const { id } = useParams()
@@ -17,6 +19,7 @@ export default function TrackPage() {
   const [trackPlaylistIds, setTrackPlaylistIds] = useState<number[]>([])
   const [catalogTracks, setCatalogTracks] = useState<any[]>([])
   const player = usePlayer()
+  useLockBodyScroll(showLyrics)
   const trackIdRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -401,21 +404,21 @@ export default function TrackPage() {
       <SimilarTracks trackId={Number(id)} limit={10} />
 
       <AnimatePresence>
-        {track.lyrics && showLyrics && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowLyrics(false)}
-            />
+        {track.lyrics && showLyrics && createPortal((
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowLyrics(false)}
+          >
             <motion.div
               initial={{ opacity: 0, y: -56, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -36, scale: 0.97 }}
               transition={{ type: 'spring', damping: 26, stiffness: 360 }}
-              className="fixed left-1/2 top-5 z-50 w-[calc(100%-1.5rem)] max-w-2xl -translate-x-1/2 overflow-hidden rounded-[1.75rem] border border-white/12 bg-black/80 shadow-[0_24px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
+              className="w-[calc(100%-1.5rem)] max-w-2xl overflow-hidden rounded-[1.75rem] border border-white/12 bg-black/80 shadow-[0_24px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
+              onClick={e => e.stopPropagation()}
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_32%),linear-gradient(135deg,rgba(168,85,247,0.18),rgba(59,130,246,0.08),transparent_70%)]" />
               <div className="relative flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
@@ -437,8 +440,8 @@ export default function TrackPage() {
                 </pre>
               </div>
             </motion.div>
-          </>
-        )}
+          </motion.div>
+        ), document.body)}
       </AnimatePresence>
     </div>
   )

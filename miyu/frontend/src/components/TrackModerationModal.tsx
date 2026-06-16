@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { adminApi } from '../api/admin'
 import { aiApi } from '../api/ai'
 import { getStoredTokens } from '../api/auth'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 const RED_FLAGS = new Set(['hate', 'hate_slur', 'nsfw_cover', 'invalid_audio', 'possible_duplicate'])
 
@@ -57,6 +59,7 @@ interface Props {
 }
 
 export default function TrackModerationModal({ track, onClose, onResolved }: Props) {
+  useLockBodyScroll(true)
   const [comment, setComment] = useState('')
   const [processing, setProcessing] = useState<'approve' | 'reject' | null>(null)
   const [reanalyzing, setReanalyzing] = useState(false)
@@ -166,7 +169,7 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
     a.currentTime = pct * a.duration
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden"
       onClick={onClose}
@@ -533,7 +536,8 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
             </div>
           </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

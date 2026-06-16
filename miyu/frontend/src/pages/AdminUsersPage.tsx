@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Search, Loader2 } from 'lucide-react'
 import { authApi, getStoredTokens } from '../api/auth'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 interface User {
   id: number
@@ -23,6 +25,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [changingRole, setChangingRole] = useState<number | null>(null)
   const [showModal, setShowModal] = useState(false)
+  useLockBodyScroll(showModal)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [newRole, setNewRole] = useState('')
 
@@ -118,7 +121,7 @@ export default function AdminUsersPage() {
         ))}
       </div>
 
-      {showModal && selectedUser && (
+      {showModal && selectedUser && createPortal(
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="w-full max-w-md rounded-2xl bg-[#0a0a0a] border border-white/10 p-6">
             <h2 className="text-xl font-bold mb-2">Изменить роль</h2>
@@ -136,7 +139,8 @@ export default function AdminUsersPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

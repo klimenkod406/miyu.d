@@ -1,4 +1,7 @@
 import { useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+
 import { Music, Check, X, AlertTriangle, Zap, Shield, Clock, Globe, Copyright, Mic, Volume2, TrendingUp, FileAudio, Play, Pause, Disc, Album } from 'lucide-react'
 
 interface TrackAnalysis {
@@ -114,8 +117,9 @@ function AnalysisModal({ item, onClose, onApprove, onReject }: { item: TrackAnal
   const [activeTab, setActiveTab] = useState<'analysis' | 'preview'>('analysis')
 
   const scoreColor = item.aiScore >= 80 ? 'text-green-400' : item.aiScore >= 60 ? 'text-yellow-400' : 'text-red-400'
+  useLockBodyScroll(true)
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto glass rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/5 glass">
@@ -268,8 +272,8 @@ function AnalysisModal({ item, onClose, onApprove, onReject }: { item: TrackAnal
           </button>
         </div>
       </div>
-    </div>
-  )
+    </div>,
+    document.body)
 }
 
 export default function ModerationPage() {

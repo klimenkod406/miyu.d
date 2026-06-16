@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, Gift, X } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 interface PaymentSuccessModalProps {
   isOpen: boolean
@@ -10,6 +12,7 @@ interface PaymentSuccessModalProps {
 
 export default function PaymentSuccessModal({ isOpen, onClose, isGift = false }: PaymentSuccessModalProps) {
   const [show, setShow] = useState(false)
+  useLockBodyScroll(show)
 
   useEffect(() => {
     if (isOpen) {
@@ -29,7 +32,7 @@ export default function PaymentSuccessModal({ isOpen, onClose, isGift = false }:
     }, 300)
   }
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {show && (
         <>
@@ -146,6 +149,6 @@ export default function PaymentSuccessModal({ isOpen, onClose, isGift = false }:
           </div>
         </>
       )}
-    </AnimatePresence>
-  )
+    </AnimatePresence>,
+    document.body)
 }

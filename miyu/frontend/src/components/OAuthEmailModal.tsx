@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Mail, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 
 interface OAuthEmailModalProps {
   open: boolean;
@@ -10,6 +12,7 @@ interface OAuthEmailModalProps {
 export default function OAuthEmailModal({ open, onSubmit, onCancel }: OAuthEmailModalProps) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  useLockBodyScroll(open);
 
   if (!open) return null;
 
@@ -26,7 +29,7 @@ export default function OAuthEmailModal({ open, onSubmit, onCancel }: OAuthEmail
     onSubmit(email);
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-md mx-4 bg-[#1a1a2e] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
@@ -71,6 +74,7 @@ export default function OAuthEmailModal({ open, onSubmit, onCancel }: OAuthEmail
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

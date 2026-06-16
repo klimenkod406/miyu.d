@@ -9,6 +9,8 @@ import { getStoredTokens } from '../api/auth'
 import OnlineStatus from '../components/OnlineStatus'
 import type { User, Track, Album, Playlist } from '../types'
 import { extractColorsFromImage } from '../utils/colorExtractor'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 interface ProfileAchievement {
   id: number
@@ -91,6 +93,7 @@ export default function PublicProfilePage() {
   const [favoriteArtists, setFavoriteArtists] = useState<any[]>([])
   const [stats, setStats] = useState({ followers: 0, following: 0, plays: 0 })
   const [showRemoveDialog, setShowRemoveDialog] = useState(false)
+useLockBodyScroll(showRemoveDialog)
   const [isProfilePublic, setIsProfilePublic] = useState(true)
   const [bannerColors, setBannerColors] = useState<string[]>(['#8B5CF6', '#EC4899', '#3B82F6'])
   const [accentColor, setAccentColor] = useState<string>('#8B5CF6')
@@ -924,7 +927,7 @@ export default function PublicProfilePage() {
         </section>
       )}
 
-      {showRemoveDialog && (
+      {showRemoveDialog && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -962,7 +965,8 @@ export default function PublicProfilePage() {
               </button>
             </div>
           </motion.div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

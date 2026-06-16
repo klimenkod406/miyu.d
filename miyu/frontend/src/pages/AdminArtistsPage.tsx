@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Loader2, Search, Star, Users, Disc, Music4, Trash2, Check, X, Camera } from 'lucide-react'
 import { authApi, getStoredTokens } from '../api/auth'
@@ -41,6 +43,7 @@ export default function AdminArtistsPage() {
   const [query, setQuery] = useState('')
   const [reviewingApplicationId, setReviewingApplicationId] = useState<number | null>(null)
   const [showDeleteArtistModal, setShowDeleteArtistModal] = useState(false)
+  useLockBodyScroll(showDeleteArtistModal)
   const [artistToDelete, setArtistToDelete] = useState<ArtistCard | null>(null)
   const [deleteReason, setDeleteReason] = useState('')
 
@@ -345,7 +348,7 @@ export default function AdminArtistsPage() {
         </div>
       )}
 
-      {showDeleteArtistModal && artistToDelete && (
+      {showDeleteArtistModal && artistToDelete && createPortal(
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="w-full max-w-md rounded-2xl bg-[#0a0a0a] border border-white/10 p-6">
             <h2 className="text-xl font-bold mb-3">Удалить страницу артиста</h2>
@@ -364,7 +367,8 @@ export default function AdminArtistsPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

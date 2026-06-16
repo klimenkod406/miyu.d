@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Film, Play, Pause, VolumeX, Volume1, Volume2, Music, Maximize, Minimize, X } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 interface VideoPlayerProps {
   title: string
@@ -23,6 +25,7 @@ export default function VideoPlayer({
   const [progress, setProgress] = useState(0)
   const [showControls, setShowControls] = useState(true)
   const controlsTimeout = useRef<ReturnType<typeof setTimeout>>()
+  useLockBodyScroll(true)
 
   const handleMouseMove = () => {
     setShowControls(true)
@@ -42,7 +45,7 @@ export default function VideoPlayer({
     }
   }
 
-  return (
+  return createPortal(
     <div
       className={`fixed inset-0 z-50 bg-black flex items-center justify-center ${
         isFullscreen ? '' : 'bg-black/90'
@@ -145,6 +148,7 @@ export default function VideoPlayer({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
