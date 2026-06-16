@@ -12,6 +12,7 @@ from __future__ import annotations
 import difflib
 import logging
 from typing import Any
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -702,3 +703,196 @@ def _merge_adjacent(
     })
 
     return blocks
+
+
+# ── Sentence-level segment splitting ──────────────────────────────────────────
+
+
+def _split_text_by_sentences(text: str) -> list[str]:
+    """Split text into sentences. Uses multiple strategies in order.
+    
+    Strategy 1: Split on . ! ? followed by space.
+    Strategy 2: Split on line breaks (\\n).
+    Strategy 3: Fallback - split by word chunks (~15-20 words).
+    """
+    if not text or not text.strip():
+        return []
+
+    text = text.strip()
+
+    # Strategy 1: Split on . ! ? followed by space
+    parts = re.split(r'(?<=[.!?])\s+', text)
+    parts = [p.strip() for p in parts if p.strip()]
+
+    # Strategy 2: Split on newlines
+    if len(parts) <= 1 and '\n' in text:
+        parts = [p.strip() for p in text.split('\n') if p.strip()]
+
+    # Strategy 3: Fallback - split by word chunks
+    if len(parts) <= 1:
+        words = text.split()
+        chunk_size = 15  # target words per chunk
+        parts = []
+        for i in range(0, len(words), chunk_size):
+            chunk = ' '.join(words[i:i + chunk_size])
+            if chunk.strip():
+                parts.append(chunk.strip())
+
+    return parts
+
+
+def _split_segment_with_words(seg: dict) -> list[dict]:
+    """Split a segment that has word-level timestamps."""
+    text = seg.get('text', '')
+    words = seg.get('words', [])
+
+    if not text or not words:
+        return [dict(seg)]
+
+    sentences = _split_text_by_sentences(text)
+    if len(sentences) <= 1:
+        return [dict(seg)]
+
+    # Map each sentence to word indices
+    result = []
+    word_idx = 0
+    sent_char_pos = 0
+
+    for sentence in sentences:
+        if not sentence:
+            continue
+
+        # Walk words until we accumulate enough characters for this sentence
+        sentence_words = []
+        sent_char_pos = 0
+
+        while word_idx < len(words) and sent_char_pos < len(sentence):
+            word = words[word_idx]
+            word_text = word.get('word', '')
+            sentence_words.append(word)
+            sent_char_pos += len(word_text) + 1  # +1 for space
+            word_idx += 1
+
+        if sentence_words:
+            result.append({
+                'start': sentence_words[0].get('start', seg['start']),
+                'end': sentence_words[-1].get('end', seg['end']),
+                'text': sentence.strip(),
+                'words': list(sentence_words),
+            })
+
+    return result if result else [dict(seg)]
+
+
+def _split_segment_without_words(seg: dict) -> list[dict]:
+    """Split a segment without word timestamps - distribute time proportionally.
+    
+    Uses word count for proportional distribution (more accurate than char count).
+    """
+    text = seg.get('text', '')
+    if not text:
+        return [dict(seg)]
+
+    sentences = _split_text_by_sentences(text)
+    if len(sentences) <= 1:
+        return [dict(seg)]
+
+    start = seg['start']
+    end = seg['end']
+    duration = end - start
+
+    # Use word count for proportional distribution (more accurate than char count)
+    word_counts = [len(s.strip().split()) for s in sentences]
+    total_words = sum(word_counts)
+
+    result = []
+    current_start = start
+
+    for i, sentence in enumerate(sentences):
+        proportion = word_counts[i] / max(total_words, 1)
+        sentence_duration = duration * proportion
+        current_end = current_start + sentence_duration
+
+        # Round to 2 decimals
+        result.append({
+            'start': round(current_start, 2),
+            'end': round(current_end, 2),
+            'text': sentence,
+        })
+        current_start = current_end
+
+    return result
+
+
+def _join_short_segments(segments: list[dict], min_duration: float = 2.0) -> list[dict]:
+    """Join consecutive short segments."""
+    if not segments:
+        return segments
+
+    result = [dict(segments[0])]
+    for seg in segments[1:]:
+        last = result[-1]
+        last_dur = last['end'] - last['start']
+
+        if last_dur < min_duration:
+            # Join
+            last['end'] = seg['end']
+            last_text = str(last.get('text', ''))
+            seg_text = str(seg.get('text', ''))
+            if last_text and seg_text:
+                last['text'] = last_text + ' ' + seg_text
+            elif seg_text:
+                last['text'] = seg_text
+
+            # Merge words
+            last_words = last.get('words') or []
+            seg_words = seg.get('words') or []
+            if seg_words:
+                last['words'] = last_words + seg_words
+        else:
+            result.append(dict(seg))
+
+    return result
+
+
+def split_segments_by_sentences(
+    segments: list[dict],
+    join_short: bool = True,
+    min_duration: float = 2.0,
+) -> list[dict]:
+    """
+    Splits each segment at sentence boundaries using word-level timestamps.
+
+    If words list is available:
+        - Split text at sentence endings (.!?)
+        - Map each sentence to its word-level timestamps
+        - Create new segment for each sentence with correct start/end
+
+    If words list is NOT available:
+        - Split text at sentence endings
+        - Distribute the segment's time proportionally by character count
+
+    Args:
+        segments: list of dicts with {start, end, text, words?}
+        join_short: if True, consecutive short segments (< min_duration) are joined
+        min_duration: minimum segment duration in seconds
+
+    Returns:
+        list of dicts with {start, end, text, words?}
+    """
+    if not segments:
+        return []
+
+    result = []
+    for seg in segments:
+        words = seg.get('words')
+        if words:
+            sub = _split_segment_with_words(seg)
+        else:
+            sub = _split_segment_without_words(seg)
+        result.extend(sub)
+
+    if join_short:
+        result = _join_short_segments(result, min_duration)
+
+    return result

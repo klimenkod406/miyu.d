@@ -14,7 +14,7 @@ const dockerCmd = 'docker';
 const sharedAiEnv = {
   PYTHONPATH: path.join(rootDir, 'ai-service'),
   MIYU_AI_DB_PATH: path.join(rootDir, 'database', 'miyu.db'),
-  MIYU_AI_STORAGE_ROOT: path.join(rootDir, 'backend'),
+  MIYU_AI_STORAGE_ROOT: rootDir,
   MIYU_AI_HOST: '0.0.0.0',
   MIYU_AI_PORT: '8001',
   MIYU_AI_REDIS_URL: 'redis://localhost:6379/0',

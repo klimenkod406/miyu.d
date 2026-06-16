@@ -156,6 +156,15 @@ def analyze_track(track_id: int, file_path: str | None = None) -> dict[str, Any]
 
     lyrics_text = best_lyrics_text
 
+    # --- 3.4. Sentence-level segment splitting ---
+    if lyrics_segments and not invalid_audio:
+        try:
+            sentence_segments = structure.split_segments_by_sentences(lyrics_segments)
+            if sentence_segments:
+                lyrics_segments = sentence_segments
+        except Exception as e:
+            logger.exception("sentence splitting failed: %s", e)
+
     # --- 3.5. Структурная сегментация ---
     track_structure: list[dict] | None = None
     if lyrics_segments and not invalid_audio:
