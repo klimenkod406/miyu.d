@@ -132,7 +132,7 @@ export default function FollowingPage() {
           >
             <Link to={`/user/${user.id}`} className="flex items-center gap-3 flex-1 min-w-0">
               <div className="relative">
-                <img
+                <img loading="lazy"
                   src={user.avatar_url ? `${user.avatar_url}` : '/default-avatar.svg'}
                   alt={user.username}
                   className="w-12 h-12 rounded-full object-cover"

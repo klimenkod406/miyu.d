@@ -200,7 +200,7 @@ export default function FeedPage() {
             >
               <div className="flex items-start gap-3">
                 <Link to={actorTarget} className="relative">
-                  <img
+                  <img loading="lazy"
                     src={actor.avatar_url ? `${actor.avatar_url}` : '/default-avatar.svg'}
                     alt={actor.username}
                     className="w-10 h-10 rounded-full object-cover"
@@ -250,7 +250,7 @@ export default function FeedPage() {
 
                   {item.track && (
                     <div className="mt-3 p-3 rounded-lg bg-white/[0.03] flex items-center gap-3">
-                      <img
+                      <img loading="lazy"
                         src={item.track.cover_url || item.track.album?.cover_url || '/default-cover.svg'}
                         alt={item.track.title}
                         className="w-12 h-12 rounded object-cover"
@@ -276,7 +276,7 @@ export default function FeedPage() {
 
                   {!item.track && item.album && (
                     <Link to={`/album/${item.album.id}`} className="mt-3 p-3 rounded-lg bg-white/[0.03] flex items-center gap-3 transition hover:bg-white/[0.06]">
-                      <img
+                      <img loading="lazy"
                         src={item.album.cover_url || '/default-cover.svg'}
                         alt={item.album.title}
                         className="w-12 h-12 rounded object-cover"

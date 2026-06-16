@@ -112,7 +112,7 @@ export default function ArtistAlbumsPage() {
               <Link to={`/album/${album.id}`}>
                 <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 mb-3 flex items-center justify-center overflow-hidden transition duration-200 relative">
                   {album.cover_url ? (
-                    <img src={album.cover_url} alt="" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={album.cover_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <Disc size={36} className="text-white/30" />
                   )}

@@ -283,7 +283,7 @@ function ColorPaletteSettings() {
           />
           <div className="absolute -bottom-5 left-5 w-14 h-14 rounded-full border-[3px] border-[#0a0a0a] overflow-hidden shadow-xl transition-all duration-500">
             {user?.avatar_url ? (
-              <img
+              <img loading="lazy"
                 src={`${user.avatar_url}`}
                 alt="Avatar"
                 className="w-full h-full object-cover"
@@ -1340,7 +1340,7 @@ export default function SettingsPage() {
                 <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {supportFilePreviews.map(({ file, url }) => (
                     <div key={`${file.name}-${file.size}`} className="rounded-xl overflow-hidden border border-white/[0.05] bg-white/[0.02]">
-                      <img src={url} alt={file.name} className="w-full h-28 object-cover" />
+                      <img loading="lazy" src={url} alt={file.name} className="w-full h-28 object-cover" />
                       <div className="p-2 text-xs text-white/50 truncate">{file.name}</div>
                     </div>
                   ))}

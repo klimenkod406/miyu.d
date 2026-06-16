@@ -209,7 +209,7 @@ export default function Player() {
     <>
       <audio
         ref={audioRef}
-        crossOrigin="anonymous"
+        crossOrigin="anonymous" preload="metadata"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}

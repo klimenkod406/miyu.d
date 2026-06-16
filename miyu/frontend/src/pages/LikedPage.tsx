@@ -195,7 +195,7 @@ export default function LikedPage() {
                 <div className="flex min-w-0 items-center gap-3 max-[414px]:gap-2.5">
                   <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/5 max-[414px]:h-8 max-[414px]:w-8">
                     {track.cover_url ? (
-                      <img src={track.cover_url} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <Music className="h-5 w-5 text-white/40 max-[414px]:h-4 max-[414px]:w-4" />
                     )}

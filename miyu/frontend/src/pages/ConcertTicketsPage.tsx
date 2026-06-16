@@ -168,7 +168,7 @@ export default function ConcertTicketsPage() {
               transition={{ duration: 0.2 }}
               className={`bg-white p-5 rounded-2xl ${active.ticket_status !== 'valid' ? 'opacity-40 grayscale' : ''}`}
             >
-              <img src={active.qr_code} alt="QR Code" className="w-56 h-56 md:w-64 md:h-64" />
+              <img loading="lazy" src={active.qr_code} alt="QR Code" className="w-56 h-56 md:w-64 md:h-64" />
             </motion.div>
           </AnimatePresence>
         </div>

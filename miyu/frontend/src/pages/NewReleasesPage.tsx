@@ -107,7 +107,7 @@ export default function NewReleasesPage() {
             <div className="relative grid gap-4 md:grid-cols-[220px,1fr] md:items-center">
               <div className="aspect-square overflow-hidden rounded-[1.35rem] bg-white/[0.03] shadow-[0_16px_40px_rgba(0,0,0,0.25)]">
                 {featured.cover_url || featured.album?.cover_url ? (
-                  <img src={featured.cover_url || featured.album?.cover_url} alt={featured.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                  <img loading="lazy" src={featured.cover_url || featured.album?.cover_url} alt={featured.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                 ) : (
                   <div className="flex h-full items-center justify-center"><Music className="h-14 w-14 text-white/20" /></div>
                 )}
@@ -141,7 +141,7 @@ export default function NewReleasesPage() {
               <div className="relative">
                 <div className="mb-4 aspect-square overflow-hidden rounded-[1.2rem] bg-white/[0.03] shadow-[0_16px_40px_rgba(0,0,0,0.25)]">
                   {track.cover_url || track.album?.cover_url ? (
-                    <img src={track.cover_url || track.album?.cover_url} alt={track.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    <img loading="lazy" src={track.cover_url || track.album?.cover_url} alt={track.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full items-center justify-center"><Music className="h-10 w-10 text-white/20" /></div>
                   )}
@@ -191,7 +191,7 @@ export default function NewReleasesPage() {
 
                         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/[0.03] text-left">
                           {track.cover_url || track.album?.cover_url ? (
-                            <img src={track.cover_url || track.album?.cover_url} alt={track.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                            <img loading="lazy" src={track.cover_url || track.album?.cover_url} alt={track.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_45%),linear-gradient(135deg,rgba(16,185,129,0.24),rgba(236,72,153,0.18),rgba(59,130,246,0.16))]">
                               <Music className="h-6 w-6 text-white/60" />

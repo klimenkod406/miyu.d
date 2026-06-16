@@ -46,7 +46,7 @@ function TrackCard({ track, tracks, canNavigate }: { track: Track; tracks: Track
     >
       <div className="aspect-square rounded-xl mb-3 overflow-hidden relative bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition duration-200">
         {coverUrl ? (
-          <img src={coverUrl} alt={track.title} className="w-full h-full object-cover" />
+          <img loading="lazy" src={coverUrl} alt={track.title} className="w-full h-full object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <Music className="w-16 h-16 text-white/20" />
@@ -242,7 +242,7 @@ function PersonalizedArtistCard({ artist }: { artist: PersonalizedHomeArtist }) 
     >
       <div className="relative mx-auto mb-4 h-24 w-24 overflow-hidden rounded-full border border-white/[0.08] bg-white/[0.03] shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition duration-300 group-hover:scale-[1.03] group-hover:border-white/15">
         {artist.avatar_url ? (
-          <img src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" />
+          <img loading="lazy" src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-500/40 via-amber-500/30 to-rose-500/30">
             <Music className="h-9 w-9 text-white/35" />
@@ -275,7 +275,7 @@ function PersonalizedPlaylistCard({ playlist, accent = 'violet' }: { playlist: P
     >
       <div className="mb-3 aspect-square overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.03]">
         {playlist.cover_url ? (
-          <img src={playlist.cover_url} alt={playlist.title} className="h-full w-full object-cover" />
+          <img loading="lazy" src={playlist.cover_url} alt={playlist.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-600/40 to-pink-500/30">
             <ListMusic className="h-10 w-10 text-white/35" />
@@ -360,7 +360,7 @@ function PlaylistOfDayPromo({
             <div className="overflow-hidden rounded-[2rem] border border-white/25 bg-white/[0.07] p-3 shadow-2xl backdrop-blur-2xl transition duration-300 group-hover:scale-[1.02]">
               <div className="aspect-square overflow-hidden rounded-[1.5rem] bg-white/10">
                 {playlist.cover_url ? (
-                  <img src={playlist.cover_url} alt={playlist.title} className="h-full w-full object-cover" />
+                  <img loading="lazy" src={playlist.cover_url} alt={playlist.title} className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-500/70 to-amber-300/60">
                     <ListMusic className="h-14 w-14 text-white/60" />
@@ -380,7 +380,7 @@ function ArtistCard({ artist, canNavigate }: { artist: PopularArtist; canNavigat
     <>
       <div className="relative mx-auto mb-4 h-28 w-28 overflow-hidden rounded-full border border-white/[0.08] bg-white/[0.03] shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition duration-300 group-hover:scale-[1.03] group-hover:border-white/15">
         {artist.avatar_url ? (
-          <img src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" />
+          <img loading="lazy" src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-500/30 via-pink-500/20 to-cyan-500/20">
             <Music className="h-10 w-10 text-white/35" />
@@ -465,7 +465,7 @@ function ChartRow({
 
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-white/[0.08] bg-white/[0.03]">
         {coverUrl ? (
-          <img src={coverUrl} alt={track.title} className="h-full w-full object-cover" />
+          <img loading="lazy" src={coverUrl} alt={track.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Music className="h-6 w-6 text-white/25" />

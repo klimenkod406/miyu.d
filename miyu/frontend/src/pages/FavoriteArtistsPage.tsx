@@ -94,7 +94,7 @@ export default function FavoriteArtistsPage() {
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 rounded-full bg-white/[0.03] border border-white/[0.05] overflow-hidden flex items-center justify-center shrink-0">
                   {artist.avatar_url ? (
-                    <img src={artist.avatar_url} alt={artist.username} className="w-full h-full object-cover" />
+                    <img loading="lazy" src={artist.avatar_url} alt={artist.username} className="w-full h-full object-cover" />
                   ) : (
                     <Mic size={28} className="text-white/30" />
                   )}

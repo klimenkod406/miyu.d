@@ -184,7 +184,7 @@ export default function AdminArtistAvatarsPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-14 h-14 rounded-full overflow-hidden bg-white/[0.03] border border-white/[0.06] flex items-center justify-center shrink-0">
                     {displaySrc ? (
-                      <img src={displaySrc} alt={artist.username} className="w-full h-full object-cover" />
+                      <img loading="lazy" src={displaySrc} alt={artist.username} className="w-full h-full object-cover" />
                     ) : (
                       <Music4 className="w-6 h-6 text-white/30" />
                     )}

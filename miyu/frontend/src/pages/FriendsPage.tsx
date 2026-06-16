@@ -30,7 +30,7 @@ function UserCard({ user, action, isOnline }: { user: User & { is_friend?: boole
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition">
       <Link to={`/user/${user.id}`} className="relative">
-        <img
+        <img loading="lazy"
           src={user.avatar_url ? `${user.avatar_url}` : '/default-avatar.svg'}
           alt={user.username}
           className="w-12 h-12 rounded-full object-cover"
@@ -481,7 +481,7 @@ export default function FriendsPage() {
                 className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]"
               >
                 <Link to={`/user/${request.from_user_id}`}>
-                  <img
+                  <img loading="lazy"
                     src={request.from_user?.avatar_url ? `${request.from_user.avatar_url}` : '/default-avatar.svg'}
                     alt={request.from_user?.username}
                     className="w-12 h-12 rounded-full object-cover"

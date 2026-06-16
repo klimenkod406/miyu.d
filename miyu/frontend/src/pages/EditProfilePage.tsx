@@ -167,7 +167,7 @@ export default function EditProfilePage() {
             <h2 className="text-lg font-medium mb-6 text-center">Аватар</h2>
             <div className="flex flex-col items-center">
               <div className="relative mb-4">
-                <img
+                <img loading="lazy"
                   src={avatar || '/default-avatar.svg'}
                   alt="Avatar"
                   className="w-32 h-32 rounded-xl object-cover border-2 border-white/10"

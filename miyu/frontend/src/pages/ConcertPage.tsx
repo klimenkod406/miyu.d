@@ -192,7 +192,7 @@ export default function ConcertPage() {
                   >
                     <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                       {(artist as any).avatar_url ? (
-                        <img
+                        <img loading="lazy"
                           src={(artist as any).avatar_url}
                           alt={artist.name}
                           className="w-full h-full object-cover"

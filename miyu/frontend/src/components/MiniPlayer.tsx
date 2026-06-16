@@ -51,7 +51,7 @@ const MemoizedMiniPlayerContent = memo(function MiniPlayerContent() {
       <div className="relative flex items-center gap-3 max-[414px]:gap-2.5">
         <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/10 text-xl shadow-inner max-[414px]:h-10 max-[414px]:w-10">
           {coverUrl ? (
-            <img src={coverUrl} alt="" className="w-full h-full object-cover" />
+            <img loading="lazy" src={coverUrl} alt="" className="w-full h-full object-cover" />
           ) : (
             <Music className="w-6 h-6 text-white/60" />
           )}

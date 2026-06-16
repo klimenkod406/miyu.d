@@ -190,7 +190,7 @@ export default function SupportAdminPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {selectedTicket.attachments.map((attachment) => (
                     <a key={attachment} href={attachment} target="_blank" rel="noreferrer" className="rounded-xl overflow-hidden border border-white/[0.05] bg-white/[0.02]">
-                      <img src={attachment} alt="support attachment" className="w-full h-48 object-cover" />
+                      <img loading="lazy" src={attachment} alt="support attachment" className="w-full h-48 object-cover" />
                     </a>
                   ))}
                 </div>

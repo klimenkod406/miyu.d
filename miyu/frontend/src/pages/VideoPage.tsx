@@ -156,7 +156,7 @@ export default function VideoPage() {
         {!isPlaying && !videoElementRef.current?.currentTime && (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-purple-900/30 via-dark-900 to-pink-900/30">
             {video.thumbnail_url ? (
-              <img src={video.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+              <img loading="lazy" src={video.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" />
             ) : null}
             <button
               onClick={togglePlay}
@@ -337,7 +337,7 @@ export default function VideoPage() {
           >
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
               {video.thumbnail_url ? (
-                <img src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                <img loading="lazy" src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
               ) : (
                 <Music className="w-6 h-6 text-purple-400" />
               )}

@@ -131,7 +131,7 @@ export default function ArtistConcertsPage() {
             <div key={concert.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.05] hover:border-white/10 transition group">
               <div className="w-16 h-16 rounded-lg bg-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
                 {concert.cover_url ? (
-                  <img src={concert.cover_url} alt={concert.title} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={concert.cover_url} alt={concert.title} className="w-full h-full object-cover" />
                 ) : (
                   <Calendar className="w-6 h-6 text-white/30" />
                 )}

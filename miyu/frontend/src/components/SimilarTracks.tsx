@@ -97,7 +97,7 @@ export default function SimilarTracks({ trackId, limit = 10, title = 'Похож
             >
               <div className="relative w-12 h-12 rounded-lg bg-white/[0.05] overflow-hidden flex-shrink-0">
                 {t.cover_url ? (
-                  <img src={t.cover_url} alt="" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={t.cover_url} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Music2 className="w-5 h-5 text-white/30" />

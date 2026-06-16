@@ -269,7 +269,7 @@ export default function ArtistStatsPage() {
             </button>
             <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03]">
               {artist?.avatar_url ? (
-                <img src={`${artist.avatar_url}`} alt={artist?.username || ''} className="h-full w-full object-cover" />
+                <img loading="lazy" src={`${artist.avatar_url}`} alt={artist?.username || ''} className="h-full w-full object-cover" />
               ) : (
                 <Music className="h-7 w-7 text-white/40" />
               )}

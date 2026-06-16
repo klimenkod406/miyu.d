@@ -253,7 +253,7 @@ function ModerationConcerts() {
                 {/* Cover */}
                 <div className="w-24 h-24 rounded-lg bg-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {c.cover_url ? (
-                    <img src={c.cover_url} alt="" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={c.cover_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <Ticket className="w-8 h-8 text-purple-400/60" />
                   )}
@@ -530,7 +530,7 @@ function ModerationTracks() {
                   <div className="flex items-start gap-4">
                     <div className="w-14 h-14 rounded-lg bg-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {track.cover_url ? (
-                        <img src={track.cover_url} alt="" className="w-full h-full object-cover" />
+                        <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <FileAudio className="w-6 h-6 text-green-400" />
                       )}
@@ -669,7 +669,7 @@ function ModerationTracks() {
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 rounded-lg bg-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
                 {track.cover_url ? (
-                  <img src={track.cover_url} alt="" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <FileAudio className="w-6 h-6 text-blue-400" />
                 )}
@@ -878,7 +878,7 @@ function ModerationAlbums() {
             >
               <div className="w-16 h-16 rounded-lg bg-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
                 {album.cover_url ? (
-                  <img src={album.cover_url.startsWith('http') ? album.cover_url : album.cover_url} alt="" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={album.cover_url.startsWith('http') ? album.cover_url : album.cover_url} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <Album className="w-8 h-8 text-purple-400" />
                 )}
@@ -1080,7 +1080,7 @@ function ModerationVideos() {
                 onClick={() => setPreviewVideo(video)}
               >
                 {video.thumbnail_url ? (
-                  <img src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <FileVideo className="w-8 h-8 text-purple-400" />
                 )}

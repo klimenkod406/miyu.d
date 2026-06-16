@@ -343,7 +343,7 @@ export default function ArtistPage() {
               >
                 <div className="aspect-square overflow-hidden rounded-[1.8rem] bg-[#100d1c]">
                   {hasAvatar ? (
-                    <img src={`${artist.avatar_url}`} alt={artist.username} className="h-full w-full object-cover" />
+                    <img loading="lazy" src={`${artist.avatar_url}`} alt={artist.username} className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center" style={{ background: `linear-gradient(135deg, ${bannerColors[0]}, ${bannerColors[1]})` }}>
                       <Mic size={78} className="text-white/90" />
@@ -441,7 +441,7 @@ export default function ArtistPage() {
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.05]" style={{ boxShadow: isCurrentTrack ? `0 0 0 1px ${bannerColors[1]}40` : undefined }}>
                         {track.cover_url ? (
-                          <img src={track.cover_url} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                          <img loading="lazy" src={track.cover_url} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center" style={{ background: `${bannerColors[0]}18` }}>
                             <Music className="h-5 w-5 text-white/40" />
@@ -496,7 +496,7 @@ export default function ArtistPage() {
                 <Link key={album.id} to={`/album/${album.id}`} className="group min-w-0 rounded-2xl border border-white/[0.08] bg-black/20 p-2.5 transition duration-300 hover:-translate-y-1 hover:border-white/[0.16] hover:bg-white/[0.07] hover:shadow-[0_20px_55px_rgba(0,0,0,0.35)]">
                   <div className="relative mb-3 aspect-square overflow-hidden rounded-xl bg-white/[0.04]">
                     {album.cover_url ? (
-                      <img src={album.cover_url} alt={album.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-110" />
+                      <img loading="lazy" src={album.cover_url} alt={album.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-110" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center" style={{ background: `linear-gradient(135deg, ${bannerColors[0]}1f, ${bannerColors[2]}18)` }}>
                         <Disc size={38} className="text-white/30" />

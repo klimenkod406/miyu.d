@@ -74,7 +74,7 @@ export default function LikedPlaylistsPage() {
           <Link key={playlist.id} to={`/playlist/${playlist.id}`} className="group">
             <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] group-hover:border-white/10 transition overflow-hidden relative mb-3">
               {playlist.cover_url ? (
-                <img
+                <img loading="lazy"
                   src={playlist.cover_url}
                   alt={playlist.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

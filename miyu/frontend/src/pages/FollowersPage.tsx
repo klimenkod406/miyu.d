@@ -105,7 +105,7 @@ export default function FollowersPage() {
               className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition"
             >
               <div className="relative">
-                <img
+                <img loading="lazy"
                   src={user.avatar_url ? `${user.avatar_url}` : '/default-avatar.svg'}
                   alt={user.username}
                   className="w-12 h-12 rounded-full object-cover"

@@ -53,7 +53,7 @@ function ChartCard({
 
         <button type="button" onClick={playTrack} className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/[0.03] text-left">
           {coverUrl ? (
-            <img src={coverUrl} alt={track.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+            <img loading="lazy" src={coverUrl} alt={track.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_45%),linear-gradient(135deg,rgba(99,102,241,0.28),rgba(236,72,153,0.2),rgba(34,197,94,0.16))]">
               <Music className="h-6 w-6 text-white/60" />

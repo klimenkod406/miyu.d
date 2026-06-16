@@ -52,7 +52,7 @@ function ArtistAvatar({ artist, size = 'medium' }: { artist: PopularArtist; size
   return (
     <div className={`${sizeClass} overflow-hidden rounded-full border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_45%),linear-gradient(135deg,rgba(99,102,241,0.35),rgba(236,72,153,0.25),rgba(34,197,94,0.2))] shadow-[0_18px_50px_rgba(0,0,0,0.28)]`}>
       {artist.avatar_url ? (
-        <img src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" />
+        <img loading="lazy" src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
           <Mic2 className={`${iconSize} text-white/65`} />

@@ -182,7 +182,7 @@ export default function SearchPage() {
                           <span className="w-8 text-center text-white/30 max-[414px]:hidden">{i + 1}</span>
                           <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/[0.05] max-[414px]:h-11 max-[414px]:w-11">
                             {track.cover_url ? (
-                              <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
+                              <img loading="lazy" src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
                             ) : (
                               <Music className="w-5 h-5 text-white/40" />
                             )}
@@ -209,7 +209,7 @@ export default function SearchPage() {
                         <Link key={artist.id} to={`/artist/${artist.id}`} className="group text-center">
                           <div className="w-full aspect-square rounded-full bg-white/[0.02] border border-white/[0.05] hover:border-white/10 mb-3 flex items-center justify-center overflow-hidden transition duration-200">
                             {artist.avatar_url ? (
-                              <img src={artist.avatar_url} alt={artist.name} className="w-full h-full object-cover" />
+                              <img loading="lazy" src={artist.avatar_url} alt={artist.name} className="w-full h-full object-cover" />
                             ) : (
                               <Mic size={30} className="text-white/30" />
                             )}
@@ -230,7 +230,7 @@ export default function SearchPage() {
                         <Link key={album.id} to={`/album/${album.id}`} className="group">
                           <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 mb-3 flex items-center justify-center overflow-hidden transition duration-200 relative">
                             {album.cover_url ? (
-                              <img src={album.cover_url} alt={album.title} className="w-full h-full object-cover" />
+                              <img loading="lazy" src={album.cover_url} alt={album.title} className="w-full h-full object-cover" />
                             ) : (
                               <Disc size={36} className="text-white/30" />
                             )}
@@ -256,7 +256,7 @@ export default function SearchPage() {
                         <Link key={concert.id} to={`/concert/${concert.id}`} className="group flex items-center gap-4 rounded-xl border border-white/[0.05] bg-white/[0.02] p-4 transition duration-200 hover:border-white/10 hover:bg-white/[0.06] max-[414px]:items-start max-[414px]:gap-3 max-[414px]:p-3">
                           <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 max-[414px]:h-12 max-[414px]:w-12">
                             {concert.cover_url ? (
-                              <img src={concert.cover_url} alt={concert.title} className="w-full h-full object-cover" />
+                              <img loading="lazy" src={concert.cover_url} alt={concert.title} className="w-full h-full object-cover" />
                             ) : (
                               <Ticket className="w-6 h-6 text-purple-400" />
                             )}
@@ -293,7 +293,7 @@ export default function SearchPage() {
                         <Link key={playlist.id} to={`/playlist/${playlist.id}`} className="group">
                           <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 mb-3 flex items-center justify-center overflow-hidden relative transition duration-200">
                             {playlist.cover_url ? (
-                              <img src={playlist.cover_url} alt={playlist.title} className="w-full h-full object-cover" />
+                              <img loading="lazy" src={playlist.cover_url} alt={playlist.title} className="w-full h-full object-cover" />
                             ) : (
                               <ListMusic size={36} className="text-white/30" />
                             )}

@@ -243,7 +243,7 @@ export default function ArtistCreateAlbumPage() {
               <div className="w-56 h-56 rounded-2xl border-2 border-dashed border-white/20 hover:border-white/40 transition bg-white/[0.02] overflow-hidden relative group">
                 {coverPreview ? (
                   <>
-                    <img src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => { setCoverPreview(null); setCoverFile(null); }}

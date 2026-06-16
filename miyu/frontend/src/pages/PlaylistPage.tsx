@@ -320,7 +320,7 @@ export default function PlaylistPage() {
         <div className="absolute inset-0 z-0">
           {playlist.cover_url ? (
             <>
-              <img src={playlist.cover_url} alt="" className="w-full h-full object-cover blur-3xl scale-125 opacity-40" />
+              <img loading="lazy" src={playlist.cover_url} alt="" className="w-full h-full object-cover blur-3xl scale-125 opacity-40" />
               <div className="absolute inset-0 bg-dark-900/60" />
             </>
           ) : (
@@ -335,7 +335,7 @@ export default function PlaylistPage() {
             onMouseLeave={() => isOwner && setShowCoverUpload(false)}
           >
             {playlist.cover_url ? (
-              <img src={playlist.cover_url} alt={playlist.title} className="w-full h-full object-cover" />
+              <img loading="lazy" src={playlist.cover_url} alt={playlist.title} className="w-full h-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-white/5">
                 <ListMusic size={80} className="text-white/30 max-[414px]:h-10 max-[414px]:w-10 max-[375px]:h-8 max-[375px]:w-8" />
@@ -465,7 +465,7 @@ export default function PlaylistPage() {
                     </div>
                     <div className="flex min-w-0 items-center gap-3 max-[414px]:gap-2.5">
                       {track.cover_url ? (
-                        <img src={getCoverUrl(track.cover_url)} alt="" className="h-10 w-10 flex-shrink-0 rounded object-cover max-[414px]:h-8 max-[414px]:w-8" />
+                        <img loading="lazy" src={getCoverUrl(track.cover_url)} alt="" className="h-10 w-10 flex-shrink-0 rounded object-cover max-[414px]:h-8 max-[414px]:w-8" />
                       ) : (
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-white/[0.02] max-[414px]:h-8 max-[414px]:w-8">
                           <Music size={20} className="text-white/30 max-[414px]:h-4 max-[414px]:w-4" />

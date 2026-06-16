@@ -206,7 +206,7 @@ export default function TrackPage() {
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 mb-8">
         <div className="w-40 md:w-52 md:h-52 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
           {coverUrl ? (
-            <img src={coverUrl} alt={track.title} className="w-full h-full object-cover" />
+            <img loading="lazy" src={coverUrl} alt={track.title} className="w-full h-full object-cover" />
           ) : (
             <Music size={80} className="text-white/30" />
           )}
@@ -327,7 +327,7 @@ export default function TrackPage() {
                     className="group flex items-center gap-3 rounded-2xl border border-white/[0.05] bg-white/[0.02] p-3 text-left transition hover:border-white/10 hover:bg-white/[0.04]"
                   >
                     <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white/[0.03]">
-                      {item.cover_url ? <img src={item.cover_url} alt={item.title} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center"><Music className="h-5 w-5 text-white/25" /></div>}
+                      {item.cover_url ? <img loading="lazy" src={item.cover_url} alt={item.title} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center"><Music className="h-5 w-5 text-white/25" /></div>}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold text-white transition group-hover:text-purple-300">{item.title}</p>
@@ -354,7 +354,7 @@ export default function TrackPage() {
                     className="group rounded-2xl border border-white/[0.05] bg-white/[0.02] p-4 transition hover:border-white/10 hover:bg-white/[0.04]"
                   >
                     <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-white/[0.08] bg-white/[0.03]">
-                      {artist.avatar_url ? <img src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" /> : <Mic className="h-8 w-8 text-white/25" />}
+                      {artist.avatar_url ? <img loading="lazy" src={artist.avatar_url} alt={artist.username} className="h-full w-full object-cover" /> : <Mic className="h-8 w-8 text-white/25" />}
                     </div>
                     <p className="truncate text-center font-semibold text-white transition group-hover:text-purple-300">{artist.username}</p>
                     <p className="mt-1 truncate text-center text-xs text-white/40">Открыть артиста</p>
@@ -377,7 +377,7 @@ export default function TrackPage() {
                 {discoveryTracks.map((item) => (
                   <div key={item.id} className="flex items-center gap-3 rounded-2xl border border-white/[0.05] bg-black/10 p-3">
                     <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white/[0.03]">
-                      {item.cover_url ? <img src={item.cover_url} alt={item.title} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center"><Music className="h-5 w-5 text-white/25" /></div>}
+                      {item.cover_url ? <img loading="lazy" src={item.cover_url} alt={item.title} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center"><Music className="h-5 w-5 text-white/25" /></div>}
                     </div>
                     <div className="min-w-0 flex-1">
                       <Link to={`/track/${item.id}`} className="block truncate font-medium text-white transition hover:text-purple-300">{item.title}</Link>

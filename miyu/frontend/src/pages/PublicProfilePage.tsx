@@ -496,7 +496,7 @@ export default function PublicProfilePage() {
         
         <div className="absolute -bottom-12 left-6 flex items-end gap-4">
           <div className="relative">
-            <img
+            <img loading="lazy"
               src={profileUser.avatar_url ? `${profileUser.avatar_url}` : '/default-avatar.svg'}
               alt={profileUser.username}
               className="w-24 h-24 rounded-full object-cover border-4 border-black"
@@ -602,7 +602,7 @@ export default function PublicProfilePage() {
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/10">
                 {profilePresence.listeningTo.track.cover_url ? (
-                  <img src={profilePresence.listeningTo.track.cover_url} alt={profilePresence.listeningTo.track.title} className="h-full w-full object-cover" />
+                  <img loading="lazy" src={profilePresence.listeningTo.track.cover_url} alt={profilePresence.listeningTo.track.title} className="h-full w-full object-cover" />
                 ) : (
                   <Music className="h-7 w-7 text-white/40" />
                 )}
@@ -712,7 +712,7 @@ export default function PublicProfilePage() {
                     <div className="group relative rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/20 transition overflow-hidden">
                       <div className="aspect-square relative overflow-hidden">
                         {playlist.cover_url ? (
-                          <img
+                          <img loading="lazy"
                             src={playlist.cover_url}
                             alt={playlist.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -774,7 +774,7 @@ export default function PublicProfilePage() {
                     <div className="group relative rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/20 transition overflow-hidden">
                       <div className="aspect-square relative overflow-hidden">
                         {album.cover_url ? (
-                          <img
+                          <img loading="lazy"
                             src={album.cover_url}
                             alt={album.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -824,7 +824,7 @@ export default function PublicProfilePage() {
                     <div className="group relative rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/20 transition overflow-hidden">
                       <div className="aspect-square relative overflow-hidden">
                         {artist.avatar_url ? (
-                          <img
+                          <img loading="lazy"
                             src={`${artist.avatar_url}`}
                             alt={artist.username}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -884,7 +884,7 @@ export default function PublicProfilePage() {
                 className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition group"
               >
                 {track.cover_url ? (
-                  <img
+                  <img loading="lazy"
                     src={track.cover_url.startsWith('http') ? track.cover_url : `${track.cover_url}`}
                     alt={track.title}
                     className="w-10 h-10 rounded object-cover flex-shrink-0"

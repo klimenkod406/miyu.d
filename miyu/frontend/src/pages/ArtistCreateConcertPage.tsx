@@ -216,7 +216,7 @@ export default function ArtistCreateConcertPage() {
             <div className="w-64 h-80 rounded-2xl border-2 border-dashed border-white/20 hover:border-white/40 transition bg-white/[0.02] overflow-hidden relative group">
               {coverPreview ? (
                 <>
-                  <img src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => { setCoverPreview(null); setCoverFile(null); }}
@@ -425,7 +425,7 @@ export default function ArtistCreateConcertPage() {
                   className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-sm"
                 >
                   {a.avatar_url ? (
-                    <img src={a.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" />
+                    <img loading="lazy" src={a.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" />
                   ) : (
                     <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
                       <Users className="w-3 h-3 text-white/40" />
@@ -481,7 +481,7 @@ export default function ArtistCreateConcertPage() {
                       className="w-full flex items-center gap-3 p-3 hover:bg-white/5 transition text-left"
                     >
                       {a.avatar_url ? (
-                        <img src={a.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                        <img loading="lazy" src={a.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                           <Users className="w-4 h-4 text-white/40" />

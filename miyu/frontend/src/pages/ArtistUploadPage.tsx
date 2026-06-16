@@ -138,7 +138,7 @@ export default function ArtistUploadPage() {
           <div className="w-40 h-40 rounded-xl border-2 border-dashed border-white/20 hover:border-white/40 transition bg-white/[0.02] overflow-hidden relative group">
             {coverPreview ? (
               <>
-                <img src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
+                <img loading="lazy" src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
                 <button
                   type="button"
                   onClick={() => { setCoverFile(null); setCoverPreview(null) }}

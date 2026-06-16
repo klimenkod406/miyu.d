@@ -47,7 +47,7 @@ export default function FavoriteAlbumsPage() {
           <Link key={album.album_id} to={`/album/${album.album_id}`} className="group">
             <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 mb-3 flex items-center justify-center overflow-hidden relative transition duration-200">
               {album.cover_url ? (
-                <img src={album.cover_url} alt={album.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                <img loading="lazy" src={album.cover_url} alt={album.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
               ) : (
                 <Disc size={40} className="text-white/30" />
               )}

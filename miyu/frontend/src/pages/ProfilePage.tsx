@@ -201,7 +201,7 @@ export default function ProfilePage() {
         </div>
         
         <div className="absolute -bottom-12 left-6 flex items-end gap-4 max-[414px]:left-4 max-[414px]:-bottom-10">
-          <img
+          <img loading="lazy"
             src={user?.avatar_url ? `${user.avatar_url}` : '/default-avatar.svg'}
             alt={username}
             className="h-24 w-24 rounded-full border-4 border-black object-cover max-[414px]:h-20 max-[414px]:w-20"
@@ -415,7 +415,7 @@ export default function ProfilePage() {
                     style={{ backgroundColor: `${accentColor}33` }}
                   >
                     {track.cover_url ? (
-                      <img src={track.cover_url} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <Music size={18} className="text-white/50" />
                     )}
@@ -472,7 +472,7 @@ export default function ProfilePage() {
               <Link key={playlist.id} to={`/playlist/${playlist.id}`} className="group">
                 <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] group-hover:border-white/10 transition overflow-hidden relative">
                   {playlist.cover_url ? (
-                    <img
+                    <img loading="lazy"
                       src={playlist.cover_url}
                       alt={playlist.title}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -522,7 +522,7 @@ export default function ProfilePage() {
             <Link key={playlist.id} to={`/playlist/${playlist.id}`} className="group">
               <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] group-hover:border-white/10 transition overflow-hidden relative">
                 {playlist.cover_url ? (
-                  <img
+                  <img loading="lazy"
                     src={playlist.cover_url}
                     alt={playlist.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -566,7 +566,7 @@ export default function ProfilePage() {
                 <div className="rounded-2xl border border-white/[0.05] bg-white/[0.02] p-4 transition group-hover:border-white/10 group-hover:bg-white/[0.04]">
                   <div className="mb-3 aspect-square overflow-hidden rounded-xl bg-white/[0.03]">
                     {artist.avatar_url ? (
-                      <img
+                      <img loading="lazy"
                         src={artist.avatar_url}
                         alt={artist.stage_name || artist.username}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -612,7 +612,7 @@ export default function ProfilePage() {
               <Link key={album.album_id} to={`/album/${album.album_id}`} className="group">
                 <div className="aspect-square rounded-xl bg-white/[0.02] border border-white/[0.05] group-hover:border-white/10 transition overflow-hidden relative">
                   {album.cover_url ? (
-                    <img
+                    <img loading="lazy"
                       src={album.cover_url}
                       alt={album.title}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

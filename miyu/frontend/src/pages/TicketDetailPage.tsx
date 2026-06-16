@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ChevronLeft, Calendar, Clock, MapPin, Mic, Ticket, Download, Share2, Loader2, Check } from 'lucide-react'
+import { ChevronLeft, Calendar, Clock, MapPin, Mic, Ticket, Loader2 } from 'lucide-react'
 import { concertsApi } from '../api/concerts'
 import { useAuth } from '../hooks/AuthContext'
-import html2canvas from 'html2canvas'
 
 interface TicketDetail {
   ticket_id: number
@@ -37,146 +36,6 @@ export default function TicketDetailPage() {
   const [ticket, setTicket] = useState<TicketDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
-  const qrBlockRef = useRef<HTMLDivElement>(null)
-  const detailsBlockRef = useRef<HTMLDivElement>(null)
-
-  function handleDownload(e: React.MouseEvent) {
-    console.log('[TicketDownload] CLICKED')
-    e.preventDefault()
-    e.stopPropagation()
-    doDownload()
-  }
-
-  async function doDownload() {
-    if (!ticket) {
-      console.log('[TicketDownload] no ticket')
-      return
-    }
-    console.log('[TicketDownload] starting...')
-    try {
-      const safeTitle = (ticket.concert_title || 'ticket').replace(/[/\\:*?"<>|]+/g, '_').replace(/\s+/g, '_')
-      const fileName = "ticket_" + ticket.ticket_id + "_" + safeTitle + ".png"
-
-      const block1 = qrBlockRef.current
-      const block2 = detailsBlockRef.current
-      console.log('[TicketDownload] blocks:', !!block1, !!block2)
-      if (!block1 || !block2) {
-        throw new Error('Content blocks not found')
-      }
-
-      const [canvas1, canvas2] = await Promise.all([
-        html2canvas(block1, { scale: 2, useCORS: true, backgroundColor: '#0f0f1a' }),
-        html2canvas(block2, { scale: 2, useCORS: true, backgroundColor: '#0f0f1a' })
-      ])
-      console.log('[TicketDownload] canvases:', canvas1.width, canvas2.width)
-
-      const gap = 20 * 2
-      const combinedW = Math.max(canvas1.width, canvas2.width)
-      const combinedH = canvas1.height + gap + canvas2.height
-
-      const combined = document.createElement('canvas')
-      combined.width = combinedW
-      combined.height = combinedH
-      const ctx = combined.getContext('2d')
-      if (!ctx) throw new Error('Canvas context not available')
-
-      ctx.drawImage(canvas1, 0, 0)
-      ctx.drawImage(canvas2, 0, canvas1.height + gap)
-
-      const blob = await new Promise<Blob | null>(resolve => combined.toBlob(resolve, 'image/png'))
-      if (!blob) {
-        throw new Error('Failed to create blob')
-      }
-      console.log('[TicketDownload] blob size:', blob.size)
-
-      if ('showSaveFilePicker' in window) {
-        console.log('[TicketDownload] using showSaveFilePicker')
-        try {
-          const opts = {
-            suggestedName: fileName,
-            types: [{ description: 'PNG Image', accept: { 'image/png': ['.png'] } }]
-          }
-          const handle = await (window as any).showSaveFilePicker(opts)
-          const writable = await handle.createWritable()
-          await writable.write(blob)
-          await writable.close()
-          window.dispatchEvent(new CustomEvent('show-toast', {
-            detail: { message: 'Билет сохранён', type: 'success' }
-          }))
-          return
-        } catch (pickerErr: any) {
-          if (pickerErr?.name === 'AbortError') return
-          console.warn('[TicketDownload] showSaveFilePicker failed:', pickerErr)
-        }
-      }
-
-      console.log('[TicketDownload] fallback to ObjectURL')
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = fileName
-      a.style.display = 'none'
-      document.body.appendChild(a)
-      a.click()
-      setTimeout(() => {
-        document.body.removeChild(a)
-        URL.revokeObjectURL(url)
-      }, 200)
-
-      window.dispatchEvent(new CustomEvent('show-toast', {
-        detail: { message: 'Билет сохранён', type: 'success' }
-      }))
-    } catch (err) {
-      console.error('[TicketDownload] failed:', err)
-      window.dispatchEvent(new CustomEvent('show-toast', {
-        detail: { message: 'Не удалось скачать билет', type: 'error' }
-      }))
-    }
-  }
-
-  const handleShare = useCallback(async () => {
-    if (!ticket) return
-    const shareUrl = window.location.href
-    const shareTitle = ticket.concert_title || 'Билет на концерт'
-    const shareText = `Билет на ${shareTitle} — ${ticket.artist?.name || ''}`
-
-    try {
-      if (navigator.share) {
-        try {
-          await navigator.share({ title: shareTitle, text: shareText, url: shareUrl })
-          return
-        } catch (shareErr: any) {
-          if (shareErr?.name === 'AbortError') return
-        }
-      }
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(shareUrl)
-        setCopied(true)
-        window.dispatchEvent(new CustomEvent('show-toast', {
-          detail: { message: 'Ссылка скопирована', type: 'success' }
-        }))
-        setTimeout(() => setCopied(false), 2000)
-        return
-      }
-      const textarea = document.createElement('textarea')
-      textarea.value = shareUrl
-      textarea.style.position = 'fixed'
-      textarea.style.opacity = '0'
-      document.body.appendChild(textarea)
-      textarea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textarea)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error('Share failed:', err)
-      window.dispatchEvent(new CustomEvent('show-toast', {
-        detail: { message: 'Не удалось поделиться', type: 'error' }
-      }))
-    }
-  }, [ticket])
-
   useEffect(() => {
     if (!accessToken || !id) {
       setError('Требуется авторизация')
@@ -240,11 +99,11 @@ export default function TicketDetailPage() {
         </div>
 
         {/* Block 1: QR + Concert Info */}
-        <div ref={qrBlockRef}>
+        <div>
           {/* QR Code */}
           <div className="flex justify-center mb-8">
             <div className="bg-white p-6 rounded-2xl">
-              <img src={ticket.qr_code} alt="QR Code" className="w-64 h-64" />
+              <img loading="lazy" src={ticket.qr_code} alt="QR Code" className="w-64 h-64" />
             </div>
           </div>
 
@@ -259,7 +118,7 @@ export default function TicketDetailPage() {
         </div>
 
         {/* Block 2: Details */}
-        <div ref={detailsBlockRef}>
+        <div>
           <div className="space-y-4 mb-8">
           <div className="flex items-start gap-3 p-4 rounded-xl bg-white/5">
             <Calendar className="w-5 h-5 text-white/40 flex-shrink-0 mt-0.5" />
@@ -317,25 +176,6 @@ export default function TicketDetailPage() {
         </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition flex items-center justify-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Скачать
-          </button>
-          <button
-            type="button"
-            onClick={handleShare}
-            className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition flex items-center justify-center gap-2"
-          >
-            {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-            {copied ? 'Скопировано' : 'Поделиться'}
-          </button>
-        </div>
 
         {/* Warning */}
         {ticket.ticket_status === 'valid' && (

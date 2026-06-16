@@ -285,7 +285,7 @@ export default function HistoryPage() {
                               className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer bg-white/[0.05]"
                             >
                               {coverUrl ? (
-                                <img src={coverUrl} alt={item.track.title} className="w-full h-full object-cover" />
+                                <img loading="lazy" src={coverUrl} alt={item.track.title} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                   <Music className="w-5 h-5 text-white/40" />

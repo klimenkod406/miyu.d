@@ -118,7 +118,7 @@ export default function ArtistVideosPage() {
               <Link to={`/video/${video.id}`}>
                 <div className="aspect-video rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 mb-2 flex items-center justify-center overflow-hidden transition duration-200 relative">
                   {video.thumbnail_url ? (
-                    <img src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <Film size={36} className="text-white/30" />
                   )}

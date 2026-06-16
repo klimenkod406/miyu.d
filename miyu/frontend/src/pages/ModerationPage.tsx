@@ -120,7 +120,7 @@ function AnalysisModal({ item, onClose, onApprove, onReject }: { item: TrackAnal
       <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto glass rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/5 glass">
           <div className="flex items-center gap-4">
-            <img src={item.coverUrl} alt={item.title} className="w-16 h-16 rounded-xl object-cover" />
+            <img loading="lazy" src={item.coverUrl} alt={item.title} className="w-16 h-16 rounded-xl object-cover" />
             <div>
               <h2 className="text-xl font-bold">{item.title}</h2>
               <p className="text-white/40">{item.artist}</p>
@@ -372,7 +372,7 @@ export default function ModerationPage() {
               onClick={() => setSelectedItem(item)}
               className="w-full flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition duration-200 text-left"
             >
-              <img src={item.coverUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover" />
+              <img loading="lazy" src={item.coverUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{item.title}</p>
                 <p className="text-sm text-white/40 truncate">{item.artist}</p>

@@ -103,7 +103,7 @@ function ActiveUser({ user, isOnline, presence, onHover }: { user: User; isOnlin
       <Link to={`/user/${user.id}`}>
         <div className="relative w-9 h-9">
           {user.avatar_url ? (
-            <img
+            <img loading="lazy"
               src={`${user.avatar_url}`}
               alt={user.username}
               className="absolute inset-0.5 w-8 h-8 rounded-full object-cover cursor-pointer"
@@ -140,9 +140,9 @@ function ActiveUser({ user, isOnline, presence, onHover }: { user: User; isOnlin
               <div className="flex gap-3">
                 <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/8">
                   {trackCover ? (
-                    <img src={trackCover} alt="" className="h-full w-full object-cover" />
+                    <img loading="lazy" src={trackCover} alt="" className="h-full w-full object-cover" />
                   ) : user.avatar_url ? (
-                    <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
+                    <img loading="lazy" src={user.avatar_url} alt="" className="h-full w-full object-cover" />
                   ) : (
                     <ListeningIndicator type={presence?.listeningTo?.type || 'track'} />
                   )}

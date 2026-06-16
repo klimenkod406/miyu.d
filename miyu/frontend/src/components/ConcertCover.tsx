@@ -25,7 +25,7 @@ export default function ConcertCover({ src, alt, className = '', imgClassName = 
   }
 
   return (
-    <img
+    <img loading="lazy"
       src={src}
       alt={alt}
       onError={() => setErrored(true)}

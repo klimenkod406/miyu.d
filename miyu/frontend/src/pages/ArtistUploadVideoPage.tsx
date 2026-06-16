@@ -190,7 +190,7 @@ export default function ArtistUploadVideoPage() {
             <div className="w-72 h-40 rounded-xl border-2 border-dashed border-white/20 hover:border-white/40 transition bg-white/[0.02] overflow-hidden relative group">
               {thumbnailPreview ? (
                 <>
-                  <img src={thumbnailPreview} alt="Thumbnail" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={thumbnailPreview} alt="Thumbnail" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => { setThumbnailFile(null); setThumbnailPreview(null) }}

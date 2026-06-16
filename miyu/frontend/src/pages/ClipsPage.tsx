@@ -151,7 +151,7 @@ export default function ClipsPage() {
         <section className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <Link to={`/video/${featuredVideo.id}`} className="group relative block overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.03] min-h-[22rem]">
             {featuredVideo.thumbnail_url ? (
-              <img src={featuredVideo.thumbnail_url} alt={featuredVideo.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+              <img loading="lazy" src={featuredVideo.thumbnail_url} alt={featuredVideo.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-violet-950 via-fuchsia-900/60 to-black" />
             )}

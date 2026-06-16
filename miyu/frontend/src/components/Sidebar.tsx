@@ -246,7 +246,7 @@ export default function Sidebar() {
                   whileTap={{ scale: 0.92 }}
                 >
                   {playlist.cover_url ? (
-                    <img src={playlist.cover_url} alt={playlist.title} className="w-full h-full object-cover" />
+                    <img loading="lazy" src={playlist.cover_url} alt={playlist.title} className="w-full h-full object-cover" />
                   ) : (
                     <ListMusic className="w-5 h-5 text-white" />
                   )}

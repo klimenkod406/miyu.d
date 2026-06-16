@@ -168,7 +168,7 @@ export default function AlbumPage() {
         <div className="absolute inset-0 z-0">
           {coverUrl ? (
             <>
-              <img src={coverUrl} alt="" className="w-full h-full object-cover blur-3xl scale-125 opacity-40" />
+              <img loading="lazy" src={coverUrl} alt="" className="w-full h-full object-cover blur-3xl scale-125 opacity-40" />
               <div className="absolute inset-0 bg-dark-900/60" />
             </>
           ) : (
@@ -179,7 +179,7 @@ export default function AlbumPage() {
         <div className="relative z-10 flex flex-col md:flex-row gap-8 p-8">
           <div className="w-48 h-48 flex-shrink-0 shadow-2xl">
             {coverUrl ? (
-              <img src={coverUrl} alt={album.title} className="w-full h-full object-cover rounded-xl" />
+              <img loading="lazy" src={coverUrl} alt={album.title} className="w-full h-full object-cover rounded-xl" />
             ) : (
               <div className="w-full h-full bg-white/5 rounded-xl flex items-center justify-center">
                 <Music className="w-16 h-16 text-white/20" />
