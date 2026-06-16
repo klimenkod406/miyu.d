@@ -7,8 +7,8 @@ APP_DIR = Path(__file__).resolve().parent
 AI_SERVICE_DIR = APP_DIR.parent
 REPO_ROOT = AI_SERVICE_DIR.parent
 def _default_storage_root():
-    lb = REPO_ROOT / "backend"
-    if (lb / "uploads").exists(): return lb
+    # uploads/ находится в корне репозитория, не в backend/
+    if (REPO_ROOT / "uploads" / "tracks").exists(): return REPO_ROOT
     return Path("/data")
 def _default_db_path():
     lp = REPO_ROOT / "database" / "miyu.db"
@@ -36,5 +36,9 @@ class Settings(BaseSettings):
     flag_threshold: float = 0.70
     unverified_artist_penalty: float = 0.10
     auto_approve_daily_limit: int = 0
+
+    analysis_version: str = "1.0.0"
+    profile_version: str = "1.0.0"
+    text_embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2"
 @lru_cache(maxsize=1)
 def get_settings(): return Settings()
