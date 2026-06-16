@@ -855,10 +855,74 @@ def _join_short_segments(segments: list[dict], min_duration: float = 2.0) -> lis
     return result
 
 
+def _split_by_max_duration(
+    segments: list[dict],
+    max_duration: float = 5.0,
+    target_duration: float = 4.0,
+) -> list[dict]:
+    """
+    Further split any segment exceeding max_duration into chunks of ~target_duration.
+    Uses word timestamps if available, otherwise proportional split.
+    """
+    if not segments:
+        return []
+
+    result = []
+    for seg in segments:
+        dur = seg['end'] - seg['start']
+        if dur <= max_duration:
+            result.append(dict(seg))
+            continue
+
+        # Needs splitting
+        words = seg.get('words')
+        text = seg.get('text', '')
+
+        if words and len(words) > 1:
+            # Split by word timestamps
+            n_chunks = max(2, int(round(dur / target_duration)))
+            chunk_word_count = max(1, len(words) // n_chunks)
+
+            for i in range(0, len(words), chunk_word_count):
+                chunk_words = words[i:i + chunk_word_count]
+                if not chunk_words:
+                    continue
+                chunk_start = chunk_words[0].get('start', seg['start'])
+                chunk_end = chunk_words[-1].get('end', seg['end'])
+                chunk_text = ' '.join(w.get('word', '') for w in chunk_words)
+
+                result.append({
+                    'start': chunk_start,
+                    'end': chunk_end,
+                    'text': chunk_text,
+                    'words': list(chunk_words),
+                })
+        else:
+            # Split by time proportionally
+            n_chunks = max(2, int(round(dur / target_duration)))
+            chunk_dur = dur / n_chunks
+            chars = text
+            total_chars = len(chars)
+            chars_per_chunk = max(1, total_chars // n_chunks)
+
+            for i in range(n_chunks):
+                chunk_start = seg['start'] + i * chunk_dur
+                chunk_end = seg['start'] + (i + 1) * chunk_dur
+                chunk_text = chars[i * chars_per_chunk:(i + 1) * chars_per_chunk]
+
+                result.append({
+                    'start': round(chunk_start, 2),
+                    'end': round(chunk_end, 2),
+                    'text': chunk_text.strip(),
+                })
+
+    return result
+
 def split_segments_by_sentences(
     segments: list[dict],
     join_short: bool = True,
     min_duration: float = 2.0,
+    max_duration: float = 5.0,
 ) -> list[dict]:
     """
     Splits each segment at sentence boundaries using word-level timestamps.
@@ -894,5 +958,8 @@ def split_segments_by_sentences(
 
     if join_short:
         result = _join_short_segments(result, min_duration)
+
+    # Step 3: Split long segments to max_duration
+    result = _split_by_max_duration(result, max_duration)
 
     return result
