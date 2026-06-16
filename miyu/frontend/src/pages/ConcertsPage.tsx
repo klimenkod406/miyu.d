@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, Clock, Ticket, Search, Mic, X, Loader } from 'lucide-react';
 import { concertsApi } from '../api/concerts';
 import ConcertCover from '../components/ConcertCover';
+import Button from '../components/Button'
 
 interface Concert {
   id: number;
@@ -114,13 +115,13 @@ function BannerSlider({ banners, isLoading }: { banners: Concert[], isLoading: b
                   ))}
                 </div>
                 <div className="flex items-center gap-4">
-                  <Link to={`/concert/${currentBanner.id}`} className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-full font-medium transition shadow-lg hover:shadow-xl">
+                <Button as="link" to={`/concert/${currentBanner.id}`} variant="primary">
                     {!hasTickets
-                      ? 'Купить билеты'
+                      ? '\u041a\u0443\u043f\u0438\u0442\u044c \u0431\u0438\u043b\u0435\u0442\u044b'
                       : currentBanner.priceFrom === 0
-                        ? 'Бесплатно'
-                        : `Купить от ${currentBanner.priceFrom.toLocaleString('ru-RU')} ₽`}
-                  </Link>
+                        ? '\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u043e'
+                        : `\u041a\u0443\u043f\u0438\u0442\u044c \u043e\u0442 ${currentBanner.priceFrom.toLocaleString('ru-RU')} \u20bd`}
+                  </Button>
                   {currentBanner.status === 'soldout' && <span className="px-4 py-2 bg-red-500/20 text-red-400 rounded-full text-sm">Распродано</span>}
                 </div>
               </motion.div>

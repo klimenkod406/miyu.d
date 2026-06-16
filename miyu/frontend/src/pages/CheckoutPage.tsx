@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { getStoredTokens } from '../api/auth'
 import { concertsApi } from '../api/concerts'
+import Button from '../components/Button'
 
 const PLAN_DETAILS: Record<string, { name: string; price: number }> = {
   plus: { name: 'Plus', price: 299 },
@@ -238,18 +239,16 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-      <button
-        onClick={handlePay}
+      <Button
+        variant="primary"
+        size="lg"
         disabled={processing || !isFormValid}
-        className={`w-full py-4 rounded-xl font-medium transition duration-200 flex items-center justify-center gap-2 ${
-          processing || !isFormValid
-            ? 'bg-white/10 text-white/40 cursor-not-allowed'
-            : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90'
-        }`}
+        onClick={handlePay}
+        className="w-full"
       >
         <Lock className="w-4 h-4" />
         {processing ? 'Обработка...' : `Оплатить ${total.toLocaleString('ru-RU')} ₽`}
-      </button>
+      </Button>
     </div>
   )
 }

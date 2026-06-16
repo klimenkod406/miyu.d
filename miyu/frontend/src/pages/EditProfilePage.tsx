@@ -4,6 +4,7 @@ import { Camera, User, AlignLeft, Save, X } from 'lucide-react'
 import type { User as UserType } from '../types'
 import { getStoredTokens } from '../api/auth'
 import { useAuth } from '../hooks/AuthContext'
+import Button from '../components/Button'
 
 export default function EditProfilePage() {
   const navigate = useNavigate()
@@ -241,14 +242,16 @@ export default function EditProfilePage() {
         </div>
 
         <div className="flex gap-4">
-          <button
-            type="submit"
+          <Button
+            variant="primary"
+            size="lg"
             disabled={isSaving}
-            className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2"
+            type="submit"
+            className="flex-1"
           >
             <Save size={20} />
             {isSaving ? 'Сохранение...' : 'Сохранить'}
-          </button>
+          </Button>
           
           <button
             type="button"

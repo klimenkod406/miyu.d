@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Gift, Mail, User } from 'lucide-react'
+import Button from '../components/Button'
 
 const plans = [
   {
@@ -235,12 +236,9 @@ export default function GiftPage() {
             <span className="text-lg font-bold">Итого</span>
             <span className="text-2xl font-bold">{calculatePrice()} ₽</span>
           </div>
-          <button
-            onClick={handleGift}
-            className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-full font-bold text-lg transition shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
+          <Button variant="primary" onClick={handleGift}>
             Перейти к оплате
-          </button>
+          </Button>
         </div>
       </div>
     </div>

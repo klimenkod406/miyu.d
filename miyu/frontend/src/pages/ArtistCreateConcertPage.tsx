@@ -5,6 +5,7 @@ import { ArrowLeft, Upload, MapPin, Calendar, Clock, Ticket, DollarSign, Users, 
 import { venuePlans, VenuePlanPreview, type VenuePlan } from '../components/VenuePlans'
 import { concertsApi } from '../api/concerts'
 import { useAuth } from '../hooks/AuthContext'
+import Button from '../components/Button'
 
 interface ArtistOption {
   id: number
@@ -641,14 +642,15 @@ export default function ArtistCreateConcertPage() {
           >
             Отмена
           </button>
-          <button
+          <Button
             type="submit"
             disabled={!canSubmit || submitting}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+            variant="primary"
+            size="sm"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {submitting ? 'Создание...' : 'Отправить на модерацию'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

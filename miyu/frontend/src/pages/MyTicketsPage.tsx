@@ -5,6 +5,7 @@ import { Loader2, Ticket, Calendar, Clock, MapPin, Mic, ChevronRight } from 'luc
 import { concertsApi } from '../api/concerts'
 import { useAuth } from '../hooks/AuthContext'
 import ConcertCover from '../components/ConcertCover'
+import Button from '../components/Button'
 
 interface MyTicket {
   ticket_id: number
@@ -228,12 +229,9 @@ export default function MyTicketsPage() {
           {groups.length === 0 && (
             <>
               <p className="text-white/40 mb-6">Самое время это исправить!</p>
-              <Link
-                to="/concerts"
-                className="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-full font-medium transition"
-              >
+              <Button variant="glass" as="link" to="/concerts">
                 К концертам
-              </Link>
+              </Button>
             </>
           )}
         </div>

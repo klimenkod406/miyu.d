@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Film, Play, Loader2, Trash2 } from 'lucide-react'
 import { artistApi } from '../api/artist'
 import { getStoredTokens } from '../api/auth'
+import Button from '../components/Button'
 
 interface Video {
   id: number
@@ -92,9 +93,9 @@ export default function ArtistVideosPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Мои клипы</h1>
-        <Link to="/artist/videos/new" className="px-4 py-2 rounded-full font-medium text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition">
+        <Button as="link" to="/artist/videos/new" variant="primary" size="sm">
           Загрузить клип
-        </Link>
+        </Button>
       </div>
 
       {error && (

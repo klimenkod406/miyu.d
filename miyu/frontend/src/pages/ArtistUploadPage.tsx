@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Music, Loader2, Image, X, Sparkles } from 'lucide-react'
 import { artistApi } from '../api/artist'
 import { getStoredTokens } from '../api/auth'
+import Button from '../components/Button'
 
 interface Album {
   id: number
@@ -227,10 +228,12 @@ export default function ArtistUploadPage() {
           </span>
         </div>
 
-        <button 
+        <Button
           type="submit"
           disabled={uploading || !file || !title}
-          className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-full font-medium transition flex items-center justify-center gap-2"
+          variant="primary"
+          size="sm"
+          className="w-full"
         >
           {uploading ? (
             <>
@@ -240,7 +243,7 @@ export default function ArtistUploadPage() {
           ) : (
             'Загрузить'
           )}
-        </button>
+        </Button>
       </form>
     </div>
   )

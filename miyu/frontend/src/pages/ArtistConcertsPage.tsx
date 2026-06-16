@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import Button from '../components/Button'
 import { Calendar, MapPin, Clock, Plus, Settings, ChartBar, Mic, Loader2 } from 'lucide-react';
 import { concertsApi } from '../api/concerts';
 import { useAuth } from '../hooks/AuthContext';
@@ -80,10 +80,10 @@ export default function ArtistConcertsPage() {
             {upcomingConcerts.length} предстоящих • {pastConcerts.length} прошедших
           </p>
         </div>
-        <Link to="/artist/concerts/new" className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full font-medium text-sm flex items-center gap-2">
-          <Plus size={18} />
+        <Button as="link" to="/artist/concerts/new" variant="primary" size="sm">
+          <Plus size={16} />
           Добавить концерт
-        </Link>
+        </Button>
       </div>
 
     {stats && (

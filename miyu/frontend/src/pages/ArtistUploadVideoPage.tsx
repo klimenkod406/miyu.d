@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload, X, Image, Play, Loader2, FileVideo, Music, Clock, AlertCircle } from 'lucide-react'
 import { artistApi } from '../api/artist'
 import { getStoredTokens } from '../api/auth'
+import Button from '../components/Button'
 
 interface ApprovedTrack {
   id: number
@@ -315,10 +316,11 @@ export default function ArtistUploadVideoPage() {
           >
             Отмена
           </button>
-          <button
+          <Button
             type="submit"
             disabled={uploading || !formData.title || !videoFile}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+            variant="primary"
+            size="sm"
           >
             {uploading ? (
               <>
@@ -331,7 +333,7 @@ export default function ArtistUploadVideoPage() {
                 Отправить на модерацию
               </>
             )}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

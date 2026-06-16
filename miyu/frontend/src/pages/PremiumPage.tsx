@@ -1,4 +1,5 @@
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import Button from '../components/Button'
 
 const plans = [
   {
@@ -65,16 +66,18 @@ export default function PremiumPage() {
               ))}
             </ul>
             {plan.price > 0 && (
-              <button
-                onClick={() => handleSelectPlan(plan.id)}
-                className={`w-full py-3 rounded-full font-medium transition ${
-                  plan.popular
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
-                    : 'bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10'
-                }`}
-              >
-                Выбрать
-              </button>
+              plan.popular ? (
+                <Button variant="primary" size="lg" onClick={() => handleSelectPlan(plan.id)}>
+                  \u0412\u044b\u0431\u0440\u0430\u0442\u044c
+                </Button>
+              ) : (
+                <button
+                  onClick={() => handleSelectPlan(plan.id)}
+                  className="w-full py-3 rounded-full font-medium transition bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10"
+                >
+                  \u0412\u044b\u0431\u0440\u0430\u0442\u044c
+                </button>
+              )
             )}
           </div>
         ))}
@@ -87,12 +90,9 @@ export default function PremiumPage() {
               Подарите подписку Plus или Fan другу или близкому человеку.
               Выберите тариф, и мы отправим красивый цифровой подарок.
             </p>
-          <Link
-            to="/gift"
-            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            Подарить подписку
-          </Link>
+            <Button as="link" to="/gift" variant="primary" size="lg">
+              \u041f\u043e\u0434\u0430\u0440\u0438\u0442\u044c \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0443
+            </Button>
         </div>
       </div>
 

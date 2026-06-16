@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Mail, ArrowLeft } from 'lucide-react'
 import { authApi } from '../api/auth'
 import ServiceLogo from '../components/ServiceLogo'
+import Button from '../components/Button'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -71,13 +72,9 @@ export default function ForgotPasswordPage() {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 hover:from-purple-500 hover:via-pink-400 hover:to-purple-500 rounded-2xl font-semibold flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <Button variant="primary" type="submit" disabled={status === 'loading'} className="w-full">
               {status === 'loading' ? 'Отправка...' : 'Отправить ссылку'}
-            </button>
+            </Button>
           </form>
         )}
 

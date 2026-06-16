@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import { Music, Share2, Play, Pause, Volume2, VolumeX, Maximize, Settings, Loader2 } from 'lucide-react'
+import Button from '../components/Button'
 
 interface VideoData {
   id: number
@@ -158,12 +159,13 @@ export default function VideoPage() {
             {video.thumbnail_url ? (
               <img loading="lazy" src={video.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" />
             ) : null}
-            <button
+            <Button
+              variant="primary"
+              className="w-24 h-24 rounded-full shadow-2xl z-10"
               onClick={togglePlay}
-              className="w-24 h-24 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-4xl hover:scale-110 transition shadow-2xl z-10"
             >
               <Play size={40} className="text-white ml-2" />
-            </button>
+            </Button>
           </div>
         )}
 

@@ -6,6 +6,7 @@ import { getStoredTokens } from '../api/auth'
 import { usePlayer } from '../hooks/PlayerContext'
 import type { Track } from '../types'
 import { ExplicitBadge } from '../components/ExplicitBadge'
+import Button from '../components/Button'
 
 export default function ArtistTracksPage() {
   const [tracks, setTracks] = useState<Track[]>([])
@@ -82,9 +83,9 @@ export default function ArtistTracksPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Мои треки</h1>
-        <Link to="/artist/upload" className="px-4 py-2 rounded-full font-medium text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition">
+        <Button as="link" to="/artist/upload" variant="primary" size="sm">
           Загрузить
-        </Link>
+        </Button>
       </div>
 
       {error && (

@@ -9,6 +9,7 @@ import { venuePlans, VenuePlanPreview, type VenuePlan } from '../components/Venu
 import ConcertCover from '../components/ConcertCover';
 import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import Button from '../components/Button'
 
 interface TicketSector { id: number; name: string; price: number; available: number; zone_id?: string; }
 interface Artist { id: number; name: string; avatar_url?: string | null; }
@@ -322,20 +323,16 @@ export default function ConcertPage() {
                   <span>{totalPrice.toLocaleString()} ₽</span>
                 </div>
               </div>
-              <button
-                onClick={handleBuyTickets}
-                disabled={isBuying || totalTickets === 0 || totalPrice <= 0}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-full font-medium text-base transition disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-2"
-              >
+              <Button variant="primary" size="lg" onClick={handleBuyTickets} disabled={isBuying || totalTickets === 0 || totalPrice <= 0}>
                 {isBuying ? (
                   <Loader2 className="animate-spin w-5 h-5" />
                 ) : (
                   <>
                     <TicketIcon className="w-5 h-5" />
-                    Купить билеты
+                    \u041a\u0443\u043f\u0438\u0442\u044c \u0431\u0438\u043b\u0435\u0442\u044b
                   </>
                 )}
-              </button>
+              </Button>
             </motion.div>
           )}
         </div>
@@ -407,12 +404,9 @@ export default function ConcertPage() {
                 >
                   Остаться здесь
                 </button>
-                <button
-                  onClick={() => navigate(`/tickets/concert/${concert.id}`)}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition text-sm font-medium flex items-center justify-center gap-2"
-                >
-                  <TicketIcon size={16} /> К билетам
-                </button>
+                <Button variant="glass" size="sm" onClick={() => navigate(`/tickets/concert/${concert.id}`)}>
+                  <TicketIcon size={16} /> \u041a \u0431\u0438\u043b\u0435\u0442\u0430\u043c
+                </Button>
               </div>
             </motion.div>
           </motion.div>

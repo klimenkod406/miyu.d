@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Upload, X, Image, Disc, Plus, Trash2, GripVertical, Clock, CheckCircle, Loader2, ChevronDown, Sparkles } from 'lucide-react'
 import { artistApi } from '../api/artist'
 import { getStoredTokens } from '../api/auth'
+import Button from '../components/Button'
 
 const ALBUM_TYPES = [
   { id: 'album', label: 'Альбом', description: 'Полноценный альбом (10+ треков)', minTracks: 1 },
@@ -326,14 +327,15 @@ export default function ArtistCreateAlbumPage() {
             >
               Отмена
             </button>
-            <button
+            <Button
               type="submit"
               disabled={!canProceed}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+              variant="primary"
+              size="sm"
             >
               Далее
               <ArrowLeft className="w-4 h-4 rotate-180" />
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -419,10 +421,11 @@ export default function ArtistCreateAlbumPage() {
               <ArrowLeft className="w-4 h-4" />
               Назад
             </button>
-            <button
+            <Button
               type="submit"
               disabled={!canSubmit || tracks.length < minTracks || creating}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+              variant="primary"
+              size="sm"
             >
               {creating ? (
                 <>
@@ -435,7 +438,7 @@ export default function ArtistCreateAlbumPage() {
                   Создать альбом
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       )}

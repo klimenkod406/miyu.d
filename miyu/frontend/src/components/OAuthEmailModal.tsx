@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Mail, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
+import Button from '../components/Button'
 
 interface OAuthEmailModalProps {
   open: boolean;
@@ -66,12 +67,9 @@ export default function OAuthEmailModal({ open, onSubmit, onCancel }: OAuthEmail
             <p className="text-red-400 text-sm">{error}</p>
           )}
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 hover:from-purple-500 hover:via-pink-400 hover:to-purple-500 rounded-xl font-semibold text-sm transition-all duration-300"
-          >
+          <Button variant="primary" type="submit" className="w-full">
             Продолжить
-          </button>
+          </Button>
         </form>
       </div>
     </div>,
