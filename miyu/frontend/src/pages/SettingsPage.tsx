@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
@@ -33,9 +34,11 @@ interface Settings {
 
 function Toggle({ checked, onChange, disabled = false }: { checked: boolean; onChange: () => void; disabled?: any }) {
   return (
-    <button
+    <motion.button
       onClick={onChange}
       disabled={disabled}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`relative w-11 h-6 rounded-full transition-all duration-300 ${
         checked ? 'bg-white' : 'bg-white/10'
       } ${disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/15'}`}
@@ -45,7 +48,7 @@ function Toggle({ checked, onChange, disabled = false }: { checked: boolean; onC
           checked ? 'left-[22px] bg-black' : 'left-0.5 bg-white'
         }`}
       />
-    </button>
+    </motion.button>
   )
 }
 
@@ -55,7 +58,7 @@ function Slider({ value, min, max, onChange }: { value: number; min: number; max
     <div className="relative w-32">
       <div className="h-1 bg-white/10 rounded-full overflow-hidden">
         <div
-          className="h-full bg-white/30 rounded-full transition-all duration-150"
+          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-150"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -67,7 +70,8 @@ function Slider({ value, min, max, onChange }: { value: number; min: number; max
         onChange={(e) => onChange(Number(e.target.value))}
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
       />
-      <div
+      <motion.div
+        whileHover={{ scale: 1.02 }}
         className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg pointer-events-none transition-all duration-150"
         style={{ left: `calc(${percent}% - 6px)` }}
       />
@@ -92,7 +96,7 @@ function SettingRow({
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.04] border border-white/[0.10] hover:border-white/[0.1] transition-all duration-300 text-left"
+      className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.10] hover:border-white/[0.1] transition-all duration-300 text-left"
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {Icon && <Icon className="w-4 h-4 text-white/50 flex-shrink-0" />}
@@ -116,7 +120,7 @@ function SettingSection({
   return (
     <div className="mb-6">
       <h3 className="text-xs font-medium text-white/60 uppercase tracking-wider mb-3 px-1">{title}</h3>
-      <div className="space-y-2">{children}</div>
+      <div className="border border-white/[0.06] rounded-xl p-4 space-y-2">{children}</div>
     </div>
   )
 }
@@ -316,10 +320,12 @@ function ColorPaletteSettings() {
             <p className="text-xs text-white/60 mb-3 uppercase tracking-wider">Готовые темы</p>
             <div className="grid grid-cols-4 gap-2">
               {defaultPalettes.map((colors, idx) => (
-                <button
+                <motion.button
                   key={idx}
                   onClick={() => applyPalette(colors)}
-                  className="h-10 rounded-lg overflow-hidden border border-white/[0.08] hover:border-white/20 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  transition={{ duration: 0.15 }}
+                  className="h-10 rounded-lg overflow-hidden border border-white/[0.08] hover:border-white/20 transition-all duration-200 shadow-sm hover:shadow-md"
                   style={{
                     background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`,
                   }}
@@ -400,12 +406,15 @@ function ColorPaletteSettings() {
       )}
 
       {hasChanges && (
-        <button
+        <motion.button
           onClick={handleSave}
-          className="w-full py-3 rounded-xl text-sm font-medium bg-white/[0.06] hover:bg-white/[0.1] text-white border border-white/[0.08] hover:border-white/[0.15] transition-all duration-200 hover:scale-[1.01] animate-in fade-in slide-in-from-bottom-2 duration-300"
+          initial={{ scale: 0.9 }}
+          animate={{ scale: [0.9, 1.05, 1] }}
+          transition={{ duration: 0.4 }}
+          className="w-full py-3 rounded-xl text-sm font-medium bg-white/[0.06] hover:bg-white/[0.1] text-white border border-white/[0.08] hover:border-white/[0.15] transition-all duration-200 hover:scale-[1.01]"
         >
           Сохранить изменения
-        </button>
+        </motion.button>
       )}
     </div>
   )
@@ -786,12 +795,14 @@ export default function SettingsPage() {
             </SettingSection>
 
             <SettingSection title="Опасная зона">
-              <button
+              <motion.button
                 onClick={async () => {
                   await logout()
                   navigate('/login')
                 }}
-                className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.05] hover:bg-red-500/10 border border-white/[0.08] hover:border-red-500/20 transition duration-200 text-left group"
+                whileHover={{ x: [0, -2, 2, -2, 2, 0] }}
+                transition={{ duration: 0.25 }}
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.05] hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/20 rounded-xl transition-colors duration-200 text-left group"
               >
                 <div className="flex items-center gap-3">
                   <LogOut className="w-5 h-5 text-red-400" />
@@ -801,7 +812,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-red-400 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </motion.button>
             </SettingSection>
           </div>
         )
@@ -811,11 +822,11 @@ export default function SettingsPage() {
           <div>
             <SettingSection title="Текущий план">
               {loadingSubscription ? (
-                <div className="p-5 rounded-xl glass border border-white/10 text-center text-white/60">
+                <div className="p-5 rounded-xl glass rounded-xl border border-purple-500/10 hover:border-purple-500/20 transition text-center text-white/60">
                   Загрузка...
                 </div>
               ) : (
-                <div className="p-5 rounded-xl glass border border-white/10">
+                <div className="p-5 rounded-xl glass rounded-xl border border-purple-500/10 hover:border-purple-500/20 transition">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-xl font-bold">{subscription?.name || 'Free'}</p>
                     <span className="px-3 py-1 glass-accent text-xs rounded-full">
@@ -1220,7 +1231,11 @@ export default function SettingsPage() {
                 <button
                   key={s.id}
                   onClick={() => setSection(s.id)}
-                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
+                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
+                    section === s.id 
+                      ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' 
+                      : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent'
+                  `}
                     section === s.id 
                       ? 'glass-accent text-white' 
                       : 'text-white/50 hover:text-white hover:bg-white/5'
@@ -1242,7 +1257,11 @@ export default function SettingsPage() {
                 <button
                   key={s.id}
                   onClick={() => setSection(s.id)}
-                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
+                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
+                    section === s.id 
+                      ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' 
+                      : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent'
+                  `}
                     section === s.id 
                       ? 'glass-accent text-white' 
                       : 'text-white/50 hover:text-white hover:bg-white/5'
@@ -1264,7 +1283,11 @@ export default function SettingsPage() {
                 <button
                   key={s.id}
                   onClick={() => setSection(s.id)}
-                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
+                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
+                    section === s.id 
+                      ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' 
+                      : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent'
+                  `}
                     section === s.id 
                       ? 'glass-accent text-white' 
                       : 'text-white/50 hover:text-white hover:bg-white/5'
@@ -1282,7 +1305,17 @@ export default function SettingsPage() {
       </div>
 
       <div className="min-w-0 flex-1">
-        {renderSection()}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={section}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2 }}
+          >
+            {renderSection()}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {showSupportModal && createPortal(
