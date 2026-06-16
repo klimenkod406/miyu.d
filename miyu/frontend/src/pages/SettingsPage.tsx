@@ -37,7 +37,7 @@ function Toggle({ checked, onChange, disabled = false }: { checked: boolean; onC
       onClick={onChange}
       disabled={disabled}
       className={`relative w-11 h-6 rounded-full transition-all duration-300 ${
-        checked ? 'bg-white' : 'bg-white/5'
+        checked ? 'bg-white' : 'bg-white/10'
       } ${disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/15'}`}
     >
       <div
@@ -53,7 +53,7 @@ function Slider({ value, min, max, onChange }: { value: number; min: number; max
   const percent = ((value - min) / (max - min)) * 100
   return (
     <div className="relative w-32">
-      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-1 bg-white/10 rounded-full overflow-hidden">
         <div
           className="h-full bg-white/30 rounded-full transition-all duration-150"
           style={{ width: `${percent}%` }}
@@ -92,13 +92,13 @@ function SettingRow({
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.06] hover:border-white/[0.1] transition-all duration-300 text-left"
+      className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.04] border border-white/[0.10] hover:border-white/[0.1] transition-all duration-300 text-left"
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        {Icon && <Icon className="w-4 h-4 text-white/30 flex-shrink-0" />}
+        {Icon && <Icon className="w-4 h-4 text-white/50 flex-shrink-0" />}
         <div className="min-w-0">
           <div className="text-sm text-white/90">{title}</div>
-          {description && <p className="text-xs text-white/30 mt-0.5">{description}</p>}
+          {description && <p className="text-xs text-white/50 mt-0.5">{description}</p>}
         </div>
       </div>
       {action}
@@ -115,7 +115,7 @@ function SettingSection({
 }) {
   return (
     <div className="mb-6">
-      <h3 className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3 px-1">{title}</h3>
+      <h3 className="text-xs font-medium text-white/60 uppercase tracking-wider mb-3 px-1">{title}</h3>
       <div className="space-y-2">{children}</div>
     </div>
   )
@@ -131,7 +131,7 @@ function TooltipIcon({ title, description }: { title: string; description: strin
         onMouseLeave={() => setShow(false)}
         onFocus={() => setShow(true)}
         onBlur={() => setShow(false)}
-        className="text-white/30 hover:text-white/60 transition ml-1"
+        className="text-white/50 hover:text-white/60 transition ml-1"
       >
         <HelpCircle size={14} />
       </button>
@@ -248,7 +248,7 @@ function ColorPaletteSettings() {
           className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-500 ${
             mode === 'auto'
               ? 'bg-white/[0.08] text-white shadow-lg shadow-white/5'
-              : 'text-white/40 hover:text-white/60 hover:bg-white/[0.02]'
+              : 'text-white/60 hover:text-white/60 hover:bg-white/[0.05]'
           }`}
         >
           Автоматически
@@ -258,7 +258,7 @@ function ColorPaletteSettings() {
           className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-500 ${
             mode === 'custom'
               ? 'bg-white/[0.08] text-white shadow-lg shadow-white/5'
-              : 'text-white/40 hover:text-white/60 hover:bg-white/[0.02]'
+              : 'text-white/60 hover:text-white/60 hover:bg-white/[0.05]'
           }`}
         >
           Настроить
@@ -266,8 +266,8 @@ function ColorPaletteSettings() {
       </div>
 
       {/* Preview */}
-      <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] transition-all duration-500">
-        <p className="text-xs text-white/40 mb-4 uppercase tracking-wider">Предпросмотр профиля</p>
+      <div className="p-5 rounded-2xl bg-white/[0.05] border border-white/[0.10] transition-all duration-500">
+        <p className="text-xs text-white/60 mb-4 uppercase tracking-wider">Предпросмотр профиля</p>
         <div
           className="h-32 rounded-xl relative overflow-hidden transition-all duration-700"
           style={{
@@ -312,8 +312,8 @@ function ColorPaletteSettings() {
       {mode === 'custom' && (
         <div className="space-y-5 animate-in fade-in slide-in-from-top-4 duration-500">
           {/* Preset Palettes */}
-          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-            <p className="text-xs text-white/40 mb-3 uppercase tracking-wider">Готовые темы</p>
+          <div className="p-5 rounded-2xl bg-white/[0.05] border border-white/[0.10]">
+            <p className="text-xs text-white/60 mb-3 uppercase tracking-wider">Готовые темы</p>
             <div className="grid grid-cols-4 gap-2">
               {defaultPalettes.map((colors, idx) => (
                 <button
@@ -329,8 +329,8 @@ function ColorPaletteSettings() {
           </div>
 
           {/* Custom Colors */}
-          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
-            <p className="text-xs text-white/40 mb-2 uppercase tracking-wider">Свои цвета</p>
+          <div className="p-5 rounded-2xl bg-white/[0.05] border border-white/[0.10] space-y-3">
+            <p className="text-xs text-white/60 mb-2 uppercase tracking-wider">Свои цвета</p>
 
             <div className="flex items-center justify-between py-2">
               <span className="text-xs text-white/60">Основной</span>
@@ -344,7 +344,7 @@ function ColorPaletteSettings() {
                   }}
                   className="w-8 h-8 rounded-lg cursor-pointer border border-white/10 hover:border-white/20 transition-all duration-200"
                 />
-                <span className="text-[10px] text-white/20 font-mono w-16 text-right">{tempPrimary}</span>
+                <span className="text-[10px] text-white/40 font-mono w-16 text-right">{tempPrimary}</span>
               </div>
             </div>
 
@@ -360,7 +360,7 @@ function ColorPaletteSettings() {
                   }}
                   className="w-8 h-8 rounded-lg cursor-pointer border border-white/10 hover:border-white/20 transition-all duration-200"
                 />
-                <span className="text-[10px] text-white/20 font-mono w-16 text-right">{tempSecondary}</span>
+                <span className="text-[10px] text-white/40 font-mono w-16 text-right">{tempSecondary}</span>
               </div>
             </div>
 
@@ -376,7 +376,7 @@ function ColorPaletteSettings() {
                   }}
                   className="w-8 h-8 rounded-lg cursor-pointer border border-white/10 hover:border-white/20 transition-all duration-200"
                 />
-                <span className="text-[10px] text-white/20 font-mono w-16 text-right">{tempTertiary}</span>
+                <span className="text-[10px] text-white/40 font-mono w-16 text-right">{tempTertiary}</span>
               </div>
             </div>
 
@@ -392,7 +392,7 @@ function ColorPaletteSettings() {
                   }}
                   className="w-8 h-8 rounded-lg cursor-pointer border border-white/10 hover:border-white/20 transition-all duration-200"
                 />
-                <span className="text-[10px] text-white/20 font-mono w-16 text-right">{tempAccent}</span>
+                <span className="text-[10px] text-white/40 font-mono w-16 text-right">{tempAccent}</span>
               </div>
             </div>
           </div>
@@ -756,10 +756,10 @@ export default function SettingsPage() {
           <div>
             <SettingSection title="Профиль">
               <Link to="/profile/edit">
-                <SettingRow title="Редактировать профиль" description={user?.is_premium ? 'Имя, аватар, биография' : 'На Free доступна только смена имени'} action={<ChevronRight className="w-5 h-5 text-white/30" />} />
+                <SettingRow title="Редактировать профиль" description={user?.is_premium ? 'Имя, аватар, биография' : 'На Free доступна только смена имени'} action={<ChevronRight className="w-5 h-5 text-white/50" />} />
               </Link>
               <Link to="/stats">
-                <SettingRow title="Моя статистика" description="Ваша активность и достижения" action={<ChevronRight className="w-5 h-5 text-white/30" />} />
+                <SettingRow title="Моя статистика" description="Ваша активность и достижения" action={<ChevronRight className="w-5 h-5 text-white/50" />} />
               </Link>
             </SettingSection>
 
@@ -767,9 +767,9 @@ export default function SettingsPage() {
               {user?.is_premium ? (
                 <ColorPaletteSettings />
               ) : (
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.10]">
                   <p className="text-sm text-white/85 mb-1">Палитра профиля доступна в Plus и Fan</p>
-                  <p className="text-xs text-white/40 mb-3">На бесплатном тарифе профиль можно менять только по имени пользователя.</p>
+                  <p className="text-xs text-white/60 mb-3">На бесплатном тарифе профиль можно менять только по имени пользователя.</p>
                   <Link to="/premium" className="inline-flex px-3 py-2 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 text-sm transition">
                     Открыть тарифы
                   </Link>
@@ -791,13 +791,13 @@ export default function SettingsPage() {
                   await logout()
                   navigate('/login')
                 }}
-                className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.02] hover:bg-red-500/10 border border-white/[0.05] hover:border-red-500/20 transition duration-200 text-left group"
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.05] hover:bg-red-500/10 border border-white/[0.08] hover:border-red-500/20 transition duration-200 text-left group"
               >
                 <div className="flex items-center gap-3">
                   <LogOut className="w-5 h-5 text-red-400" />
                   <div>
                     <p className="font-medium text-red-400">Выйти из аккаунта</p>
-                    <p className="text-sm text-white/40">user@{user?.username}</p>
+                    <p className="text-sm text-white/60">user@{user?.username}</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-red-400 group-hover:translate-x-1 transition-transform" />
@@ -811,7 +811,7 @@ export default function SettingsPage() {
           <div>
             <SettingSection title="Текущий план">
               {loadingSubscription ? (
-                <div className="p-5 rounded-xl glass border border-white/10 text-center text-white/40">
+                <div className="p-5 rounded-xl glass border border-white/10 text-center text-white/60">
                   Загрузка...
                 </div>
               ) : (
@@ -827,10 +827,10 @@ export default function SettingsPage() {
                     </p>
                   <p className="text-2xl font-bold">
                     {subscription?.price || 0} ₽
-                    {subscription?.price > 0 && <span className="text-sm font-normal text-white/40">/мес</span>}
+                    {subscription?.price > 0 && <span className="text-sm font-normal text-white/60">/мес</span>}
                   </p>
                   {subscription?.expires_at && (
-                    <p className="text-xs text-white/40 mt-2">
+                    <p className="text-xs text-white/60 mt-2">
                       Действует до: {new Date(subscription.expires_at).toLocaleDateString('ru-RU')}
                     </p>
                   )}
@@ -840,10 +840,10 @@ export default function SettingsPage() {
 
             <SettingSection title="Управление">
               <Link to="/billing" className="block">
-                <SettingRow title="История платежей" action={<ChevronRight className="w-5 h-5 text-white/30" />} />
+              <SettingRow title="История платежей" action={<ChevronRight className="w-5 h-5 text-white/50" />} />
               </Link>
               <Link to="/premium" className="block mt-2">
-                <SettingRow title="Сменить тариф" action={<ChevronRight className="w-5 h-5 text-white/30" />} />
+                <SettingRow title="Сменить тариф" action={<ChevronRight className="w-5 h-5 text-white/50" />} />
               </Link>
             </SettingSection>
           </div>
@@ -853,9 +853,9 @@ export default function SettingsPage() {
         return (
           <div>
             <SettingSection title="Звук">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.08]">
                 <div className="mb-3 flex items-center gap-2">
-                  <Volume2 className="h-4 w-4 text-white/40" />
+                  <Volume2 className="h-4 w-4 text-white/60" />
                   <p className="font-medium">Громкость плеера</p>
                 </div>
                 <div className="flex items-center justify-between gap-4">
@@ -880,7 +880,7 @@ export default function SettingsPage() {
                 action={<Toggle checked={settings.eqEnabled} onChange={() => updateSetting('eqEnabled', !settings.eqEnabled)} />}
               />
               {settings.eqEnabled && (
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.08]">
                   <div className="relative">
                     <select
                       value={settings.eqPreset}
@@ -891,7 +891,7 @@ export default function SettingsPage() {
                         <option key={p} value={p} className="bg-black text-white">{p}</option>
                       ))}
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/60">
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" />
                       </svg>
@@ -902,9 +902,9 @@ export default function SettingsPage() {
             </SettingSection>
 
             <SettingSection title="Премиум-возможности">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.08]">
                 <p className="font-medium mb-1">Plus и Fan</p>
-                <p className="text-sm text-white/40 mb-3">Отключите рекламу, откройте полную статистику и получите доступ к fan-привилегиям без офлайн-режима и скачивания.</p>
+                <p className="text-sm text-white/60 mb-3">Отключите рекламу, откройте полную статистику и получите доступ к fan-привилегиям без офлайн-режима и скачивания.</p>
                 <Link to="/premium" className="inline-flex px-3 py-2 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 text-sm transition">
                   Посмотреть тарифы
                 </Link>
@@ -1091,9 +1091,9 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.08]">
                     <h3 className="font-medium mb-2">Заявка на страницу исполнителя</h3>
-                    <p className="text-sm text-white/40 mb-4">Расскажите о себе и оставьте ссылки на соцсети, портфолио или музыку. После этого администратор сможет одобрить заявку.</p>
+                    <p className="text-sm text-white/60 mb-4">Расскажите о себе и оставьте ссылки на соцсети, стриминги или портфолио. После этого администратор сможет одобрить заявку.</p>
 
                     <div className="space-y-3">
                       <textarea
@@ -1101,20 +1101,20 @@ export default function SettingsPage() {
                         onChange={(e) => setArtistApplicationMessage(e.target.value)}
                         rows={4}
                         placeholder="Кратко расскажите о себе как об артисте"
-                        className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] focus:border-white/15 outline-none transition resize-none"
+                        className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] focus:border-white/15 outline-none transition resize-none"
                       />
                       <input
                         value={artistApplicationLinks}
                         onChange={(e) => setArtistApplicationLinks(e.target.value)}
                         placeholder="Ссылки на соцсети, стриминги или портфолио"
-                        className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] focus:border-white/15 outline-none transition"
+                        className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] focus:border-white/15 outline-none transition"
                       />
                       <button
                         onClick={() => submitArtistApplication('create')}
                         disabled={artistApplicationLoading || artistApplication?.status === 'pending'}
                         className={`px-4 py-3 rounded-xl text-sm font-medium transition ${
                           artistApplicationLoading || artistApplication?.status === 'pending'
-                            ? 'bg-white/10 text-white/40 cursor-not-allowed'
+                            ? 'bg-white/10 text-white/60 cursor-not-allowed'
                             : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30'
                         }`}
                       >
@@ -1128,8 +1128,8 @@ export default function SettingsPage() {
                   </div>
 
                   {artistApplication && (
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] text-sm">
-                      <p className="text-white/40 mb-2">Текущий статус</p>
+                    <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.08] text-sm">
+                      <p className="text-white/60 mb-2">Текущий статус</p>
                       <p className={`font-medium ${
                         artistApplication.status === 'approved'
                           ? 'text-green-400'
@@ -1159,17 +1159,17 @@ export default function SettingsPage() {
                     onChange={(e) => setArtistDeleteReason(e.target.value)}
                     rows={4}
                     placeholder="Причина удаления страницы артиста"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] focus:border-white/15 outline-none transition resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] focus:border-white/15 outline-none transition resize-none"
                   />
                   <input
                     type="password"
                     value={artistDeletePassword}
                     onChange={(e) => setArtistDeletePassword(e.target.value)}
                     placeholder="Пароль от аккаунта"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] focus:border-white/15 outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] focus:border-white/15 outline-none transition"
                   />
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => setShowArtistDeleteModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05]">Отмена</button>
+                    <button onClick={() => setShowArtistDeleteModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08]">Отмена</button>
                     <button
                       onClick={() => submitArtistApplication('delete')}
                       disabled={artistApplicationLoading || !artistDeleteReason.trim() || !artistDeletePassword}
@@ -1200,7 +1200,7 @@ export default function SettingsPage() {
                 title="Поддержка"
                 description="Сообщить о проблеме и отправить скриншоты"
                 onClick={() => setShowSupportModal(true)}
-                action={<ChevronRight className="w-5 h-5 text-white/30" />}
+                action={<ChevronRight className="w-5 h-5 text-white/50" />}
               />
             </SettingSection>
           </div>
@@ -1297,9 +1297,9 @@ export default function SettingsPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">Обращение в поддержку</h2>
-                <p className="text-sm text-white/40">Выберите область проблемы, опишите ситуацию и при необходимости приложите скриншоты.</p>
+                <p className="text-sm text-white/60">Выберите область проблемы, опишите ситуацию и при необходимости приложите скриншоты.</p>
               </div>
-              <button onClick={() => setShowSupportModal(false)} className="px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05]">Закрыть</button>
+              <button onClick={() => setShowSupportModal(false)} className="px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08]">Закрыть</button>
             </div>
 
             <div>
@@ -1310,7 +1310,7 @@ export default function SettingsPage() {
                   const isDisabled = area !== 'Другое' && supportIssueAreas.includes('Другое')
 
                   return (
-                  <label key={area} className={`p-3 rounded-xl border cursor-pointer transition ${isChecked ? 'bg-purple-500/10 border-purple-500/30 text-purple-200' : 'bg-white/[0.02] border-white/[0.05] text-white/70 hover:border-white/10'} ${isDisabled ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                  <label key={area} className={`p-3 rounded-xl border cursor-pointer transition ${isChecked ? 'bg-purple-500/10 border-purple-500/30 text-purple-200' : 'bg-white/[0.05] border-white/[0.08] text-white/70 hover:border-white/10'} ${isDisabled ? 'opacity-40 cursor-not-allowed' : ''}`}>
                     <div className="flex items-center gap-3">
                       <input type="checkbox" checked={isChecked} disabled={isDisabled} onChange={() => toggleSupportArea(area)} className="accent-gray-400 checked:accent-purple-500" />
                       <span className="text-sm">{area}</span>
@@ -1327,7 +1327,7 @@ export default function SettingsPage() {
                 onChange={(e) => setSupportDescription(e.target.value)}
                 rows={6}
                 placeholder="Опишите, что произошло, как это воспроизводится и что вы ожидали увидеть"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] focus:border-white/15 outline-none transition resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] focus:border-white/15 outline-none transition resize-none"
               />
             </div>
 
@@ -1338,12 +1338,12 @@ export default function SettingsPage() {
                 accept="image/*"
                 multiple
                 onChange={(e) => setSupportFiles(Array.from(e.target.files || []).slice(0, 5))}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-white"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-white"
               />
               {supportFiles.length > 0 && (
                 <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {supportFilePreviews.map(({ file, url }) => (
-                    <div key={`${file.name}-${file.size}`} className="rounded-xl overflow-hidden border border-white/[0.05] bg-white/[0.02]">
+                    <div key={`${file.name}-${file.size}`} className="rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.05]">
                       <img loading="lazy" src={url} alt={file.name} className="w-full h-28 object-cover" />
                       <div className="p-2 text-xs text-white/50 truncate">{file.name}</div>
                     </div>
@@ -1353,7 +1353,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex justify-end gap-2">
-              <button onClick={() => setShowSupportModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05]">Отмена</button>
+              <button onClick={() => setShowSupportModal(false)} className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08]">Отмена</button>
               <button
                 onClick={submitSupportTicket}
                 disabled={supportSubmitting || supportIssueAreas.length === 0 || !supportDescription.trim()}

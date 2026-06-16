@@ -476,3 +476,18 @@ select option {
   opacity: 0 !important;
   animation: none !important;
 }
+
+/* Primary morph button */
+.btn-primary {
+  position: relative;
+  isolation: isolate;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
