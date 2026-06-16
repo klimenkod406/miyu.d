@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import FilterPills from './FilterPills'
 
 const options = [
@@ -11,14 +11,14 @@ const options = [
 
 describe('FilterPills', () => {
   it('renders all options', () => {
-    render(<FilterPills options={options} selected="all" onChange={() => {}} />)
+    render(<FilterPills name="test" options={options} selected="all" onChange={() => {}} />)
     expect(screen.getByText('All')).toBeInTheDocument()
     expect(screen.getByText('Rock')).toBeInTheDocument()
     expect(screen.getByText('Pop')).toBeInTheDocument()
   })
 
   it('selected option has active background classes', () => {
-    render(<FilterPills options={options} selected="rock" onChange={() => {}} />)
+    render(<FilterPills name="test" options={options} selected="rock" onChange={() => {}} />)
     const rockBtn = screen.getByText('Rock').closest('button')!
     expect(rockBtn.className).toContain('text-white')
     // active pill should NOT have the inactive class
@@ -27,13 +27,13 @@ describe('FilterPills', () => {
 
   it('clicking an option calls onChange with the correct id', () => {
     const onChange = vi.fn()
-    render(<FilterPills options={options} selected="all" onChange={onChange} />)
+    render(<FilterPills name="test" options={options} selected="all" onChange={onChange} />)
     fireEvent.click(screen.getByText('Rock'))
     expect(onChange).toHaveBeenCalledWith('rock')
   })
 
   it('works in single-select mode (default) — only one selected', () => {
-    render(<FilterPills options={options} selected="pop" onChange={() => {}} />)
+    render(<FilterPills name="test" options={options} selected="pop" onChange={() => {}} />)
     const popBtn = screen.getByText('Pop').closest('button')!
     const allBtn = screen.getByText('All').closest('button')!
     expect(popBtn.className).toContain('text-white')
@@ -42,7 +42,7 @@ describe('FilterPills', () => {
 
   it('works in multi-select mode — multiple selected', () => {
     render(
-      <FilterPills options={options} selected={['rock', 'pop']} onChange={() => {}} multi />
+      <FilterPills name="test" options={options} selected={['rock', 'pop']} onChange={() => {}} multi />
     )
     const rockBtn = screen.getByText('Rock').closest('button')!
     const popBtn = screen.getByText('Pop').closest('button')!
@@ -54,7 +54,7 @@ describe('FilterPills', () => {
 
   it('renders a motion.div with layoutId for the animated indicator', () => {
     const { container } = render(
-      <FilterPills options={options} selected="rock" onChange={() => {}} />
+      <FilterPills name="test" options={options} selected="rock" onChange={() => {}} />
     )
     // The animated indicator is a div inside the selected button with indicator classes
     const rockBtn = screen.getByText('Rock').closest('button')!

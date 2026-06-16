@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 
 interface FilterPillsProps {
+  name: string
   options: { id: string; label: string }[]
   selected: string | string[]
   onChange: (id: string) => void
@@ -12,6 +13,7 @@ interface FilterPillsProps {
  * Supports single-select (default) and multi-select modes.
  */
 export default function FilterPills({
+  name,
   options,
   selected,
   onChange,
@@ -34,7 +36,7 @@ export default function FilterPills({
           >
             {active && (
               <motion.div
-                layoutId="pill-bg"
+                layoutId={`pill-bg-${name}`}
                 className="absolute inset-0 bg-purple-500 rounded-full"
               />
             )}

@@ -357,6 +357,7 @@ export default function ModerationPage() {
           </p>
         </div>
         <FilterPills
+          name="status"
           options={[
             { id: 'pending', label: 'На проверке' },
             { id: 'approved', label: 'Одобренные' },

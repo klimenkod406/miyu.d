@@ -341,18 +341,21 @@ export default function ConcertsPage() {
 
         <div className="flex flex-wrap gap-2">
           <FilterPills
+            name="date"
             options={dateFilterOptions}
             selected={selectedDate}
             onChange={(id) => setSelectedDate(id)}
           />
 
           <FilterPills
+            name="genre"
             options={genreFilterOptions}
             selected={selectedGenre}
             onChange={(id) => setSelectedGenre(id)}
           />
 
           <FilterPills
+            name="price"
             options={priceFilterOptions}
             selected={selectedPrice.toString()}
             onChange={(id) => setSelectedPrice(parseInt(id))}

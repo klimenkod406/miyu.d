@@ -277,6 +277,7 @@ export default function AdminAchievementsPage() {
               />
 
               <FilterPills
+                name="rarity"
                 options={[
                   { id: 'all', label: 'Все редкости' },
                   ...rarityOptions.map(r => ({ id: r.value, label: r.label }))
@@ -287,6 +288,7 @@ export default function AdminAchievementsPage() {
               />
 
               <FilterPills
+                name="type"
                 options={[
                   { id: 'all', label: 'Все типы' },
                   { id: 'public', label: 'Обычные' },
