@@ -329,7 +329,7 @@ export default function ConcertPage() {
                 ) : (
                   <>
                     <TicketIcon className="w-5 h-5" />
-                    \u041a\u0443\u043f\u0438\u0442\u044c \u0431\u0438\u043b\u0435\u0442\u044b
+                    Купить билеты
                   </>
                 )}
               </Button>
@@ -405,7 +405,7 @@ export default function ConcertPage() {
                   Остаться здесь
                 </button>
                 <Button variant="glass" size="sm" onClick={() => navigate(`/tickets/concert/${concert.id}`)}>
-                  <TicketIcon size={16} /> \u041a \u0431\u0438\u043b\u0435\u0442\u0430\u043c
+                  <TicketIcon size={16} /> К билетам
                 </Button>
               </div>
             </motion.div>

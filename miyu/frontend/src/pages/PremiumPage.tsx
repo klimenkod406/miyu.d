@@ -68,14 +68,14 @@ export default function PremiumPage() {
             {plan.price > 0 && (
               plan.popular ? (
                 <Button variant="primary" size="lg" onClick={() => handleSelectPlan(plan.id)}>
-                  \u0412\u044b\u0431\u0440\u0430\u0442\u044c
+                  Выбрать
                 </Button>
               ) : (
                 <button
                   onClick={() => handleSelectPlan(plan.id)}
                   className="w-full py-3 rounded-full font-medium transition bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10"
                 >
-                  \u0412\u044b\u0431\u0440\u0430\u0442\u044c
+                  Выбрать
                 </button>
               )
             )}
@@ -91,7 +91,7 @@ export default function PremiumPage() {
               Выберите тариф, и мы отправим красивый цифровой подарок.
             </p>
             <Button as="link" to="/gift" variant="primary" size="lg">
-              \u041f\u043e\u0434\u0430\u0440\u0438\u0442\u044c \u043f\u043e\u0434\u043f\u0438\u0441\u043a\u0443
+              Подарить подписку
             </Button>
         </div>
       </div>
