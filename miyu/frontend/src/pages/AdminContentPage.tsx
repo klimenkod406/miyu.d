@@ -10,6 +10,7 @@ import TrackModerationModal from '../components/TrackModerationModal'
 import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { ExplicitBadge } from '../components/ExplicitBadge'
+import FilterTabs from '../components/FilterTabs'
 
 const COLORS = {
   gold: '#fbbf24',
@@ -84,28 +85,17 @@ export default function AdminContentPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        {[
-          { id: 'overview', label: 'Обзор', icon: Activity },
-          { id: 'tracks', label: 'Треки', icon: FileAudio },
-          { id: 'albums', label: 'Альбомы', icon: Album },
-          { id: 'videos', label: 'Клипы', icon: FileVideo },
-          { id: 'concerts', label: 'Концерты', icon: Ticket },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id as typeof tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 ${
-              tab === t.id
-                ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                : 'bg-white/[0.02] text-white/40 hover:text-white border border-white/[0.05]'
-            }`}
-          >
-            <t.icon className="w-4 h-4" />
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <FilterTabs
+        tabs={[
+          { id: 'overview', label: 'Обзор', icon: <Activity className="w-4 h-4" /> },
+          { id: 'tracks', label: 'Треки', icon: <FileAudio className="w-4 h-4" /> },
+          { id: 'albums', label: 'Альбомы', icon: <Album className="w-4 h-4" /> },
+          { id: 'videos', label: 'Клипы', icon: <FileVideo className="w-4 h-4" /> },
+          { id: 'concerts', label: 'Концерты', icon: <Ticket className="w-4 h-4" /> },
+        ]}
+        activeTab={tab}
+        onChange={(id) => setTab(id as typeof tab)}
+      />
 
       {tab === 'overview' && stats && (
         <>

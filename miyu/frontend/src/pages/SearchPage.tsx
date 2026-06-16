@@ -5,6 +5,7 @@ import { Music, Mic, Disc, ListMusic, Play, Ticket, Calendar, MapPin, Loader2 } 
 import { useAuth } from '../hooks/AuthContext'
 import { searchApi, SearchResults } from '../api/search'
 import { ExplicitBadge } from '../components/ExplicitBadge'
+import FilterTabs from '../components/FilterTabs'
 
 type TabType = 'all' | 'tracks' | 'artists' | 'albums' | 'playlists' | 'concerts'
 
@@ -128,22 +129,13 @@ export default function SearchPage() {
 
       {/* Show tabs only if there's a query and results */}
       {(query || genre) && hasAnyResults && (
-        <div className="mb-6 flex flex-wrap gap-2 max-[414px]:mb-4 max-[414px]:gap-1.5">
-          {availableTabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => paginate(tab.key)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition duration-200 max-[414px]:px-3 max-[414px]:py-1.5 max-[414px]:text-xs ${
-                  activeTab === tab.key
-                    ? 'glass-accent text-white'
-                    : 'text-white/50 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="mb-6 max-[414px]:mb-4">
+          <FilterTabs
+            tabs={availableTabs.map((t) => ({ id: t.key, label: t.label }))}
+            activeTab={activeTab}
+            onChange={(id) => paginate(id as TabType)}
+          />
         </div>
-      )}
 
       {loading && (
         <div className="flex items-center justify-center py-12">

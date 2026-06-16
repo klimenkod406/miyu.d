@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/AuthContext'
 import { achievementsApi } from '../api/achievements'
+import FilterPills from '../components/FilterPills'
 
 // Функция для получения компонента иконки
 const getIconComponent = (iconName: string) => {
@@ -275,26 +276,26 @@ export default function AdminAchievementsPage() {
                 className="flex-1 min-w-[200px] px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] focus:border-purple-500/50 outline-none text-sm"
               />
 
-              <select
-                value={filterRarity}
-                onChange={(e) => setFilterRarity(e.target.value)}
-                className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] appearance-none cursor-pointer text-sm"
-              >
-                <option value="all">Все редкости</option>
-                {rarityOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
+              <FilterPills
+                options={[
+                  { id: 'all', label: 'Все редкости' },
+                  ...rarityOptions.map(r => ({ id: r.value, label: r.label }))
+                ]}
+                selected={filterRarity}
+                onChange={(id) => setFilterRarity(id)}
+                multi={false}
+              />
 
-              <select
-                value={filterSecret}
-                onChange={(e) => setFilterSecret(e.target.value)}
-                className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] appearance-none cursor-pointer text-sm"
-              >
-                <option value="all">Все типы</option>
-                <option value="public">Обычные</option>
-                <option value="secret">Секретные</option>
-              </select>
+              <FilterPills
+                options={[
+                  { id: 'all', label: 'Все типы' },
+                  { id: 'public', label: 'Обычные' },
+                  { id: 'secret', label: 'Секретные' },
+                ]}
+                selected={filterSecret}
+                onChange={(id) => setFilterSecret(id)}
+                multi={false}
+              />
             </div>
 
             <div className="flex items-center gap-2 text-sm text-white/40">

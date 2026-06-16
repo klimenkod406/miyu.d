@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 import { Music, Check, X, AlertTriangle, Zap, Shield, Clock, Globe, Copyright, Mic, Volume2, TrendingUp, FileAudio, Play, Pause, Disc, Album } from 'lucide-react'
+import FilterPills from '../components/FilterPills'
 import { ExplicitBadge } from '../components/ExplicitBadge'
 
 interface TrackAnalysis {
@@ -355,16 +356,16 @@ export default function ModerationPage() {
             В ожидании: {pendingCount} | Одобрено: {approvedCount}
           </p>
         </div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="px-4 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05] text-white"
-        >
-          <option value="pending">На проверке</option>
-          <option value="approved">Одобренные</option>
-          <option value="all">Все</option>
-        </select>
-      </div>
+        <FilterPills
+          options={[
+            { id: 'pending', label: 'На проверке' },
+            { id: 'approved', label: 'Одобренные' },
+            { id: 'all', label: 'Все' },
+          ]}
+          selected={filter}
+          onChange={(id) => setFilter(id)}
+          multi={false}
+        />
 
       <div className="space-y-2">
         {filteredItems.map((item) => {

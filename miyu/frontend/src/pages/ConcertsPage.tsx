@@ -7,6 +7,7 @@ import { MapPin, Calendar, Clock, Ticket, Search, Mic, X, Loader } from 'lucide-
 import { concertsApi } from '../api/concerts';
 import ConcertCover from '../components/ConcertCover';
 import Button from '../components/Button'
+import FilterPills from '../components/FilterPills'
 
 interface Concert {
   id: number;
@@ -32,12 +33,25 @@ const priceRanges = [
   { label: 'До 1000 ₽', min: 1, max: 1000 },
   { label: 'До 5000 ₽', min: 1001, max: 5000 },
 ];
-const dateFilters = [
-  { label: 'Все', value: 'all' },
-  { label: 'Сегодня', value: 'today' },
-  { label: 'Завтра', value: 'tomorrow' },
-  { label: 'На этой неделе', value: 'week' },
-  { label: 'В этом месяце', value: 'month' },
+const genreFilterOptions = [
+  { id: 'Рок', label: 'Рок' },
+  { id: 'Поп', label: 'Поп' },
+  { id: 'Электроника', label: 'Электроника' },
+  { id: 'Хип-хоп', label: 'Хип-хоп' },
+  { id: 'Джаз', label: 'Джаз' },
+];
+const priceFilterOptions = [
+  { id: '0', label: 'Все' },
+  { id: '1', label: 'Бесплатно' },
+  { id: '2', label: 'до 1000₽' },
+  { id: '3', label: 'до 5000₽' },
+];
+const dateFilterOptions = [
+  { id: 'all', label: 'Все' },
+  { id: 'today', label: 'Сегодня' },
+  { id: 'tomorrow', label: 'Завтра' },
+  { id: 'week', label: 'Неделя' },
+  { id: 'month', label: 'Месяц' },
 ];
 
 function formatConcertTime(time: string | undefined | null): string {
@@ -326,53 +340,23 @@ export default function ConcertsPage() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <div className="flex gap-1 p-1 bg-white/[0.02] rounded-lg">
-            {dateFilters.map((filter) => (
-              <button
-                key={filter.value}
-                onClick={() => setSelectedDate(filter.value)}
-                className={`px-3 py-1.5 rounded-md text-sm transition ${
-                  selectedDate === filter.value
-                    ? 'bg-purple-500 text-white'
-                    : 'text-white/50 hover:text-white'
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
+          <FilterPills
+            options={dateFilterOptions}
+            selected={selectedDate}
+            onChange={(id) => setSelectedDate(id)}
+          />
 
-          <div className="flex gap-1 p-1 bg-white/[0.02] rounded-lg">
-            {genres.slice(0, 5).map((genre) => (
-              <button
-                key={genre}
-                onClick={() => setSelectedGenre(genre)}
-                className={`px-3 py-1.5 rounded-md text-sm transition ${
-                  selectedGenre === genre
-                    ? 'bg-purple-500 text-white'
-                    : 'text-white/50 hover:text-white'
-                }`}
-              >
-                {genre}
-              </button>
-            ))}
-          </div>
+          <FilterPills
+            options={genreFilterOptions}
+            selected={selectedGenre}
+            onChange={(id) => setSelectedGenre(id)}
+          />
 
-          <div className="flex gap-1 p-1 bg-white/[0.02] rounded-lg">
-            {priceRanges.map((range, i) => (
-              <button
-                key={i}
-                onClick={() => setSelectedPrice(i)}
-                className={`px-3 py-1.5 rounded-md text-sm transition ${
-                  selectedPrice === i
-                    ? 'bg-purple-500 text-white'
-                    : 'text-white/50 hover:text-white'
-                }`}
-              >
-                {range.label}
-              </button>
-            ))}
-          </div>
+          <FilterPills
+            options={priceFilterOptions}
+            selected={selectedPrice.toString()}
+            onChange={(id) => setSelectedPrice(parseInt(id))}
+          />
 
           {(searchQuery || selectedGenre !== 'Все' || selectedCity !== 'Все' || selectedPrice > 0) && (
             <button
