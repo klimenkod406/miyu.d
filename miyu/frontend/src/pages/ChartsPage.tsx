@@ -4,6 +4,7 @@ import { Crown, Heart, Loader2, Music, Play, Radio, TrendingUp } from 'lucide-re
 import { usePlayer } from '../hooks/PlayerContext'
 import { getStoredTokens } from '../api/auth'
 import type { Track } from '../types'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 function formatDuration(seconds: number) {
   if (!seconds) return '0:00'
@@ -64,7 +65,7 @@ function ChartCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-white">{track.title}</p>
+              <span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
               <p className="truncate text-xs text-white/45">{track.artist?.username}</p>
             </div>
             <span className="text-sm text-white/45">{formatDuration(track.duration)}</span>

@@ -8,6 +8,7 @@ import AudioVisualizer from '../components/AudioVisualizer'
 import type { Track, User } from '../types'
 import { getStoredTokens } from '../api/auth'
 import { recsysApi, type PersonalizedHomeArtist, type PersonalizedHomePlaylist } from '../api/recsys'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 const genreIcons: Record<string, typeof Guitar> = {
   'Рок': Guitar,
@@ -82,12 +83,12 @@ function TrackCard({ track, tracks, canNavigate }: { track: Track; tracks: Track
           className="block"
         >
           <h3 className={`font-medium text-sm truncate transition-colors ${isCurrentTrack ? 'text-white' : 'group-hover:text-purple-400'}`}>
-            {track.title}
+            <span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
           </h3>
         </Link>
       ) : (
         <h3 className={`font-medium text-sm truncate transition-colors ${isCurrentTrack ? 'text-white' : 'group-hover:text-purple-400'}`}>
-          {track.title}
+          <span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
         </h3>
       )}
       <p className="text-sm text-white/40 truncate">{track.artist?.username}</p>
@@ -492,15 +493,10 @@ function ChartRow({
               onClick={(e) => e.stopPropagation()}
               className={`truncate text-sm font-bold transition-colors ${isCurrentTrack ? 'text-white' : 'text-white group-hover:text-purple-300'}`}
             >
-              {track.title}
+              <span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
             </Link>
           ) : (
-            <p className={`truncate text-sm font-bold transition-colors ${isCurrentTrack ? 'text-white' : 'text-white group-hover:text-purple-300'}`}>{track.title}</p>
-          )}
-          {Boolean(track.is_explicit) && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/[0.12] bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-semibold text-white/60">
-              <AlertCircle className="h-3 w-3" />E
-            </span>
+            <p className={`truncate text-sm font-bold transition-colors ${isCurrentTrack ? 'text-white' : 'text-white group-hover:text-purple-300'}`}><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></p>
           )}
         </div>
         <p className="truncate text-xs text-white/40">{track.artist?.username}</p>

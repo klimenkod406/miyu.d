@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Music, Mic, Disc, ListMusic, Play, Ticket, Calendar, MapPin, Loader2 } from 'lucide-react'
 import { useAuth } from '../hooks/AuthContext'
 import { searchApi, SearchResults } from '../api/search'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 type TabType = 'all' | 'tracks' | 'artists' | 'albums' | 'playlists' | 'concerts'
 
@@ -188,7 +189,7 @@ export default function SearchPage() {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate group-hover:text-purple-400 transition">{track.title}</p>
+                            <span className="inline-flex items-center gap-1"><p className="font-medium truncate group-hover:text-purple-400 transition">{track.title}</p><ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
                             <p className="text-sm text-white/40 truncate">
                               {track.artist.username}{track.genre ? ` • ${track.genre}` : ''}
                             </p>

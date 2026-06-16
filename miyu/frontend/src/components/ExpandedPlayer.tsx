@@ -9,6 +9,7 @@ import {
 import { aiApi } from '../api/ai'
 import { getStoredTokens } from '../api/auth'
 import type { Video } from '../types'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 type PopupType = 'eq' | 'volume' | 'playlist' | null
 type ViewMode = 'player' | 'lyrics'
@@ -395,7 +396,7 @@ export default function ExpandedPlayer() {
                         >
                           {lyricsSegments.map((segment, index) => {
                             const isActive = index === effectiveIndex
-
+                            return (
                                 <motion.div
                                   ref={(node) => { lineRefs.current[index] = node }}
                                   animate={{
@@ -408,7 +409,7 @@ export default function ExpandedPlayer() {
                                 >
                                   {segment.text}
                                 </motion.div>
-                              </div>
+
                             )
                           })}
                         </motion.div>
@@ -458,10 +459,10 @@ export default function ExpandedPlayer() {
                         onClick={handlePlayerNavigation}
                         className="rounded-sm transition hover:text-purple-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                       >
-                        {currentTrack?.title || 'Трек не выбран'}
+                        <span className="inline-flex items-center gap-1">{currentTrack?.title || 'Трек не выбран'}<ExplicitBadge is_explicit={currentTrack?.is_explicit} size="xs" /></span>
                       </Link>
                     ) : (
-                      currentTrack?.title || 'Трек не выбран'
+                      <span className="inline-flex items-center gap-1">{currentTrack?.title || 'Трек не выбран'}<ExplicitBadge is_explicit={currentTrack?.is_explicit} size="xs" /></span>
                     )}
                   </h3>
                   <p className="truncate text-sm text-gray-400 max-[414px]:text-center max-[414px]:text-xs">

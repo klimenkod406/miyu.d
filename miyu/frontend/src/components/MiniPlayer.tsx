@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Square, Heart, Music, Waves } from 'lucide-react'
 import { memo } from 'react'
 import { useAuth } from '../hooks/AuthContext'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 const MemoizedMiniPlayerContent = memo(function MiniPlayerContent() {
   const { currentTrack, isPlaying, togglePlay, stop, toggleExpanded, progress, duration, isLiked, toggleLike, isWaveActive } = usePlayer()
@@ -59,7 +60,7 @@ const MemoizedMiniPlayerContent = memo(function MiniPlayerContent() {
 
         <div className="min-w-0 flex-1 pr-1 max-[414px]:pr-0">
           <p className="truncate text-sm font-medium text-white max-[414px]:text-[13px]">
-            {currentTrack?.title || 'Трек не выбран'}
+            <span className="inline-flex items-center gap-1">{currentTrack?.title || 'Трек не выбран'}<ExplicitBadge is_explicit={currentTrack?.is_explicit} size="xs" /></span>
           </p>
           <div className="flex items-center gap-2 min-w-0">
             <p className="truncate text-xs text-gray-400 max-[414px]:text-[11px]">

@@ -5,6 +5,7 @@ import { usePlayer } from '../hooks/PlayerContext'
 import { getStoredTokens } from '../api/auth'
 import { Music, Pause, Play, Heart, FileText, Mic, ListMusic, X, Disc, ArrowRight } from 'lucide-react'
 import SimilarTracks from '../components/SimilarTracks'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
@@ -218,7 +219,7 @@ export default function TrackPage() {
         <div className="flex-1 flex flex-col">
           <div className="mb-4">
             <p className="text-sm text-white/40">ТРЕК</p>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{track.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2"><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></h1>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Link to={`/artist/${track.artist_id}`} className="font-medium hover:text-white transition">
                 {track.artist_name}
@@ -333,7 +334,7 @@ export default function TrackPage() {
                       {item.cover_url ? <img loading="lazy" src={item.cover_url} alt={item.title} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center"><Music className="h-5 w-5 text-white/25" /></div>}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold text-white transition group-hover:text-purple-300">{item.title}</p>
+                      <p className="truncate font-semibold text-white transition group-hover:text-purple-300"><span className="inline-flex items-center gap-1">{item.title}<ExplicitBadge is_explicit={item.is_explicit} size="xs" /></span></p>
                       <p className="truncate text-sm text-white/40">{item.genre || 'Трек артиста'}</p>
                     </div>
                     <Play className="h-4 w-4 shrink-0 text-white/35" />
@@ -383,7 +384,7 @@ export default function TrackPage() {
                       {item.cover_url ? <img loading="lazy" src={item.cover_url} alt={item.title} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center"><Music className="h-5 w-5 text-white/25" /></div>}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <Link to={`/track/${item.id}`} className="block truncate font-medium text-white transition hover:text-purple-300">{item.title}</Link>
+                      <Link to={`/track/${item.id}`} className="block truncate font-medium text-white transition hover:text-purple-300"><span className="inline-flex items-center gap-1">{item.title}<ExplicitBadge is_explicit={item.is_explicit} size="xs" /></span></Link>
                       <p className="truncate text-sm text-white/40">{item.artist?.username || item.artist_name || 'Артист'} • {item.genre || 'Музыка'}</p>
                     </div>
                     <button

@@ -5,6 +5,7 @@ import { artistApi } from '../api/artist'
 import { getStoredTokens } from '../api/auth'
 import { usePlayer } from '../hooks/PlayerContext'
 import type { Track } from '../types'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 export default function ArtistTracksPage() {
   const [tracks, setTracks] = useState<Track[]>([])
@@ -132,7 +133,7 @@ export default function ArtistTracksPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-medium truncate transition ${isCurrentTrack ? 'text-white' : 'group-hover:text-purple-400'}`}>{track.title}</p>
+                  <span className="inline-flex items-center gap-1"><p className={`font-medium truncate transition ${isCurrentTrack ? 'text-white' : 'group-hover:text-purple-400'}`}>{track.title}</p><ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
                   {track.album?.title && (
                     <p className="text-sm text-white/40 truncate">{track.album.title}</p>
                   )}

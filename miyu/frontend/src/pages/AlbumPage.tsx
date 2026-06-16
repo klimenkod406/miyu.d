@@ -4,6 +4,7 @@ import { usePlayer } from '../hooks/PlayerContext';
 import type { Track, Album } from '../types';
 import { Play, Pause, Clock, Music, Loader2, Heart, Share2, MoreHorizontal, Verified } from 'lucide-react';
 import { getStoredTokens } from '../api/auth';
+import { ExplicitBadge } from '../components/ExplicitBadge';
 
 interface AlbumFull extends Album {
   artist_id: number;
@@ -261,7 +262,7 @@ export default function AlbumPage() {
                   {!isCurrent && <Play className="w-4 h-4 hidden group-hover:block text-white/60" />}
                 </div>
                 <div>
-                  <p className="font-medium text-white">{track.title}</p>
+                  <p className="font-medium text-white"><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></p>
                   <p className="text-sm text-white/40">{album.artist_name}</p>
                 </div>
                 <div className="text-sm text-white/60 flex items-center">
