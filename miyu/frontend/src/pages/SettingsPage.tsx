@@ -39,14 +39,10 @@ function Toggle({ checked, onChange, disabled = false }: { checked: boolean; onC
       disabled={disabled}
       whileTap={{ scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className={`relative w-11 h-6 rounded-full transition-all duration-300 ${
-        checked ? 'bg-white' : 'bg-white/10'
-      } ${disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/15'}`}
+      className={'relative w-11 h-6 rounded-full transition-all duration-300 ' + (checked ? 'bg-white' : 'bg-white/10') + ' ' + (disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/15')}
     >
       <div
-        className={`absolute top-0.5 w-5 h-5 rounded-full shadow-lg transition-all duration-300 ${
-          checked ? 'left-[22px] bg-black' : 'left-0.5 bg-white'
-        }`}
+        className={'absolute top-0.5 w-5 h-5 rounded-full shadow-lg transition-all duration-300 ' + (checked ? 'left-[22px] bg-black' : 'left-0.5 bg-white')}
       />
     </motion.button>
   )
@@ -249,21 +245,13 @@ function ColorPaletteSettings() {
       <div className="flex items-center gap-3 p-1 rounded-xl bg-white/[0.03] border border-white/[0.08]">
         <button
           onClick={() => handleModeChange('auto')}
-          className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-500 ${
-            mode === 'auto'
-              ? 'bg-white/[0.08] text-white shadow-lg shadow-white/5'
-              : 'text-white/60 hover:text-white/60 hover:bg-white/[0.05]'
-          }`}
+          className={'flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-500 ' + (mode === 'auto' ? 'bg-white/[0.08] text-white shadow-lg shadow-white/5' : 'text-white/60 hover:text-white/60 hover:bg-white/[0.05]')}
         >
           Автоматически
         </button>
         <button
           onClick={() => handleModeChange('custom')}
-          className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-500 ${
-            mode === 'custom'
-              ? 'bg-white/[0.08] text-white shadow-lg shadow-white/5'
-              : 'text-white/60 hover:text-white/60 hover:bg-white/[0.05]'
-          }`}
+          className={'flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-500 ' + (mode === 'custom' ? 'bg-white/[0.08] text-white shadow-lg shadow-white/5' : 'text-white/60 hover:text-white/60 hover:bg-white/[0.05]')}
         >
           Настроить
         </button>
@@ -1123,11 +1111,7 @@ export default function SettingsPage() {
                       <button
                         onClick={() => submitArtistApplication('create')}
                         disabled={artistApplicationLoading || artistApplication?.status === 'pending'}
-                        className={`px-4 py-3 rounded-xl text-sm font-medium transition ${
-                          artistApplicationLoading || artistApplication?.status === 'pending'
-                            ? 'bg-white/10 text-white/60 cursor-not-allowed'
-                            : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30'
-                        }`}
+                        className={'px-4 py-3 rounded-xl text-sm font-medium transition ' + (artistApplicationLoading || artistApplication?.status === 'pending' ? 'bg-white/10 text-white/60 cursor-not-allowed' : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30')}
                       >
                         {artistApplication?.status === 'pending'
                           ? 'Заявка отправлена'
@@ -1141,13 +1125,7 @@ export default function SettingsPage() {
                   {artistApplication && (
                     <div className="p-4 rounded-xl bg-white/[0.05] border border-white/[0.08] text-sm">
                       <p className="text-white/60 mb-2">Текущий статус</p>
-                      <p className={`font-medium ${
-                        artistApplication.status === 'approved'
-                          ? 'text-green-400'
-                          : artistApplication.status === 'rejected'
-                            ? 'text-red-400'
-                            : 'text-yellow-400'
-                      }`}>
+                      <p className={'font-medium ' + (artistApplication.status === 'approved' ? 'text-green-400' : artistApplication.status === 'rejected' ? 'text-red-400' : 'text-yellow-400')}>
                         {artistApplication.status === 'approved'
                           ? 'Одобрено'
                           : artistApplication.status === 'rejected'
@@ -1231,15 +1209,7 @@ export default function SettingsPage() {
                 <button
                   key={s.id}
                   onClick={() => setSection(s.id)}
-                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
-                    section === s.id 
-                      ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' 
-                      : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent'
-                  `}
-                    section === s.id 
-                      ? 'glass-accent text-white' 
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
-                  }`}
+                  className={'w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ' + (section === s.id ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent')}
                 >
                   <div className="flex items-center gap-3 max-[414px]:gap-0">
                     <Icon className="w-5 h-5" />
@@ -1257,15 +1227,7 @@ export default function SettingsPage() {
                 <button
                   key={s.id}
                   onClick={() => setSection(s.id)}
-                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
-                    section === s.id 
-                      ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' 
-                      : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent'
-                  `}
-                    section === s.id 
-                      ? 'glass-accent text-white' 
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
-                  }`}
+                  className={'w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ' + (section === s.id ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent')}
                 >
                   <div className="flex items-center gap-3 max-[414px]:gap-0">
                     <Icon className="w-5 h-5" />
@@ -1283,15 +1245,7 @@ export default function SettingsPage() {
                 <button
                   key={s.id}
                   onClick={() => setSection(s.id)}
-                  className={`w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ${
-                    section === s.id 
-                      ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' 
-                      : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent'
-                  `}
-                    section === s.id 
-                      ? 'glass-accent text-white' 
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
-                  }`}
+                  className={'w-full rounded-xl px-4 py-3 text-left transition-all duration-300 border-l-2 max-[414px]:flex max-[414px]:h-11 max-[414px]:items-center max-[414px]:justify-center max-[414px]:px-0 max-[414px]:py-0 ' + (section === s.id ? 'glass-accent text-white border-l-purple-500 shadow-[inset_0_0_12px_rgba(139,92,246,0.1)]' : 'text-white/50 hover:text-white hover:bg-white/5 border-l-transparent')}
                 >
                   <div className="flex items-center gap-3 max-[414px]:gap-0">
                     <Icon className="w-5 h-5" />
@@ -1343,7 +1297,7 @@ export default function SettingsPage() {
                   const isDisabled = area !== 'Другое' && supportIssueAreas.includes('Другое')
 
                   return (
-                  <label key={area} className={`p-3 rounded-xl border cursor-pointer transition ${isChecked ? 'bg-purple-500/10 border-purple-500/30 text-purple-200' : 'bg-white/[0.05] border-white/[0.08] text-white/70 hover:border-white/10'} ${isDisabled ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                  <label key={area} className={'p-3 rounded-xl border cursor-pointer transition ' + (isChecked ? 'bg-purple-500/10 border-purple-500/30 text-purple-200' : 'bg-white/[0.05] border-white/[0.08] text-white/70 hover:border-white/10') + ' ' + (isDisabled ? 'opacity-40 cursor-not-allowed' : '')}>
                     <div className="flex items-center gap-3">
                       <input type="checkbox" checked={isChecked} disabled={isDisabled} onChange={() => toggleSupportArea(area)} className="accent-gray-400 checked:accent-purple-500" />
                       <span className="text-sm">{area}</span>

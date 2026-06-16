@@ -121,7 +121,6 @@ export default function LoginPage() {
           <AuthGlassButton
             variant="glow"
             type="button"
-            type="button"
             onClick={() => handleOAuth('github')}
             disabled={isLoading}
             className="group w-12 h-12 rounded-2xl hover:w-[220px] transition-[width] duration-300 ease-out text-white"

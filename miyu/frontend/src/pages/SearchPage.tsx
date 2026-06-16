@@ -135,8 +135,8 @@ export default function SearchPage() {
             activeTab={activeTab}
             onChange={(id) => paginate(id as TabType)}
           />
-        </div>
-
+      </div>
+)}
       {loading && (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-white" />

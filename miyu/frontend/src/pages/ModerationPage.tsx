@@ -367,6 +367,7 @@ export default function ModerationPage() {
           multi={false}
         />
 
+      </div>
       <div className="space-y-2">
         {filteredItems.map((item) => {
           const scoreColor = item.aiScore >= 80 ? 'text-green-400' : item.aiScore >= 60 ? 'text-yellow-400' : 'text-red-400'
