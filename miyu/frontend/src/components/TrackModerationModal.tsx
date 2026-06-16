@@ -6,6 +6,7 @@ import { aiApi } from '../api/ai'
 import { getStoredTokens } from '../api/auth'
 import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import { ExplicitBadge } from './ExplicitBadge'
 
 const RED_FLAGS = new Set(['hate', 'hate_slur', 'nsfw_cover', 'invalid_audio', 'possible_duplicate'])
 
@@ -214,7 +215,7 @@ export default function TrackModerationModal({ track, onClose, onResolved }: Pro
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-bold truncate">{track.title}</h3>
+              <h3 className="text-xl font-bold truncate">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></h3>
               <div className="flex items-center gap-2 mt-1 text-sm text-white/50">
                 <Link to={`/artist/${track.artist_id}`} className="hover:text-white/80 transition flex items-center gap-1">
                   {track.artist_name}

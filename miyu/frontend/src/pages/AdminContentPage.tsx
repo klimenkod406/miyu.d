@@ -9,6 +9,7 @@ import AIAnalysisPanel from '../components/AIAnalysisPanel'
 import TrackModerationModal from '../components/TrackModerationModal'
 import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 const COLORS = {
   gold: '#fbbf24',
@@ -541,6 +542,7 @@ function ModerationTracks() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="font-bold truncate">{track.title}</h3>
+                        <ExplicitBadge is_explicit={track.is_explicit} size="xs" />
                         <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/15 text-green-400">
                           Одобрен
                         </span>
@@ -680,6 +682,7 @@ function ModerationTracks() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h3 className="font-bold truncate">{track.title}</h3>
+                  <ExplicitBadge is_explicit={track.is_explicit} size="xs" />
                   <span className={`px-2 py-0.5 rounded-full text-xs ${
                     track.moderation_status === 'ai_flagged'
                       ? 'bg-red-500/20 text-red-400'
@@ -928,7 +931,7 @@ function ModerationAlbums() {
                       <div key={track.id} className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]">
                         <span className="w-6 text-center text-white/40 text-sm">{idx + 1}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{track.title}</p>
+                          <span className="inline-flex items-center gap-1"><p className="text-sm font-medium truncate">{track.title}</p><ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span>
                           <p className="text-xs text-white/40">{track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : ''}</p>
                         </div>
                         <span className={`px-2 py-0.5 rounded text-xs ${

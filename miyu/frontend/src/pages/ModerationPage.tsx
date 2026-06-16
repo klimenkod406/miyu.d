@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 import { Music, Check, X, AlertTriangle, Zap, Shield, Clock, Globe, Copyright, Mic, Volume2, TrendingUp, FileAudio, Play, Pause, Disc, Album } from 'lucide-react'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 interface TrackAnalysis {
   id: number
@@ -126,7 +127,7 @@ function AnalysisModal({ item, onClose, onApprove, onReject }: { item: TrackAnal
           <div className="flex items-center gap-4">
             <img loading="lazy" src={item.coverUrl} alt={item.title} className="w-16 h-16 rounded-xl object-cover" />
             <div>
-              <h2 className="text-xl font-bold">{item.title}</h2>
+              <h2 className="text-xl font-bold">{item.title}<ExplicitBadge is_explicit={item.hasExplicit} size="xs" /></h2>
               <p className="text-white/40">{item.artist}</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className={`px-2 py-0.5 rounded text-xs ${scoreColor} bg-white/10`}>
@@ -378,7 +379,7 @@ export default function ModerationPage() {
             >
               <img loading="lazy" src={item.coverUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover" />
               <div className="flex-1 min-w-0">
-                <p className="font-medium truncate">{item.title}</p>
+                <p className="font-medium truncate">{item.title}<ExplicitBadge is_explicit={item.hasExplicit} size="xs" /></p>
                 <p className="text-sm text-white/40 truncate">{item.artist}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-white/40">{item.genre}</span>

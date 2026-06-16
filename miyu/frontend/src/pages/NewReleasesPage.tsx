@@ -113,7 +113,7 @@ export default function NewReleasesPage() {
                 )}
               </div>
               <div>
-                <h3 className="text-3xl font-bold leading-tight md:text-4xl">{featured.title}</h3>
+                <h3 className="text-3xl font-bold leading-tight md:text-4xl">{featured.title} <ExplicitBadge is_explicit={featured.is_explicit} size="sm" /></h3>
                 <p className="mt-2 text-lg text-white/55">{featured.artist?.username}</p>
                 <div className="mt-5 flex flex-wrap gap-3 text-sm text-white/55">
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-2"><Disc3 className="h-4 w-4" />Свежий релиз</span>

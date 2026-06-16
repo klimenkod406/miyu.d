@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Sparkles, Play, Pause, Music2, Verified, Loader2 } from 'lucide-react'
 import { recsysApi, type SimilarTrack } from '../api/recsys'
 import { usePlayer } from '../hooks/PlayerContext'
+import { ExplicitBadge } from './ExplicitBadge'
 
 interface Props {
   trackId: number
@@ -69,7 +70,7 @@ export default function SimilarTracks({ trackId, limit = 10, title = 'Похож
       duration: t.duration,
       file_path: t.file_path || '',
       cover_url: t.cover_url || undefined,
-      is_explicit: false,
+      is_explicit: t.is_explicit,
       is_premium: false,
       status: 'approved' as const,
       created_at: '',
@@ -121,6 +122,7 @@ export default function SimilarTracks({ trackId, limit = 10, title = 'Похож
                 <div className="flex items-center gap-1">
                   <p className={`font-medium text-sm truncate ${isCurrent ? 'text-purple-400' : 'text-white'}`}>
                     {t.title}
+                    <ExplicitBadge is_explicit={t.is_explicit} size="xs" />
                   </p>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-white/40">

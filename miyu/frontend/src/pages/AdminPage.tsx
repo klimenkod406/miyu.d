@@ -4,6 +4,7 @@ import { Users, Music, Shield, FileAudio, Loader2, Ticket, Award, TrendingUp, Di
 import { AreaChart, Area, BarChart, Bar, PieChart, Pie, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line } from 'recharts'
 import { adminApi } from '../api/admin'
 import { getStoredTokens } from '../api/auth'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 const COLORS = {
   blue: '#3b82f6',
@@ -350,7 +351,7 @@ export default function AdminPage() {
               <div key={track.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.02]">
                 <span className="w-6 text-center text-white/40">{idx + 1}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{track.title}</p>
+                  <p className="font-medium truncate">{track.title} <ExplicitBadge is_explicit={track.is_explicit} size="xs" /></p>
                   <p className="text-xs text-white/40">{track.artist_name}</p>
                 </div>
                 <span className="text-purple-400">{formatValue(track.play_count)}</span>
