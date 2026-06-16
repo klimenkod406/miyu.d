@@ -8,6 +8,7 @@ import { usePlayer } from '../hooks/PlayerContext'
 import { getStoredTokens } from '../api/auth'
 import { achievementsApi } from '../api/achievements'
 import { extractColorsFromImage } from '../utils/colorExtractor'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 const RARITY_COLORS = {
   common: '#94a3b8',
@@ -401,7 +402,7 @@ export default function ProfilePage() {
                   duration: track.duration || 0,
                   file_path: track.file_path || '',
                   cover_url: track.cover_url,
-                  is_explicit: false,
+                  is_explicit: track.is_explicit,
                   is_premium: false,
                   status: 'approved',
                   created_at: ''
@@ -440,7 +441,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <Link to={`/track/${track.track_id}`} className={`font-medium truncate text-sm block ${isCurrentTrack ? 'text-white' : 'group-hover:text-white'}`}>{track.title}</Link>
+                    <Link to={`/track/${track.track_id}`} className={`font-medium truncate text-sm block ${isCurrentTrack ? 'text-white' : 'group-hover:text-white'}`}><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></Link>
                     <Link to={`/artist/${track.artist_id}`} className="text-xs text-white/40 truncate hover:text-white transition block">{track.artist_name}</Link>
                   </div>
                   <button 

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { Music, Film, Calendar, Trash2, Play, Loader2, ListMusic } from 'lucide-react'
 import { usePlayer } from '../hooks/PlayerContext'
 import type { Track } from '../types'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 type TabType = 'tracks' | 'videos'
 
@@ -311,7 +312,7 @@ export default function HistoryPage() {
                                   isCurrentTrack ? 'text-purple-400' : ''
                                 }`}
                               >
-                                {item.track.title}
+                                <span className="inline-flex items-center gap-1">{item.track.title}<ExplicitBadge is_explicit={item.track.is_explicit} size="xs" /></span>
                               </Link>
                               <Link
                                 to={`/artist/${item.track.artist?.id}`}

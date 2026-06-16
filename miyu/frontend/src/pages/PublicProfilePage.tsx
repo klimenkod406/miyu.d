@@ -11,6 +11,7 @@ import type { User, Track, Album, Playlist } from '../types'
 import { extractColorsFromImage } from '../utils/colorExtractor'
 import { createPortal } from 'react-dom'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 interface ProfileAchievement {
   id: number
@@ -611,7 +612,7 @@ useLockBodyScroll(showRemoveDialog)
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-base font-semibold text-white">{profilePresence.listeningTo.track.title}</p>
+                <p className="truncate text-base font-semibold text-white"><span className="inline-flex items-center gap-1">{profilePresence.listeningTo.track.title}<ExplicitBadge is_explicit={profilePresence.listeningTo.track.is_explicit} size="xs" /></span></p>
                 <p className="truncate text-sm text-white/60">{profilePresence.listeningTo.track.artist?.username || 'Артист'}</p>
                 {profilePresence.listeningTo.context?.title && (
                   <p className="mt-1 truncate text-xs text-white/35">
@@ -901,7 +902,7 @@ useLockBodyScroll(showRemoveDialog)
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate text-sm">{track.title}</p>
+                  <p className="font-medium truncate text-sm"><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></p>
                   <p className="text-xs text-white/40">{track.artist?.username}</p>
                 </div>
                 <button

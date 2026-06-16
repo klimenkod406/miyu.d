@@ -7,6 +7,7 @@ import { usePlayer } from '../hooks/PlayerContext'
 import { useOnlineStatus } from '../hooks/useOnlineStatus'
 import OnlineStatus from '../components/OnlineStatus'
 import type { User as UserType, Track, Album } from '../types'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 interface FeedItem {
   id: number
@@ -257,7 +258,7 @@ export default function FeedPage() {
                       />
                       <div className="flex-1 min-w-0">
                         <Link to={`/track/${item.track.id}`} className="font-medium hover:underline truncate block">
-                          {item.track.title}
+                          <span className="inline-flex items-center gap-1">{item.track.title}<ExplicitBadge is_explicit={item.track.is_explicit} size="xs" /></span>
                         </Link>
                         <div className="text-sm text-white/40 truncate">
                           {item.track.artist?.username || item.artist?.username || 'Артист'}

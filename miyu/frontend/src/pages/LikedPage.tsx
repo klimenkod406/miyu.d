@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Music, Play, Pause, Clock, Loader2, Trash2 } from 'lucide-react'
 import { usePlayer } from '../hooks/PlayerContext'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 import { getStoredTokens } from '../api/auth'
 
 export default function LikedPage() {
@@ -45,7 +46,7 @@ export default function LikedPage() {
       duration: t.duration || 0,
       file_path: t.file_path || '',
       cover_url: t.cover_url,
-      is_explicit: false,
+      is_explicit: t.is_explicit,
       is_premium: false,
       status: 'approved' as const,
       created_at: ''
@@ -72,7 +73,7 @@ export default function LikedPage() {
       duration: t.duration || 0,
       file_path: t.file_path || '',
       cover_url: t.cover_url,
-      is_explicit: false,
+      is_explicit: t.is_explicit,
       is_premium: false,
       status: 'approved' as const,
       created_at: ''
@@ -201,7 +202,7 @@ export default function LikedPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className={`truncate font-medium max-[414px]:text-sm ${isCurrent ? 'text-white' : 'text-white'}`}>{track.title}</p>
+                    <p className={`truncate font-medium max-[414px]:text-sm ${isCurrent ? 'text-white' : 'text-white'}`}><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></p>
                     <Link to={`/artist/${track.artist_id}`} className="block truncate text-sm text-white/40 hover:text-white max-[414px]:text-xs">{track.artist_name}</Link>
                   </div>
                 </div>

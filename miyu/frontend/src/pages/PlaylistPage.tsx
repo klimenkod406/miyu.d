@@ -4,6 +4,7 @@ import { ListMusic, Music, Play, Pause, Clock, ArrowLeft, Trash2, Upload, Pin, P
 import { usePlayer } from '../hooks/PlayerContext'
 import { useAuth } from '../hooks/AuthContext'
 import { getStoredTokens } from '../api/auth'
+import { ExplicitBadge } from '../components/ExplicitBadge'
 
 interface Track {
   id: number
@@ -194,7 +195,7 @@ export default function PlaylistPage() {
     },
     cover_url: track.cover_url || undefined,
     file_path: (track as any).file_path || '',
-    is_explicit: Boolean((track as any).is_explicit),
+    is_explicit: track.is_explicit,
     is_premium: Boolean((track as any).is_premium),
     status: ((track as any).status || 'approved') as 'approved' | 'pending' | 'rejected',
     created_at: (track as any).created_at || '',
@@ -473,7 +474,7 @@ export default function PlaylistPage() {
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className={`truncate font-medium transition max-[414px]:text-sm ${isCurrent ? 'text-white' : 'group-hover:text-purple-400'}`}>{track.title}</p>
+                        <p className={`truncate font-medium transition max-[414px]:text-sm ${isCurrent ? 'text-white' : 'group-hover:text-purple-400'}`}><span className="inline-flex items-center gap-1">{track.title}<ExplicitBadge is_explicit={track.is_explicit} size="xs" /></span></p>
                         <p className="truncate text-sm text-white/40 max-[414px]:text-xs">{track.artist_name}</p>
                       </div>
                     </div>
