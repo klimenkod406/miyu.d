@@ -445,7 +445,7 @@ router.post('/:id/buy-ticket', authenticateToken, async (req: AuthRequest, res) 
     }
     try {
       await runQuery('BEGIN TRANSACTION');
-      const ticketType = await getOne<any>('SELECT * FROM ticket_types WHERE id = ? AND concert_id = ?', [ticket_type_id, concertId]);
+      const ticketType = await getOne<any>('SELECT id, concert_id, name, price, quantity, sold, description FROM ticket_types WHERE id = ? AND concert_id = ?', [ticket_type_id, concertId]);
       if (!ticketType) {
         await runQuery('ROLLBACK');
         return res.status(404).json({ error: 'Тип билета не найден' });
@@ -454,7 +454,7 @@ router.post('/:id/buy-ticket', authenticateToken, async (req: AuthRequest, res) 
         await runQuery('ROLLBACK');
         return res.status(400).json({ error: 'Недостаточно билетов' });
       }
-      const concert = await getOne<any>('SELECT * FROM concerts WHERE id = ?', [concertId]);
+      const concert = await getOne<any>('SELECT id, artist_id, title, event_date, available_seats, cover_url FROM concerts WHERE id = ?', [concertId]);
       if (!concert || concert.available_seats < quantity) {
           await runQuery('ROLLBACK');
           return res.status(400).json({ error: 'Недостаточно мест' });

@@ -19,7 +19,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
     try {
       console.log(`[EMAIL] Attempt ${attempt}/${MAX_RETRIES} — To: ${to}, Subject: "${subject}"`);
       const info = await transporter.sendMail({
-        from: process.env.MAIL_FROM || 'noreply@miyu.local',
+        from: `"Miyu" <${process.env.MAIL_FROM || 'noreply@miyu.local'}>`,
         to,
         subject,
         html,

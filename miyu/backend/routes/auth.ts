@@ -118,7 +118,7 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Заполните все поля' });
     }
 
-    const user = await getOne<User>('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await getOne<User>('SELECT id, email, username, password_hash, role, avatar_url, bio, is_verified, is_premium, premium_expires_at, created_at FROM users WHERE email = ?', [email]);
     console.log('Found user:', user);
 
     if (!user) {
@@ -185,7 +185,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
     }
 
     const storedToken = await getOne<RefreshToken>(
-      'SELECT * FROM refresh_tokens WHERE token = ? AND user_id = ?',
+      'SELECT id, user_id, token, expires_at FROM refresh_tokens WHERE token = ? AND user_id = ?',
       [refreshToken, decoded.id]
     );
 

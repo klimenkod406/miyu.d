@@ -52,7 +52,7 @@ router.post('/', authenticateToken, upload.array('screenshots', 5), async (req: 
       [req.user!.id, issueArea, description, JSON.stringify(attachments)],
     );
 
-    const ticket = await getOne<any>('SELECT * FROM support_tickets WHERE id = ?', [result.lastID]);
+    const ticket = await getOne<any>('SELECT id, user_id, issue_area, description, attachments, status, admin_response, reviewed_by, reviewed_at, created_at, updated_at FROM support_tickets WHERE id = ?', [result.lastID]);
     res.status(201).json({
       ...ticket,
       attachments,

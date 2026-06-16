@@ -186,7 +186,7 @@ router.post('/tracks', authenticateToken, authorizeRole(['artist', 'admin']), up
       ]
     );
 
-    const track = await getOne<Track>('SELECT * FROM tracks WHERE id = ?', [result.lastID]);
+    const track = await getOne<Track>('SELECT id, artist_id, album_id, title, duration, track_number, file_path, file_path_hd, cover_url, genre, bpm, key, lyrics, is_explicit, is_premium, status, created_at FROM tracks WHERE id = ?', [result.lastID]);
 
     // Hook: поставить задачу анализа в ai-service (fire-and-forget).
     if (track) {
@@ -205,7 +205,7 @@ router.patch('/tracks/:id', authenticateToken, authorizeRole(['artist', 'admin']
     const trackId = parseInt(req.params.id as string);
     const { title, genre, bpm, key, lyrics, is_explicit, is_premium } = req.body;
 
-    const track = await getOne<Track>('SELECT * FROM tracks WHERE id = ?', [trackId]);
+    const track = await getOne<Track>('SELECT id, artist_id, album_id, title, duration, track_number, file_path, file_path_hd, cover_url, genre, bpm, key, lyrics, is_explicit, is_premium, status, created_at FROM tracks WHERE id = ?', [trackId]);
     if (!track) {
       return res.status(404).json({ error: 'Трек не найден' });
     }
@@ -229,7 +229,7 @@ router.patch('/tracks/:id', authenticateToken, authorizeRole(['artist', 'admin']
       ]
     );
 
-    const updatedTrack = await getOne<Track>('SELECT * FROM tracks WHERE id = ?', [trackId]);
+    const updatedTrack = await getOne<Track>('SELECT id, artist_id, album_id, title, duration, track_number, file_path, file_path_hd, cover_url, genre, bpm, key, lyrics, is_explicit, is_premium, status, created_at FROM tracks WHERE id = ?', [trackId]);
     res.json(updatedTrack);
   } catch (error) {
     console.error('Update track error:', error);
@@ -241,7 +241,7 @@ router.delete('/tracks/:id', authenticateToken, authorizeRole(['artist', 'admin'
   try {
     const trackId = parseInt(req.params.id as string);
 
-    const track = await getOne<Track>('SELECT * FROM tracks WHERE id = ?', [trackId]);
+    const track = await getOne<Track>('SELECT id, artist_id, album_id, title, duration, track_number, file_path, file_path_hd, cover_url, genre, bpm, key, lyrics, is_explicit, is_premium, status, created_at FROM tracks WHERE id = ?', [trackId]);
     if (!track) {
       return res.status(404).json({ error: 'Трек не найден' });
     }

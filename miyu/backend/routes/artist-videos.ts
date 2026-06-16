@@ -122,7 +122,7 @@ router.post('/videos',
         ]
       );
 
-      const video = await getOne<any>('SELECT * FROM videos WHERE id = ?', [result.lastID]);
+      const video = await getOne<any>('SELECT id, artist_id, album_id, track_id, title, description, duration, file_path, thumbnail_url, status, views_count, created_at FROM videos WHERE id = ?', [result.lastID]);
       
       let thumbnailFinalUrl = video.thumbnail_url;
       if (thumbnailFinalUrl && !thumbnailFinalUrl.startsWith('/uploads/')) {
@@ -145,7 +145,7 @@ router.patch('/videos/:id', authenticateToken, authorizeRole(['artist', 'admin']
     const videoId = parseInt(req.params.id as string);
     const { title, description, track_id, album_id } = req.body;
 
-    const video = await getOne<any>('SELECT * FROM videos WHERE id = ?', [videoId]);
+    const video = await getOne<any>('SELECT id, artist_id, album_id, track_id, title, description, duration, file_path, thumbnail_url, status, views_count, created_at FROM videos WHERE id = ?', [videoId]);
     if (!video) {
       return res.status(404).json({ error: 'Видео не найдено' });
     }
@@ -192,7 +192,7 @@ router.patch('/videos/:id', authenticateToken, authorizeRole(['artist', 'admin']
       ]
     );
 
-    const updatedVideo = await getOne<any>('SELECT * FROM videos WHERE id = ?', [videoId]);
+    const updatedVideo = await getOne<any>('SELECT id, artist_id, album_id, track_id, title, description, duration, file_path, thumbnail_url, status, views_count, created_at FROM videos WHERE id = ?', [videoId]);
     res.json(updatedVideo);
   } catch (error) {
     console.error('Update video error:', error);
@@ -204,7 +204,7 @@ router.delete('/videos/:id', authenticateToken, authorizeRole(['artist', 'admin'
   try {
     const videoId = parseInt(req.params.id as string);
 
-    const video = await getOne<any>('SELECT * FROM videos WHERE id = ?', [videoId]);
+    const video = await getOne<any>('SELECT id, artist_id, album_id, track_id, title, description, duration, file_path, thumbnail_url, status, views_count, created_at FROM videos WHERE id = ?', [videoId]);
     if (!video) {
       return res.status(404).json({ error: 'Видео не найдено' });
     }

@@ -66,7 +66,7 @@ router.post('/accept', authenticateToken, async (req: AuthRequest, res: Response
     }
 
     const request = await getOne<any>(
-      'SELECT * FROM friendships WHERE id = ? AND friend_id = ? AND status = ?',
+      'SELECT id, user_id, friend_id, status FROM friendships WHERE id = ? AND friend_id = ? AND status = ?',
       [requestId, userId, 'pending']
     );
 
@@ -104,7 +104,7 @@ router.post('/reject', authenticateToken, async (req: AuthRequest, res: Response
     }
 
     const request = await getOne<any>(
-      'SELECT * FROM friendships WHERE id = ? AND friend_id = ? AND status = ?',
+      'SELECT id, user_id, friend_id, status FROM friendships WHERE id = ? AND friend_id = ? AND status = ?',
       [requestId, userId, 'pending']
     );
 

@@ -479,7 +479,7 @@ router.patch('/albums/:id/reject', authenticateToken, authorizeRole(['admin', 'm
   try {
     const albumId = parseInt(req.params.id as string);
 
-    const album = await getOne<any>('SELECT * FROM albums WHERE id = ?', [albumId]);
+    const album = await getOne<any>('SELECT id, artist_id, title, cover_url FROM albums WHERE id = ?', [albumId]);
     if (!album) {
       return res.status(404).json({ error: 'Альбом не найден' });
     }
@@ -652,7 +652,7 @@ router.get('/concerts/pending', authenticateToken, authorizeRole(['admin', 'mode
        LIMIT 100`
     );
 
-    const ticketTypes = await getAll<any>(`SELECT * FROM ticket_types WHERE concert_id IN (${concerts.map(() => '?').join(',') || 'NULL'})`,
+    const ticketTypes = await getAll<any>(`SELECT id, concert_id, name, price, quantity, sold, description FROM ticket_types WHERE concert_id IN (${concerts.map(() => '?').join(',') || 'NULL'})`,
       concerts.map(c => c.id));
 
     const result = concerts.map(c => ({
@@ -759,7 +759,7 @@ router.patch('/videos/:id/reject', authenticateToken, authorizeRole(['admin', 'm
   try {
     const videoId = parseInt(req.params.id as string);
 
-    const video = await getOne<any>('SELECT * FROM videos WHERE id = ?', [videoId]);
+    const video = await getOne<any>('SELECT id, artist_id, title, file_path, thumbnail_url FROM videos WHERE id = ?', [videoId]);
     if (!video) {
       return res.status(404).json({ error: 'Видео не найдено' });
     }

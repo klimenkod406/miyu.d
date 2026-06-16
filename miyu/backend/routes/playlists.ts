@@ -100,7 +100,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 
     const unlockedAchievements = await checkAchievementsForUser(req.user!.id);
 
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [result.lastID]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [result.lastID]);
     res.status(201).json({ ...playlist, unlockedAchievements });
   } catch (error) {
     console.error('Create playlist error:', error);
@@ -113,7 +113,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
     const playlistId = parseInt(req.params.id as string);
     const { title, description, cover_url, is_public, is_pinned } = req.body;
     
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }
@@ -127,7 +127,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
       [title || null, description !== undefined ? description : null, cover_url !== undefined ? cover_url : null, is_public !== undefined ? (is_public ? 1 : 0) : null, is_pinned !== undefined ? (is_pinned ? 1 : 0) : null, playlistId]
     );
 
-    const updated = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const updated = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     res.json(updated);
   } catch (error) {
     console.error('Update playlist error:', error);
@@ -139,7 +139,7 @@ router.post('/:id/cover', authenticateToken, upload.single('cover'), async (req:
   try {
     const playlistId = parseInt(req.params.id as string);
     
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }
@@ -200,7 +200,7 @@ router.post('/:id/like', authenticateToken, async (req: AuthRequest, res: Respon
   try {
     const playlistId = parseInt(req.params.id as string);
 
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }
@@ -309,7 +309,7 @@ router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response)
   try {
     const playlistId = parseInt(req.params.id as string);
     
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }
@@ -337,7 +337,7 @@ router.post('/:id/tracks/:trackId', authenticateToken, async (req: AuthRequest, 
     const playlistId = parseInt(req.params.id as string);
     const trackId = parseInt(req.params.trackId as string);
     
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }
@@ -379,7 +379,7 @@ router.delete('/:id/tracks/:trackId', authenticateToken, async (req: AuthRequest
     const playlistId = parseInt(req.params.id as string);
     const trackId = parseInt(req.params.trackId as string);
     
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }
@@ -409,7 +409,7 @@ router.get('/:id/has-track/:trackId', authenticateToken, async (req: AuthRequest
     const playlistId = parseInt(req.params.id as string);
     const trackId = parseInt(req.params.trackId as string);
 
-    const playlist = await getOne<any>('SELECT * FROM playlists WHERE id = ?', [playlistId]);
+    const playlist = await getOne<any>('SELECT id, user_id, title, description, cover_url, is_public, is_system, is_pinned, created_at FROM playlists WHERE id = ?', [playlistId]);
     if (!playlist) {
       return res.status(404).json({ error: 'Плейлист не найден' });
     }

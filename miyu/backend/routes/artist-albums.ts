@@ -79,7 +79,7 @@ router.post('/albums', authenticateToken, authorizeRole(['artist', 'admin']), up
       ]
     );
 
-    const album = await getOne<any>('SELECT * FROM albums WHERE id = ?', [result.lastID]);
+    const album = await getOne<any>('SELECT id, artist_id, title, release_year, cover_url, description, genre, type, status, created_at FROM albums WHERE id = ?', [result.lastID]);
     res.status(201).json(album);
   } catch (error) {
     console.error("--- ALBUM CREATION FAILED ---");
@@ -93,7 +93,7 @@ router.patch('/albums/:id', authenticateToken, authorizeRole(['artist', 'admin']
     const albumId = parseInt(req.params.id as string);
     const { title, release_year, genre, type, description, cover_url } = req.body;
 
-    const album = await getOne<any>('SELECT * FROM albums WHERE id = ?', [albumId]);
+    const album = await getOne<any>('SELECT id, artist_id, title, release_year, cover_url, description, genre, type, status, created_at FROM albums WHERE id = ?', [albumId]);
     if (!album) {
       return res.status(404).json({ error: 'Альбом не найден' });
     }
@@ -116,7 +116,7 @@ router.patch('/albums/:id', authenticateToken, authorizeRole(['artist', 'admin']
       ]
     );
 
-    const updatedAlbum = await getOne<any>('SELECT * FROM albums WHERE id = ?', [albumId]);
+    const updatedAlbum = await getOne<any>('SELECT id, artist_id, title, release_year, cover_url, description, genre, type, status, created_at FROM albums WHERE id = ?', [albumId]);
     res.json(updatedAlbum);
   } catch (error) {
     console.error('Update album error:', error);
@@ -128,7 +128,7 @@ router.delete('/albums/:id', authenticateToken, authorizeRole(['artist', 'admin'
   try {
     const albumId = parseInt(req.params.id as string);
 
-    const album = await getOne<any>('SELECT * FROM albums WHERE id = ?', [albumId]);
+    const album = await getOne<any>('SELECT id, artist_id, title, release_year, cover_url, description, genre, type, status, created_at FROM albums WHERE id = ?', [albumId]);
     if (!album) {
       return res.status(404).json({ error: 'Альбом не найден' });
     }
