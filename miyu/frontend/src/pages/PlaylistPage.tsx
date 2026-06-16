@@ -12,6 +12,7 @@ interface Track {
   artist_id: number
   duration: number
   cover_url: string
+  is_explicit?: boolean
 }
 
 interface Playlist {

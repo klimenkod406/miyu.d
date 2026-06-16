@@ -12,7 +12,7 @@ interface ExplicitBadgeProps {
   className?: string
 }
 
-const TOOLTIP = 'AI-анализ обнаружил нецензурную лексику или контент 18+'
+const TOOLTIP = 'Возможен нецензурный контент 18+'
 const TOOLTIP_OFFSET = 6
 
 const ICON_SIZE: Record<ExplicitBadgeSize, string> = {

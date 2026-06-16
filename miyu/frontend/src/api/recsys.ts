@@ -28,6 +28,7 @@ export interface SimilarTrack {
     cover_url: string | null;
   } | null;
   similarity: number;
+  is_explicit: boolean;
 }
 
 export interface SimilarResponse {
