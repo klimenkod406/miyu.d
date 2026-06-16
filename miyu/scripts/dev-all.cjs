@@ -38,7 +38,7 @@ const services = [
   {
     name: 'ai-service',
     command: pythonCmd,
-    args: ['-m', 'uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '8001'],
+    args: ['-m', 'uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '8001', '--reload'],
     cwd: path.join(rootDir, 'ai-service'),
     env: sharedAiEnv,
   },
