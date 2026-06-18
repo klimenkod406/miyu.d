@@ -16,9 +16,9 @@ const TOOLTIP = 'Возможен нецензурный контент 18+'
 const TOOLTIP_OFFSET = 6
 
 const ICON_SIZE: Record<ExplicitBadgeSize, string> = {
-  xs: 'h-3 w-3',
-  sm: 'h-3.5 w-3.5',
-  md: 'h-4 w-4',
+  xs: 'h-3.5 w-3.5',
+  sm: 'h-4 w-4',
+  md: 'h-5 w-5',
 }
 
 const TEXT_SIZE: Record<ExplicitBadgeSize, string> = {
