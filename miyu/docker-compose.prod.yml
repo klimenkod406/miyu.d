@@ -5,8 +5,23 @@ services:
       network: host
     container_name: miyu-frontend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
   backend:
     build:
@@ -14,6 +29,15 @@ services:
       network: host
     container_name: miyu-backend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       PORT: 3001
       DB_PATH: /app/database/miyu.db
@@ -24,13 +48,29 @@ services:
       - ./database:/app/database
       - ./uploads:/app/uploads
       - ./seed-content:/app/seed-content:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - ai-service
+      ai-service:
+        condition: service_healthy
 
   redis:
     image: redis:7-alpine
     container_name: miyu-redis
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -43,6 +83,21 @@ services:
       network: host
     container_name: miyu-ai-service
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 6g
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/ai/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       redis:
         condition: service_healthy
@@ -69,7 +124,22 @@ services:
       network: host
     container_name: miyu-ai-worker
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 6g
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     command: ["python", "worker.py"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "from redis import Redis; r=Redis(host='redis',port=6379); r.ping()"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       redis:
         condition: service_healthy
@@ -95,11 +165,29 @@ services:
     image: nginx:1.27-alpine
     container_name: miyu-nginx
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - frontend
-      - backend
-      - ai-service
-      - ai-worker
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+      ai-worker:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:
