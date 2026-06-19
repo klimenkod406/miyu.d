@@ -40,5 +40,5 @@ jobs:
         if: failure()
         run: |
           echo "Deployment failed. Rolling back..."
-          docker compose -f docker-compose.prod.yml down
-          docker compose -f docker-compose.prod.yml up -d
+          docker compose --env-file .env.production -f docker-compose.prod.yml down
+          docker compose --env-file .env.production -f docker-compose.prod.yml up -d
