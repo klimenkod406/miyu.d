@@ -208,12 +208,22 @@ export default function TrackPage() {
   return (
     <div className="relative">
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 mb-8">
-        <div className="w-40 md:w-52 md:h-52 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <div className="group relative w-40 md:w-52 md:h-52 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center flex-shrink-0 overflow-hidden">
           {coverUrl ? (
-            <img loading="lazy" src={coverUrl} alt={track.title} className="w-full h-full object-cover" />
+            <img loading="lazy" src={coverUrl} alt={track.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
           ) : (
             <Music size={80} className="text-white/30" />
           )}
+          <button
+            onClick={handlePlay}
+            className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            {isCurrentTrack && isPlaying ? (
+              <Pause size={32} className="text-white" />
+            ) : (
+              <Play size={32} className="text-white ml-1" />
+            )}
+          </button>
         </div>
 
         <div className="flex-1 flex flex-col">
@@ -388,11 +398,15 @@ export default function TrackPage() {
                       <p className="truncate text-sm text-white/40">{item.artist?.username || item.artist_name || 'Артист'} • {item.genre || 'Музыка'}</p>
                     </div>
                     <button
-                      onClick={() => queueTrack(item, discoveryTracks)}
-                      className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
+                      onClick={(e) => { e.stopPropagation(); toggleLike(); }}
+                      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs transition ${
+                        isLiked 
+                          ? 'border-red-500/40 bg-red-500/10 text-red-400' 
+                          : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
                     >
-                      Слушать
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}`} />
+                      {isLiked ? 'В избранном' : 'В избранное'}
                     </button>
                   </div>
                 ))}
